@@ -27,7 +27,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -45,7 +45,7 @@ dependencies {
     // Reactive extensions
     implementation 'android.arch.lifecycle:reactivestreams:1.1.1'
 //    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
-    implementation 'androidx.room:room-rxjava2:2.0.0'
+//    implementation 'androidx.room:room-rxjava2:2.0.0'
 //    testImplementation'android.arch.persistence.room:testing:1.1.1'
 
     // Dagger
