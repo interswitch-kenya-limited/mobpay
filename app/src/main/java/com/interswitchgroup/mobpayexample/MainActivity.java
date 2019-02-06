@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.model.Invoice;
+import com.interswitchgroup.mobpaylib.model.Transaction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +30,22 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        MobPay.pay(new Invoice());
+        new MobPay().pay(new Invoice(), new MobPay.TransactionCallback() {
+            @Override
+            public void onSuccess(Transaction transaction) {
+
+            }
+
+            @Override
+            public void onUserCancel() {
+
+            }
+
+            @Override
+            public void onError(Throwable error, Transaction transaction) {
+
+            }
+        });
     }
 
     @Override

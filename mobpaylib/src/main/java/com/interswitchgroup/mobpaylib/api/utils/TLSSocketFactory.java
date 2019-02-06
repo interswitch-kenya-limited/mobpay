@@ -93,8 +93,9 @@ public class TLSSocketFactory extends SSLSocketFactory {
 
     private Socket enableTLSOnSocket(Socket socket) {
         if (socket != null && (socket instanceof SSLSocket)) {
+            // TODO Disabled to allow automatic negotiation btw server and client
             // Only use TLSv1.2
-            ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.2"});
+//            ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.2"});
         }
         return socket;
     }
