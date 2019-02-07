@@ -3,12 +3,12 @@ package com.interswitchgroup.mobpayexample;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
@@ -30,31 +30,37 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(final View view) {
+                Merchant merchant = new Merchant("ISWKEN0001", "ISWKE");
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+
+                Payment payment = new Payment("100", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES");
+                // TODO remove hard coded customer information after API fixes requirement for this field which should be optional
+                Customer customer = new Customer("1002", "kelvin", "mwangi", " kelvin.mwangi@interswitchgroup.com ", "0714171282", "NBI", "KE", "00200", "wstlnds");
+                new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(
+                        merchant,
+                        payment,
+                        customer,
+                        new TransactionSuccessCallback() {
+                            @Override
+                            public void onSuccess(TransactionResponse transactionResponse) {
+                                Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                                        .setAction("Action", null).show();
+                            }
+                        },
+                        new TransactionFailureCallback() {
+                            @Override
+                            public void onError(Throwable error) {
+                                Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                                        .setAction("Action", null).show();
+                            }
+                        });
             }
         });
-
-        Merchant merchant = new Merchant("101", "lQVuoq1grpVZeQw7g/ztgiEn+XgmEatIO6tcVNZpP+I2l2fcTw0ZKIhkrxxajaivgY25ljyueNOBzqF/13lLlTKN/KVp4p391bEBsorCesKpxnji1k9GkIaL/QydGA+gC5h4GWtryslvFD/aBLYZ0YLzRIwBbHdK9UzTel2EgP5vjFonoXUngRnT9nIg0iDwBumZPN1hW6hcxflK7WmJ+nAX9oZK0z2Vi6LgIxfmgG2YGo4youb7EILZwh5xMMTiCHjyL7Vi4ZTkyKaJS/Xd1vvF6KJfsy7QER0qfDEo2NjyWBZcQRHsPG5KVWoH4W+mCHe0EpFyNKciBYgrSI8pYw==", "ISWKE");
-        Payment payment = new Payment("100", "1234890", "MOBILE", "3TLP0001", "CRD", "KES");
-        Customer customer = new Customer();
-        new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(
-                merchant,
-                payment,
-                customer,
-                new TransactionSuccessCallback() {
-                    @Override
-                    public void onSuccess(TransactionResponse transactionResponse) {
-                        Toast.makeText(getApplicationContext(), "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Toast.LENGTH_LONG).show();
-                    }
-                },
-                new TransactionFailureCallback() {
-                    @Override
-                    public void onError(Throwable error) {
-                        Toast.makeText(getApplicationContext(), "Transaction failed, reason:\t" + error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
     }
 
     @Override

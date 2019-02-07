@@ -51,7 +51,6 @@ public class NetModule {
     @Singleton
     Gson provideGson() {
         return new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .setLenient()
                 .setDateFormat("yyyy-MM-dd hh:mm:ss.S")
                 .create();
@@ -77,7 +76,7 @@ public class NetModule {
     @Singleton
     OkHttpClient provideOkhttpClient(TLSSocketFactory tlsSocketFactory) {
         HttpLoggingInterceptor httpLogger = new HttpLoggingInterceptor();
-        httpLogger.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        httpLogger.setLevel(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient
                 .Builder()
                 .addInterceptor(new Interceptor() {
