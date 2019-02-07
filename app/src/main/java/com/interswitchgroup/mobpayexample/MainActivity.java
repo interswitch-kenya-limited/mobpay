@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
 
                 Payment payment = new Payment("100", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES");
-                // TODO remove hard coded customer information after API fixes requirement for this field which should be optional
-                Customer customer = new Customer("1002", "kelvin", "mwangi", " kelvin.mwangi@interswitchgroup.com ", "0714171282", "NBI", "KE", "00200", "wstlnds");
+                Customer customer = new Customer("1002");
+                customer.setSecondName("Ongeri");
                 new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(
                         merchant,
                         payment,
