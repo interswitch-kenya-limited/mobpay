@@ -4,17 +4,19 @@ public class DaggerWrapper {
 
     private static MainComponent mComponent;
 
-    public static MainComponent getComponent() {
+    public static MainComponent getComponent(String clientId, String clientSecret) {
         if (mComponent == null) {
-            initComponent();
+            initComponent(clientId, clientSecret);
         }
         return mComponent;
     }
 
-    private static void initComponent() {
+    private static void initComponent(String clientId, String clientSecret) {
+//        String baseurl = "https://ptsv2.com/t/rbvm6-1549534696/";
+        String baseurl = "https://testids.interswitch.co.ke:9080/api/v1/";
         mComponent = DaggerMainComponent
                 .builder()
-                .netModule(new NetModule("https://testids.interswitch.co.ke:9080"))
+                .netModule(new NetModule(baseurl, clientId, clientSecret))
                 .build();
     }
 }

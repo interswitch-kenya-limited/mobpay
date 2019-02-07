@@ -8,6 +8,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface CardPayment {
-    @POST("/api/v1/merchant/transact/cards")
+    @POST("merchant/transact/cards")
     Single<CardPaymentResponse> merchantCardPayment(@Body CardPaymentPayload cardPaymentPayload);
 }

@@ -1,7 +1,5 @@
 package com.interswitchgroup.mobpaylib.api.model;
 
-import com.interswitchgroup.mobpaylib.model.Transaction;
-
 public class CardPaymentResponse implements TransactionResponse{
     private String fee;
     private String transactionAmount;
@@ -86,7 +84,7 @@ public class CardPaymentResponse implements TransactionResponse{
     }
 
     @Override
-    public Transaction buildTransaction() {
-        return new Transaction(this.getTransactionRef());
+    public String getTransactionReference() {
+        return this.getTransactionRef();
     }
 }

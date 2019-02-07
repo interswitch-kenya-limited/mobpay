@@ -8,10 +8,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.interswitchgroup.mobpaylib.MobPay;
-import com.interswitchgroup.mobpaylib.model.Invoice;
-import com.interswitchgroup.mobpaylib.model.Transaction;
+import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
+import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
+import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
+import com.interswitchgroup.mobpaylib.model.Customer;
+import com.interswitchgroup.mobpaylib.model.Merchant;
+import com.interswitchgroup.mobpaylib.model.Payment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,22 +35,26 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        new MobPay().pay(new Invoice(), new MobPay.TransactionCallback() {
-            @Override
-            public void onSuccess(Transaction transaction) {
 
-            }
-
-            @Override
-            public void onUserCancel() {
-
-            }
-
-            @Override
-            public void onError(Throwable error, Transaction transaction) {
-
-            }
-        });
+        Merchant merchant = new Merchant("101", "lQVuoq1grpVZeQw7g/ztgiEn+XgmEatIO6tcVNZpP+I2l2fcTw0ZKIhkrxxajaivgY25ljyueNOBzqF/13lLlTKN/KVp4p391bEBsorCesKpxnji1k9GkIaL/QydGA+gC5h4GWtryslvFD/aBLYZ0YLzRIwBbHdK9UzTel2EgP5vjFonoXUngRnT9nIg0iDwBumZPN1hW6hcxflK7WmJ+nAX9oZK0z2Vi6LgIxfmgG2YGo4youb7EILZwh5xMMTiCHjyL7Vi4ZTkyKaJS/Xd1vvF6KJfsy7QER0qfDEo2NjyWBZcQRHsPG5KVWoH4W+mCHe0EpFyNKciBYgrSI8pYw==", "ISWKE");
+        Payment payment = new Payment("100", "1234890", "MOBILE", "3TLP0001", "CRD", "KES");
+        Customer customer = new Customer();
+        new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(
+                merchant,
+                payment,
+                customer,
+                new TransactionSuccessCallback() {
+                    @Override
+                    public void onSuccess(TransactionResponse transactionResponse) {
+                        Toast.makeText(getApplicationContext(), "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Toast.LENGTH_LONG).show();
+                    }
+                },
+                new TransactionFailureCallback() {
+                    @Override
+                    public void onError(Throwable error) {
+                        Toast.makeText(getApplicationContext(), "Transaction failed, reason:\t" + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     @Override

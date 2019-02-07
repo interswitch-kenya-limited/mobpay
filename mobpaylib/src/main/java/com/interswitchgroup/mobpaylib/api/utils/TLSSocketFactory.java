@@ -93,9 +93,8 @@ public class TLSSocketFactory extends SSLSocketFactory {
 
     private Socket enableTLSOnSocket(Socket socket) {
         if (socket != null && (socket instanceof SSLSocket)) {
-            // TODO Disabled to allow automatic negotiation btw server and client
-            // Only use TLSv1.2
-//            ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.2"});
+            // TODO Change to TLSv1.2 as soon as server starts accepting it to comply with PCI-DSS
+            ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.1"});
         }
         return socket;
     }

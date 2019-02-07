@@ -1,6 +1,8 @@
 package com.interswitchgroup.mobpaylib.di;
 
 import android.os.Build;
+import android.text.TextUtils;
+import android.util.Base64;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -9,9 +11,13 @@ import com.interswitchgroup.mobpaylib.BuildConfig;
 import com.interswitchgroup.mobpaylib.api.utils.TLSSocketFactory;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -30,10 +36,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class NetModule {
     private final String LOG_TAG = this.getClass().getSimpleName();
-    String mBaseUrl;
+    private final String mBaseUrl;
+    private final String clientId;
+    private final String clientSecret;
 
-    public NetModule(String mBaseUrl) {
-        this.mBaseUrl = mBaseUrl;
+
+    public NetModule(String baseUrl, String clientId, String clientSecret) {
+        this.mBaseUrl = baseUrl;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
     }
 
     @Provides
@@ -64,30 +75,54 @@ public class NetModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkhttpClient(TLSSocketFactory tlsV1point2factory) {
+    OkHttpClient provideOkhttpClient(TLSSocketFactory tlsSocketFactory) {
         HttpLoggingInterceptor httpLogger = new HttpLoggingInterceptor();
-        httpLogger.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        httpLogger.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         return new OkHttpClient
                 .Builder()
-                .addInterceptor(httpLogger)
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request original = chain.request();
-                        // Add headers so we get Android version and Paystack Library version
-                        Request.Builder builder = original.newBuilder()
-                                .header("User-Agent", "Android_" + Build.VERSION.SDK_INT + "_Paystack_" + BuildConfig.VERSION_NAME)
-                                .header("Accept", "application/json")
-                                .method(original.method(), original.body());
-                        Request request = builder.build();
+                        try {
+                            // Build signature and headers
+                            String timestamp = String.valueOf(new Date().getTime() / 1000);
+                            String nonce = UUID.randomUUID().toString().replaceAll("-", "");
+                            String encodedClientId = Base64.encodeToString(clientId.getBytes("UTF-8"), Base64.NO_WRAP);
+                            String httpMethod = original.method();
+                            String url = original.url().toString();
+                            String encodedUrl = URLEncoder.encode(url, "UTF-8");
+                            String[] signatureItems = {httpMethod, encodedUrl, timestamp, nonce, clientId, clientSecret};
+                            String signatureCipher = TextUtils.join("&", signatureItems);
+                            String signatureMethod = "SHA1";
+                            MessageDigest messageDigest = MessageDigest.getInstance(signatureMethod);
+                            String signature = Base64.encodeToString(messageDigest.digest(signatureCipher.getBytes("UTF-8")), Base64.NO_WRAP);
 
-                        return chain.proceed(request);
+                            // Add headers to request
+                            Request.Builder builder = original.newBuilder()
+                                    .header("User-Agent", "Android_" + Build.VERSION.SDK_INT + "_jg.ongeri_" + BuildConfig.VERSION_NAME)
+                                    .header("Accept", "application/json")
+                                    .header("Content-Type", "application/json")
+                                    .header("Nonce", nonce)
+                                    .header("Timestamp", timestamp)
+                                    .header("SignatureMethod", signatureMethod)
+                                    .header("Signature", signature)
+                                    .header("Authorization", "InterswitchAuth " + encodedClientId)
+                                    .method(original.method(), original.body());
+                            Request request = builder.build();
+
+                            return chain.proceed(request);
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                            return chain.proceed(original);
+                        }
                     }
                 })
-                .sslSocketFactory(tlsV1point2factory, tlsV1point2factory.getX509TrustManager())
+                .sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getX509TrustManager())
                 .connectTimeout(5, TimeUnit.MINUTES)
                 .readTimeout(5, TimeUnit.MINUTES)
                 .writeTimeout(5, TimeUnit.MINUTES)
+                .addInterceptor(httpLogger)
                 .build();
     }
 
