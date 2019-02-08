@@ -3,14 +3,16 @@ package com.interswitchgroup.mobpaylib.model;
 public class Payment {
     private String amount;
     private String transactionRef;
+    private String orderId;
     private String terminalType;
     private String terminalId;
     private String paymentItem;
     private String currency;
 
-    public Payment(String amount, String transactionRef, String terminalType, String terminalId, String paymentItem, String currency) {
+    public Payment(String amount, String transactionRef, String terminalType, String terminalId, String paymentItem, String currency, String orderId) {
         this.amount = amount;
         this.transactionRef = transactionRef;
+        this.orderId = orderId;
         this.terminalType = terminalType;
         this.terminalId = terminalId;
         this.paymentItem = paymentItem;
@@ -31,6 +33,14 @@ public class Payment {
 
     public void setTransactionRef(String transactionRef) {
         this.transactionRef = transactionRef;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public String getTerminalType() {

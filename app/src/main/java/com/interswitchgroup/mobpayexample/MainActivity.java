@@ -14,6 +14,7 @@ import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
+import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Payment;
@@ -35,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+                String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
 
-                Payment payment = new Payment("100", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES");
+                Payment payment = new Payment("127", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES", orderId);
                 Customer customer = new Customer("1002");
                 customer.setSecondName("Ongeri");
-                new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(
+                Card card = new Card("4111111111111111", "123", "20", "02");
+                new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").makeCardPayment(
+                        card,
                         merchant,
                         payment,
                         customer,
