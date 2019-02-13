@@ -13,8 +13,8 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
-    publications = ['MyPublication']
-    configurations = ['archives']
+//    publications = ['MyPublication']
+//    configurations = ['archives']
     pkg {
         repo = bintrayRepo
         name = bintrayName
@@ -22,6 +22,7 @@ bintray {
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = allLicenses
+        userOrg = userOrg
         publish = true
         publicDownloadNumbers = true
         version {
