@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+group = 'com.github.interswitch-kenya-limited'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -60,6 +62,6 @@ dependencies {
 }
 
 //apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/bintray.gradle'
-apply from: 'bintray.gradle'
+//apply from: 'bintray.gradle'
 //apply from: 'https://raw.githubusercontent.com/kostasdrakonakis/maven-upload/master/publications.gradle'
-apply from: 'publications.gradle'
+//apply from: 'publications.gradle'
