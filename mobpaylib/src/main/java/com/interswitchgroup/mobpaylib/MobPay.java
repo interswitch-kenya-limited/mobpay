@@ -1,5 +1,7 @@
 package com.interswitchgroup.mobpaylib;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
@@ -12,6 +14,7 @@ import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Payment;
+import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
@@ -49,13 +52,15 @@ public class MobPay {
      * @param transactionSuccessCallback
      * @param transactionFailureCallback
      */
-    public void pay(Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+    public void pay(Activity context, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+        NullChecker.checkNull(context, "Activity context must not be null");
         NullChecker.checkNull(merchant, "merchant must not be null");
         NullChecker.checkNull(customer, "customer must not be null");
         NullChecker.checkNull(payment, "payment must not be null");
         NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
         NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
-
+        Intent intent = new Intent(context, MobPayActivity.class);
+        context.startActivity(intent);
         /*
         Launch ui
         collect card data
