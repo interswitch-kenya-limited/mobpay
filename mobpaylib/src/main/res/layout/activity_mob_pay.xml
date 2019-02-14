@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
         android:elevation="0dp"
+        android:background="@color/mobPayColorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:translationZ="0.1dp"
         app:elevation="0dp"
@@ -23,7 +24,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/mobpay_toolbar_height"
-            android:background="@color/mobPayColorPrimary"
             android:contentInsetStart="0dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
@@ -68,24 +68,38 @@
                         android:layout_gravity="end"
                         android:text="KES 4,521.00"
                         android:textAlignment="viewEnd"
-                        android:textColor="#0f4763"
+                        android:textColor="@color/mobPayColorAccent"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/headerEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:text="someemail@somewhere.com"
                         android:textAlignment="viewEnd"
-                        android:textColor="#ccc"
+                        android:textColor="@color/mobPayGrayText"
                         tools:ignore="HardcodedText" />
                 </LinearLayout>
 
             </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/tab_height"
+            android:gravity="center"
+            android:textColor="@color/mobPayGrayText"
+            app:tabGravity="fill"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/mobPayColorAccent"
+            app:tabTextColor="@color/mobPayGrayText" />
 
     </android.support.design.widget.AppBarLayout>
 
