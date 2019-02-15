@@ -30,9 +30,9 @@ public class CardPaymentFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_card_payment, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootLayout = inflater.inflate(R.layout.fragment_card_payment, container, false);
+        return rootLayout;
     }
 }
 

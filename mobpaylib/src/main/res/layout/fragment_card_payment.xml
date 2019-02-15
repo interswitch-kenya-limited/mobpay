@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
@@ -47,44 +48,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_number_label" />
 
-    <EditText
-        android:id="@+id/card_expiry_date"
-        android:layout_width="156dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:ems="10"
-        android:inputType="date"
-        app:layout_constraintEnd_toStartOf="@+id/cvv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/expiry_date_label" />
-
-    <EditText
-        android:id="@+id/cvv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:ems="10"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cvv_lavel" />
-
     <TextView
         android:id="@+id/expiry_date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/card_expiry_date"
-        app:layout_constraintStart_toStartOf="@+id/card_expiry_date"
+        app:layout_constraintStart_toStartOf="@+id/expiry_date"
         app:layout_constraintTop_toBottomOf="@+id/card_number" />
 
+    <EditText
+        android:id="@+id/expiry_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:autofillHints="MM"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/expiry_date_label" />
+
     <TextView
-        android:id="@+id/cvv_lavel"
+        android:id="@+id/cvv_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -92,19 +79,35 @@
         app:layout_constraintStart_toStartOf="@+id/cvv"
         app:layout_constraintTop_toBottomOf="@+id/card_number" />
 
+    <EditText
+        android:id="@+id/cvv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:autofillHints="123"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/expiry_date"
+        app:layout_constraintTop_toBottomOf="@+id/cvv_label" />
+
     <Button
         android:id="@+id/pay_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="Pay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cvv" />
+        app:layout_constraintTop_toBottomOf="@+id/expiry_date" />
 
     <Button
         android:id="@+id/cancel_button"
