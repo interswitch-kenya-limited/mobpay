@@ -46,10 +46,10 @@ public class MobPayActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mSectionsPagerAdapter.addFragment(PlaceholderFragment.newInstance(1), "Card");
-        mSectionsPagerAdapter.addFragment(PlaceholderFragment.newInstance(2), "Mobile");
-        mSectionsPagerAdapter.addFragment(PlaceholderFragment.newInstance(3), "Bank");
-        mSectionsPagerAdapter.addFragment(PlaceholderFragment.newInstance(4), "Verve Paycode");
+        mSectionsPagerAdapter.addTab("Card");
+        mSectionsPagerAdapter.addTab("Mobile");
+        mSectionsPagerAdapter.addTab("Bank");
+        mSectionsPagerAdapter.addTab("Verve Paycode");
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -95,17 +95,16 @@ public class MobPayActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            // Return a CardPaymentFragment (defined as a static inner class below).
+            return CardPaymentFragment.newInstance();
         }
 
         @Override
         public int getCount() {
-            return mFragmentList.size();
+            return mFragmentTitlesList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
+        public void addTab(String title) {
             mFragmentTitlesList.add(title);
         }
 

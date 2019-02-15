@@ -4,4 +4,9 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_mob_pay">MobPayActivity</string>
+    <string name="enter_your_card_details">Enter your Card Details</string>
+    <string name="card_number">Card Number</string>
+    <string name="card_expiry_date">Card Expiry Date</string>
+    <string name="cvv">CVV</string>
+    <string name="cancel">Cancel</string>
 </resources>
