@@ -6,18 +6,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.interswitchgroup.mobpaylib.R;
+import com.interswitchgroup.mobpaylib.ui.fragments.card.CardPaymentFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MobPayActivity extends AppCompatActivity {
+import dagger.android.support.DaggerAppCompatActivity;
+
+public class MobPayActivity extends DaggerAppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

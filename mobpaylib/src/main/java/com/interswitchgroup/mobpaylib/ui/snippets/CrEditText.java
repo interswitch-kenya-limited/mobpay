@@ -20,24 +20,24 @@ import android.util.AttributeSet;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.model.Card;
 
-public class EditCredit extends AppCompatEditText {
+public class CrEditText extends AppCompatEditText {
 
     @Nullable
     private String mSeparator;
     private Gravity mDrawableGravity = Gravity.END;
     private int mCurrentDrawableResId = 0;
 
-    public EditCredit(Context context) {
+    public CrEditText(Context context) {
         super(context);
         init();
     }
-    public EditCredit(Context context, AttributeSet attrs) {
+    public CrEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
         applyAttributes(attrs);
     }
 
-    public EditCredit(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CrEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
         applyAttributes(attrs);
@@ -52,12 +52,12 @@ public class EditCredit extends AppCompatEditText {
     private void applyAttributes(AttributeSet attrs) {
         TypedArray a = getContext().getTheme().obtainStyledAttributes(
                 attrs,
-                R.styleable.EditCredit,
+                R.styleable.CrEditText,
                 0, 0);
         try {
-            setSeparator(Separator.values()[a.getInt(R.styleable.EditCredit_separator, Separator.NONE.ordinal())]);
+            setSeparator(Separator.values()[a.getInt(R.styleable.CrEditText_separator, Separator.NONE.ordinal())]);
 //            setDisabledCardsInternal(a.getInt(R.styleable.EditCredit_disabledCards, 0));
-            setDrawableGravity(Gravity.values()[a.getInt(R.styleable.EditCredit_drawableGravity, Gravity.END.ordinal())]);
+            setDrawableGravity(Gravity.values()[a.getInt(R.styleable.CrEditText_drawableGravity, Gravity.END.ordinal())]);
         } finally {
             a.recycle();
         }

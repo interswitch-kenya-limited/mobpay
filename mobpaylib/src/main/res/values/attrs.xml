@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="EditCredit">
+    <declare-styleable name="CrEditText">
         <attr name="separator" format="enum">
             <enum name="no_separator" value="0" />
             <enum name="spaces" value="1" />
