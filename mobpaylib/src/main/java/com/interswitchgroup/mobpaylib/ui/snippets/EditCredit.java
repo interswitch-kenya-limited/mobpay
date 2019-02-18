@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -17,14 +16,8 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 
 import com.interswitchgroup.mobpaylib.R;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EditCredit extends AppCompatEditText {
 
@@ -36,38 +29,8 @@ public class EditCredit extends AppCompatEditText {
         START, END, LEFT, RIGHT
     }
 
-    public enum Card {
-        VISA(1), MASTERCARD(2), AMEX(4), DISCOVER(8);
-        private int value;
-
-        Card(int value) {
-            this.value = value;
-        }
-    }
-
-    @Deprecated
-    public static final int NO_SEPARATOR = 0;
-    @Deprecated
-    public static final int SPACES_SEPARATOR = 1;
-    @Deprecated
-    public static final int DASHES_SEPARATOR = 2;
-
-    @Deprecated
-    public static final int NONE = 0;
-    @Deprecated
-    public static final int VISA = 1;
-    @Deprecated
-    public static final int MASTERCARD = 2;
-    @Deprecated
-    public static final int AMEX = 4;
-    @Deprecated
-    public static final int DISCOVER = 8;
-
-    private SparseArray<Pattern> mCCPatterns = null;
-
     @Nullable
     private String mSeparator;
-    private boolean isValidCard;
 
     private Gravity mDrawableGravity = Gravity.END;
     private int mCurrentDrawableResId = 0;
@@ -90,9 +53,6 @@ public class EditCredit extends AppCompatEditText {
     }
 
     private void init() {
-        if (mCCPatterns == null) {
-            setDisabledCards();
-        }
         setInputType(InputType.TYPE_CLASS_PHONE);
         setSeparator(Separator.NONE);
         setDrawableGravity(Gravity.END);
@@ -105,7 +65,7 @@ public class EditCredit extends AppCompatEditText {
                 0, 0);
         try {
             setSeparator(Separator.values()[a.getInt(R.styleable.EditCredit_separator, Separator.NONE.ordinal())]);
-            setDisabledCardsInternal(a.getInt(R.styleable.EditCredit_disabledCards, 0));
+//            setDisabledCardsInternal(a.getInt(R.styleable.EditCredit_disabledCards, 0));
             setDrawableGravity(Gravity.values()[a.getInt(R.styleable.EditCredit_drawableGravity, Gravity.END.ordinal())]);
         } finally {
             a.recycle();
@@ -114,28 +74,12 @@ public class EditCredit extends AppCompatEditText {
 
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-
-        if (mCCPatterns == null) {
-            init();
-        }
-
         String textWithoutSeparator = getTextWithoutSeparator();
-
-        int mDrawableResId = 0;
-        for (int i = 0; i < mCCPatterns.size(); i++) {
-            int key = mCCPatterns.keyAt(i);
-
-            Pattern p = mCCPatterns.get(key);
-
-            Matcher m = p.matcher(textWithoutSeparator);
-            if (isValidCard = m.find()) {
-                mDrawableResId = key;
-                break;
-            }
-        }
-        if (mDrawableResId > 0 && mDrawableResId != mCurrentDrawableResId) {
+        com.interswitchgroup.mobpaylib.model.Card.Type type = com.interswitchgroup.mobpaylib.model.Card.getType(textWithoutSeparator);
+        Integer mDrawableResId = com.interswitchgroup.mobpaylib.model.Card.TYPE_DRAWABLE_MAP.get(type);
+        if (mDrawableResId != null) {
             mCurrentDrawableResId = mDrawableResId;
-        } else if (mDrawableResId == 0) {
+        } else {
             mCurrentDrawableResId = R.drawable.creditcard;
         }
         addDrawable();
@@ -212,19 +156,6 @@ public class EditCredit extends AppCompatEditText {
     }
 
     /**
-     * This method has been deprecated, please use {@link #setSeparator(Separator)} instead.
-     */
-    @Deprecated
-    public void setSeparator(@IntRange(from = 0, to = 2) int separator) {
-        if (separator > 2 || separator < 0)
-            throw new IllegalArgumentException("The separator has to be one of the following:" +
-                    "NO_SEPARATOR." +
-                    "SPACES_SEPARATOR." +
-                    "DASHES_SEPARATOR.");
-        setSeparator(Separator.values()[separator]);
-    }
-
-    /**
      * Use this method to set the separator style.
      * The default separator is {@link Separator#NONE}.
      *
@@ -264,68 +195,6 @@ public class EditCredit extends AppCompatEditText {
         addDrawable();
     }
 
-    private void setDisabledCardsInternal(int disabledCards) {
-        List<Card> cards = new ArrayList<>();
-        if (containsFlag(disabledCards, Card.VISA.value)) {
-            cards.add(Card.VISA);
-        }
-        if (containsFlag(disabledCards, Card.MASTERCARD.value)) {
-            cards.add(Card.MASTERCARD);
-        }
-        if (containsFlag(disabledCards, Card.AMEX.value)) {
-            cards.add(Card.AMEX);
-        }
-        if (containsFlag(disabledCards, Card.DISCOVER.value)) {
-            cards.add(Card.DISCOVER);
-        }
-        setDisabledCards(cards.toArray(new Card[0]));
-    }
-
-    /**
-     * This method has been deprecated, please use {@link #setDisabledCards(Card...)}} instead.
-     */
-    @Deprecated
-    public void setDisabledCards(int disabledCards) {
-        setDisabledCardsInternal(disabledCards);
-    }
-
-    /**
-     * Use this method to set which cards are disabled.
-     * By default all supported cards are enabled.
-     *
-     * @param cards the cards to be disabled.
-     */
-    public void setDisabledCards(Card... cards) {
-        mCCPatterns = new SparseArray<>();
-        int disabledCards = 0;
-        if (cards != null) {
-            for (Card card : cards) {
-                disabledCards |= card.value;
-            }
-        }
-        if (!containsFlag(disabledCards, Card.VISA.value)) {
-            mCCPatterns.put(R.drawable.visa, Pattern.compile("^4[0-9]{1,12}(?:[0-9]{6})?$"));
-        }
-        if (!containsFlag(disabledCards, Card.MASTERCARD.value)) {
-            mCCPatterns.put(R.drawable.mastercard, Pattern.compile("^5[1-5][0-9]{0,14}$"));
-        }
-        if (!containsFlag(disabledCards, Card.AMEX.value)) {
-            mCCPatterns.put(R.drawable.amex, Pattern.compile("^3[47][0-9]{0,13}$"));
-        }
-        if (!containsFlag(disabledCards, Card.DISCOVER.value)) {
-            mCCPatterns.put(R.drawable.discover, Pattern.compile("^6(?:011|5[0-9]{1,2})[0-9]{0,12}$"));
-        }
-        onTextChanged("", 0, 0, 0);
-    }
-
-    private boolean containsFlag(int flagSet, int flag) {
-        return (flagSet | flag) == flagSet;
-    }
-
-    public boolean isCardValid() {
-        return getTextWithoutSeparator().length() > 12 && isValidCard;
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -343,7 +212,12 @@ public class EditCredit extends AppCompatEditText {
 
     private Drawable resize(Drawable image) {
         int imageIntrinsicHeight = image.getIntrinsicHeight();
-        int height = getMeasuredHeight() - (getPaddingTop() + getPaddingBottom());
+//        int measuredHeight = getMeasuredHeight();
+        int measuredHeight = 30;
+        int paddingTop = getPaddingTop();
+        int paddingBottom = getPaddingBottom();
+//        int height = measuredHeight - (paddingTop + paddingBottom);
+        int height = measuredHeight;
         if (height <= 0) {
             return null;
         } else if (imageIntrinsicHeight > height) {
