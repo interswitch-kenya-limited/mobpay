@@ -1,6 +1,8 @@
 package com.interswitchgroup.mobpaylib.model;
 
-public class Payment {
+import java.io.Serializable;
+
+public class Payment implements Serializable {
     private String amount;
     private String transactionRef;
     private String orderId;

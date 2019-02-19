@@ -29,11 +29,16 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay {
+    private static final int MOBPAY_PAY_REQUEST_CODE = 1;
     private final String LOG_TAG = this.getClass().getSimpleName();
+    private final String clientId;
+    private final String clientSecret;
     Retrofit retrofit;
 
     public MobPay(String clientId, String clientSecret) {
         DaggerWrapper.getComponent(clientId, clientSecret).inject(this);
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
     }
 
     @Inject
@@ -60,6 +65,9 @@ public class MobPay {
         NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
         NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
         Intent intent = new Intent(context, MobPayActivity.class);
+        intent.putExtra("merchant", merchant);
+        intent.putExtra("customer", customer);
+        intent.putExtra("payment", payment);
         context.startActivity(intent);
         /*
         Launch ui

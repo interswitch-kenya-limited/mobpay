@@ -2,13 +2,14 @@ package com.interswitchgroup.mobpaylib.model;
 
 import com.interswitchgroup.mobpaylib.R;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Card {
+public class Card implements Serializable {
     private String pan;
     private String cvv;
     private String expiryYear;
@@ -18,7 +19,8 @@ public class Card {
 
     static {
         Map<Pattern, Type> aMap = new HashMap<>();
-        aMap.put(Pattern.compile("^(((50)[0-9])|(650))[0-9]{0,16}$"), Type.VERVE);
+        // TODO Verve as is overlaps discover cards and does not handle verve international(6500---)
+        aMap.put(Pattern.compile("^(50)[0-9]{0,17}$"), Type.VERVE);
         aMap.put(Pattern.compile("^4[0-9]{1,12}(?:[0-9]{6})?$"), Type.VISA);
         aMap.put(Pattern.compile("^5[1-5][0-9]{0,14}$"), Type.MASTERCARD);
         aMap.put(Pattern.compile("^6(?:011|5[0-9]{1,2})[0-9]{0,12}$"), Type.DISCOVER);
@@ -41,6 +43,10 @@ public class Card {
         this.cvv = cvv;
         this.expiryYear = expiryYear;
         this.expiryMonth = expiryMonth;
+    }
+
+    public Card() {
+
     }
 
     public String getPan() {

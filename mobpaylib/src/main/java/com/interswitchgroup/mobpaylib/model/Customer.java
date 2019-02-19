@@ -1,6 +1,8 @@
 package com.interswitchgroup.mobpaylib.model;
 
-public class Customer {
+import java.io.Serializable;
+
+public class Customer  implements Serializable {
     private String customerId = "";
     private String firstName = "";
     private String secondName = "";
@@ -11,6 +13,9 @@ public class Customer {
     private String postalCode = "";
     private String street = "";
     private String state = "";
+
+    public Customer() {
+    }
 
     public Customer(String customerId) {
         this.customerId = customerId;
