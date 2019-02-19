@@ -164,12 +164,13 @@ public class CrEditText extends AppCompatEditText {
                 mSeparator = "-";
                 break;
         }
+        int maxLength = 16;
         if (mSeparator != null) {
-            setFilters(new InputFilter[]{new InputFilter.LengthFilter(23)});
+            setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength + (maxLength / 4))});
             setKeyListener(DigitsKeyListener.getInstance("0123456789" + mSeparator));
             addSeparators();
         } else {
-            setFilters(new InputFilter[]{new InputFilter.LengthFilter(19)});
+            setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             setKeyListener(DigitsKeyListener.getInstance("0123456789"));
             removeSeparators();
         }

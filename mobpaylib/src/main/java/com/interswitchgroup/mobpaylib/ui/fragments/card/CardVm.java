@@ -1,10 +1,8 @@
 package com.interswitchgroup.mobpaylib.ui.fragments.card;
 
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.interswitchgroup.mobpaylib.MobPay;
-import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
@@ -21,6 +19,8 @@ public class CardVm extends ViewModel {
     private Payment payment;
     private Customer customer;
     private String LOG_TAG = this.getClass().getSimpleName();
+    private TransactionSuccessCallback onSuccess;
+    private TransactionFailureCallback onFailure;
 
     @Inject
     public CardVm() {
@@ -59,23 +59,21 @@ public class CardVm extends ViewModel {
         this.customer = customer;
     }
 
+    public void setOnSuccess(TransactionSuccessCallback onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public void setOnFailure(TransactionFailureCallback onFailure) {
+        this.onFailure = onFailure;
+    }
+
     public void makePayment() {
         mobPay.makeCardPayment(
                 card,
                 merchant,
                 payment,
                 customer,
-                new TransactionSuccessCallback() {
-                    @Override
-                    public void onSuccess(TransactionResponse transactionResponse) {
-                        Log.i(LOG_TAG, "Paid via UI successfully");
-                    }
-                },
-                new TransactionFailureCallback() {
-                    @Override
-                    public void onError(Throwable error) {
-                        Log.e(LOG_TAG, "Failed to make card payment via UI");
-                    }
-                });
+                onSuccess,
+                onFailure);
     }
 }
