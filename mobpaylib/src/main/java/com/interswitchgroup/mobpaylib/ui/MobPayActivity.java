@@ -8,10 +8,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.interswitchgroup.mobpaylib.R;
+import com.interswitchgroup.mobpaylib.model.Customer;
+import com.interswitchgroup.mobpaylib.model.Merchant;
+import com.interswitchgroup.mobpaylib.model.Payment;
+import com.interswitchgroup.mobpaylib.ui.fragments.PlaceHolderFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardPaymentFragment;
 
 import java.util.ArrayList;
@@ -35,18 +38,22 @@ public class MobPayActivity extends DaggerAppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private Merchant merchant;
+    private Customer customer;
+    private Payment payment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Remove title bar
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.merchant = (Merchant) getIntent().getSerializableExtra("merchant");
+        this.customer = (Customer) getIntent().getSerializableExtra("customer");
+        this.payment = (Payment) getIntent().getSerializableExtra("payment");
+
         setContentView(R.layout.activity_mob_pay);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mSectionsPagerAdapter.addTab("Card");
         mSectionsPagerAdapter.addTab("Mobile");
@@ -67,27 +74,11 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         return false;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitlesList = new ArrayList<>();
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -96,9 +87,12 @@ public class MobPayActivity extends DaggerAppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a CardPaymentFragment (defined as a static inner class below).
-            return CardPaymentFragment.newInstance();
+            switch (position) {
+                case 0:
+                    return new CardPaymentFragment();
+                default:
+                    return PlaceHolderFragment.newInstance(mFragmentTitlesList.get(position));
+            }
         }
 
         @Override

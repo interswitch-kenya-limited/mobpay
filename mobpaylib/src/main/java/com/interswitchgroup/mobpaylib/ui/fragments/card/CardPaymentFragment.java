@@ -30,14 +30,6 @@ public class CardPaymentFragment extends DaggerFragment {
         cardVm = ViewModelProviders.of(this, viewModelFactory).get(CardVm.class);
     }
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static CardPaymentFragment newInstance() {
-        return new CardPaymentFragment();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentCardPaymentBinding fragmentCardPaymentBinding = FragmentCardPaymentBinding.inflate(inflater, container, false);

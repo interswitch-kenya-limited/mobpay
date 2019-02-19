@@ -9,4 +9,6 @@
     <string name="card_expiry_date">Card Expiry Date</string>
     <string name="cvv">CVV</string>
     <string name="cancel">Cancel</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

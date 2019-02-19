@@ -1,8 +1,13 @@
 package com.interswitchgroup.mobpaylib.model;
 
-public class Merchant {
+import java.io.Serializable;
+
+public class Merchant implements Serializable {
     private String merchantId;
     private String domain;
+
+    public Merchant() {
+    }
 
     public Merchant(String merchantId, String domain) {
         this.merchantId = merchantId;
