@@ -18,6 +18,7 @@ import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
+import java.io.Serializable;
 import java.security.PublicKey;
 
 import javax.inject.Inject;
@@ -28,8 +29,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
-public class MobPay {
-    private static final int MOBPAY_PAY_REQUEST_CODE = 1;
+public class MobPay implements Serializable {
     private final String LOG_TAG = this.getClass().getSimpleName();
     private final String clientId;
     private final String clientSecret;
@@ -68,6 +68,8 @@ public class MobPay {
         intent.putExtra("merchant", merchant);
         intent.putExtra("customer", customer);
         intent.putExtra("payment", payment);
+        intent.putExtra("clientId", clientId);
+        intent.putExtra("clientSecret", clientSecret);
         context.startActivity(intent);
         /*
         Launch ui

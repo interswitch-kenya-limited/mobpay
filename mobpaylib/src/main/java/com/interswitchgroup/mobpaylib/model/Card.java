@@ -14,6 +14,7 @@ public class Card implements Serializable {
     private String cvv;
     private String expiryYear;
     private String expiryMonth;
+    private String fullExpiry;
     public static final Map<Type, Integer> TYPE_DRAWABLE_MAP;
     public static final Map<Pattern, Type> PATTERN_TYPE_MAP;
 
@@ -49,8 +50,9 @@ public class Card implements Serializable {
 
     }
 
+    // Returns a sanitized string without any non-numeric characters
     public String getPan() {
-        return pan;
+        return pan != null ? pan.replaceAll("[^\\d.]", "") : pan;
     }
 
     public void setPan(String pan) {
@@ -79,6 +81,21 @@ public class Card implements Serializable {
 
     public void setExpiryMonth(String expiryMonth) {
         this.expiryMonth = expiryMonth;
+    }
+
+    public String getFullExpiry() {
+        return fullExpiry;
+    }
+
+    public void setFullExpiry(String fullExpiry) {
+        this.fullExpiry = fullExpiry;
+        if (fullExpiry != null) {
+            String[] expiryParts = fullExpiry.split("/");
+            this.expiryMonth = expiryParts[0];
+            if (expiryParts.length > 1) {
+                this.expiryYear = expiryParts[1];
+            }
+        }
     }
 
     public static Type getType(String cardNumber) {

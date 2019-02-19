@@ -38,9 +38,11 @@ public class MobPayActivity extends DaggerAppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private Merchant merchant;
-    private Customer customer;
-    private Payment payment;
+    public Merchant merchant;
+    public Customer customer;
+    public Payment payment;
+    public String clientId;
+    public String clientSecret;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +50,12 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         this.merchant = (Merchant) getIntent().getSerializableExtra("merchant");
         this.customer = (Customer) getIntent().getSerializableExtra("customer");
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
+        this.clientId = getIntent().getStringExtra("clientId");
+        this.clientSecret = getIntent().getStringExtra("clientSecret");
 
         setContentView(R.layout.activity_mob_pay);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -61,10 +65,10 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         mSectionsPagerAdapter.addTab("Verve Paycode");
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -89,7 +93,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new CardPaymentFragment();
+                    return new CardPaymentFragment(merchant, customer, payment, clientId, clientSecret);
                 default:
                     return PlaceHolderFragment.newInstance(mFragmentTitlesList.get(position));
             }
