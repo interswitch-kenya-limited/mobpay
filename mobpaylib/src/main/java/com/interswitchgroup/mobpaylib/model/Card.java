@@ -88,17 +88,21 @@ public class Card implements Serializable {
     }
 
     public void setFullExpiry(String fullExpiry) {
-        this.fullExpiry = fullExpiry;
         if (fullExpiry != null) {
-            String[] expiryParts = fullExpiry.split("/");
-            this.expiryMonth = expiryParts[0];
-            if (expiryParts.length > 1) {
-                this.expiryYear = expiryParts[1];
+            fullExpiry = fullExpiry.replaceAll("[^\\d]", ""); // Remove non numeric characters including / separator
+            String[] expiryParts = fullExpiry.split("(?<=\\G.{2})");// Split into twos
+            if (expiryParts.length > 0) {
+                this.expiryMonth = expiryParts[0];
+                if (expiryParts.length > 1) {
+                    this.expiryYear = expiryParts[1];
+                }
             }
         }
+        this.fullExpiry = fullExpiry;
     }
 
     public static Type getType(String cardNumber) {
+        cardNumber = cardNumber.replaceAll("[^\\d.]", "");
         for (Pattern pattern : PATTERN_TYPE_MAP.keySet()) {
             Matcher m = pattern.matcher(cardNumber);
             if (m.find()) {

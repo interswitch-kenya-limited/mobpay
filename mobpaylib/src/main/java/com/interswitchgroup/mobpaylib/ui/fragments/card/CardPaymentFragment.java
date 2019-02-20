@@ -103,7 +103,7 @@ public class CardPaymentFragment extends DaggerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentCardPaymentBinding fragmentCardPaymentBinding = FragmentCardPaymentBinding.inflate(inflater, container, false);
-        fragmentCardPaymentBinding.setModel(cardVm);
+        fragmentCardPaymentBinding.setCardVm(cardVm);
         return fragmentCardPaymentBinding.getRoot();
     }
 }

@@ -25,7 +25,8 @@ public class CrEditText extends AppCompatEditText {
     @Nullable
     private String mSeparator;
     private Gravity mDrawableGravity = Gravity.END;
-    private int mCurrentDrawableResId = 0;
+    private int mCurrentDrawableResId = R.drawable.creditcard;
+    private int maxLength = 16;
 
     public CrEditText(Context context) {
         super(context);
@@ -70,8 +71,18 @@ public class CrEditText extends AppCompatEditText {
         Integer mDrawableResId = Card.TYPE_DRAWABLE_MAP.get(type);
         if (mDrawableResId != null) {
             mCurrentDrawableResId = mDrawableResId;
+            if (textWithoutSeparator.length() == maxLength) {
+                setBackgroundResource(R.drawable.valid_textbox);
+            } else {
+                setBackgroundResource(R.drawable.probably_valid_textbox);
+            }
         } else {
             mCurrentDrawableResId = R.drawable.creditcard;
+            if (textWithoutSeparator.length() > 0) {
+                setBackgroundResource(R.drawable.error_textbox);
+            } else {
+                setBackgroundResource(R.drawable.edit_text_basic);
+            }
         }
         addDrawable();
         addSeparators();
