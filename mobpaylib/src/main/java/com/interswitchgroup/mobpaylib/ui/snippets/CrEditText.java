@@ -71,7 +71,8 @@ public class CrEditText extends AppCompatEditText {
         Integer mDrawableResId = Card.TYPE_DRAWABLE_MAP.get(type);
         if (mDrawableResId != null) {
             mCurrentDrawableResId = mDrawableResId;
-            if (textWithoutSeparator.length() == maxLength) {
+            String pan = text.toString().replaceAll("[^\\d]", "");
+            if (Card.isPanValid(pan)) {
                 setBackgroundResource(R.drawable.valid_textbox);
             } else {
                 setBackgroundResource(R.drawable.probably_valid_textbox);

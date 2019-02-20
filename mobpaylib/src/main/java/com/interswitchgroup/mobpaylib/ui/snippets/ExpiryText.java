@@ -6,12 +6,9 @@ import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 
 import com.interswitchgroup.mobpaylib.R;
+import com.interswitchgroup.mobpaylib.model.Card;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class ExpiryText extends AppCompatEditText {
 
@@ -48,7 +45,7 @@ public class ExpiryText extends AppCompatEditText {
             if (textString.length() < 5) {
                 setBackgroundResource(R.drawable.probably_valid_textbox);
             } else if (textString.length() == 5) {
-                if (this.getDate().getTime() > new Date().getTime()) {
+                if (Card.isExpiryValid(textString)) {
                     setBackgroundResource(R.drawable.valid_textbox);
                 } else {
                     setBackgroundResource(R.drawable.error_textbox);
@@ -59,13 +56,6 @@ public class ExpiryText extends AppCompatEditText {
         }
     }
 
-    private Date getDate() {
-        String[] expiryParts = getText().toString().replaceAll("[^\\d]", "").split("(?<=\\G.{2})");
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.YEAR, Integer.valueOf("20" + expiryParts[1]));
-        calendar.set(Calendar.MONTH, Integer.valueOf(expiryParts[0]));
-        return calendar.getTime();
-    }
 
     private static String sanitize(String text) {
         String[] expiryParts = text.replaceAll("[^\\d]", "").split("(?<=\\G.{2})");
