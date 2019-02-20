@@ -5,6 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="mobpay_toolbar_height">70dp</dimen>
+    <dimen name="mobpay_running_man_height">100dp</dimen>
     <dimen name="icon_width">38dp</dimen>
     <dimen name="tab_height">22dp</dimen>
     <dimen name="edit_text_box_radius">2dp</dimen>
