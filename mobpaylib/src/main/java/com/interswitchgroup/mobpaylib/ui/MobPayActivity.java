@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -138,7 +137,6 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 .load(R.drawable.running_man)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                 .into((ImageView) findViewById(R.id.running_man));
-        final AppBarLayout appBar = activityMobPayBinding.appbar;
         paymentVm.getLoading().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {

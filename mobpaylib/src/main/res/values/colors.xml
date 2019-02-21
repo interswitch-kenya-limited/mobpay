@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="mobPayColorAccent">#00455f</color>
+    <color name="enabled_main_button">@color/mobPayColorAccent</color>
+    <color name="disabled_main_button">#8000455F</color>
     <color name="mobPayColorPrimary">#fff</color>
     <color name="mobPayGrayText">#888</color>
-    <color name="edit_text_background">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="edit_text_default_border_color">#D3D3D3</color>
     <color name="edit_text_error_border_color">#ff0000</color>
     <color name="edit_text_valid_border_color">#00aa00</color>
     <color name="edit_text_probably_valid_border_color">#0000ee</color>
+    <color name="transparent_gray">#60000000</color>
 </resources>

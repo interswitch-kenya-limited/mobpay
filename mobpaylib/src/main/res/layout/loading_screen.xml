@@ -10,9 +10,8 @@
         android:id="@+id/progress_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.4"
         android:animateLayoutChanges="true"
-        android:background="@android:color/black"
+        android:background="@color/transparent_gray"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone">
@@ -22,7 +21,6 @@
             android:layout_width="@dimen/mobpay_running_man_height"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:alpha="1"
             android:src="@drawable/running_man"
             tools:ignore="ContentDescription" />
 

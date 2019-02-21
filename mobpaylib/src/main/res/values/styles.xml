@@ -18,4 +18,12 @@
         <item name="android:paddingLeft">@dimen/edit_text_padding</item>
         <item name="android:paddingRight">@dimen/edit_text_padding</item>
     </style>
+
+    <style name="MainActionButtonStyle">
+        <item name="android:background">@drawable/main_button</item>
+        <item name="android:layout_height">@dimen/edit_text_height</item>
+        <item name="android:paddingLeft">@dimen/edit_text_padding</item>
+        <item name="android:paddingRight">@dimen/edit_text_padding</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

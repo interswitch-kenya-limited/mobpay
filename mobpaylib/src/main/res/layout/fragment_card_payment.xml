@@ -150,17 +150,19 @@
 
         <Button
             android:id="@+id/pay_button"
-            android:layout_width="wrap_content"
+            style="@style/MainActionButtonStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:enabled="@{cardVm.card.valid}"
             android:layout_marginRight="8dp"
+            android:clickable="true"
+            android:enabled="@{cardVm.card.valid}"
+            android:focusable="true"
             android:onClick="@{() -> cardVm.makePayment()}"
+            tools:text="Pay Kes 4,355.00"
             android:text='@{"Pay "+ cardVm.paymentVm.payment.currency + " " + cardVm.paymentVm.payment.amount}'
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

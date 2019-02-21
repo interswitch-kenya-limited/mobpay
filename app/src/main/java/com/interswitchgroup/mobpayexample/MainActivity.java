@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         final Payment payment = new Payment("127", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES", orderId);
         final Customer customer = new Customer("1002");
         customer.setSecondName("Ongeri");
+        customer.setEmail("japheth.ongeri@interswitch.com");
         findViewById(R.id.payDirectFab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {

@@ -24,7 +24,7 @@ public class Card extends BaseObservable implements Serializable {
     private String fullExpiry;
     public static final Map<Type, Integer> TYPE_DRAWABLE_MAP;
     public static final Map<Pattern, Type> PATTERN_TYPE_MAP;
-    public Boolean valid;
+    public boolean valid;
 
     static {
         Map<Pattern, Type> aMap = new HashMap<>();
@@ -116,11 +116,11 @@ public class Card extends BaseObservable implements Serializable {
     }
 
     @Bindable
-    public Boolean getValid() {
+    public boolean getValid() {
         return valid;
     }
 
-    public void setValid(Boolean valid) {
+    public void setValid(boolean valid) {
         this.valid = valid;
         notifyPropertyChanged(BR.valid);
     }
