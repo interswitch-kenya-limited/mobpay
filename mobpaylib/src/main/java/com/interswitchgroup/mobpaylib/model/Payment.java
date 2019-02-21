@@ -1,6 +1,7 @@
 package com.interswitchgroup.mobpaylib.model;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class Payment implements Serializable {
     private String amount;
@@ -10,6 +11,7 @@ public class Payment implements Serializable {
     private String terminalId;
     private String paymentItem;
     private String currency;
+    private String amountString;
 
     public Payment(String amount, String transactionRef, String terminalType, String terminalId, String paymentItem, String currency, String orderId) {
         this.amount = amount;
@@ -75,5 +77,10 @@ public class Payment implements Serializable {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getAmountString() {
+//        return String.format("%,.2f", Double.valueOf(amount) / 100); // Constant of two decimal places with up to two trailing zeros
+        return new DecimalFormat("#,###.##").format(Double.valueOf(amount) / 100); // Up to two decimal places but no trailing zeros
     }
 }

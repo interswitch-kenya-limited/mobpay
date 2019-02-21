@@ -2,6 +2,7 @@ package com.interswitchgroup.mobpaylib.ui;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -141,7 +143,18 @@ public class MobPayActivity extends DaggerAppCompatActivity {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
                 if (((ObservableBoolean) sender).get()) {
-                    AndroidUtils.animateView(progressOverlay, View.VISIBLE, 0.4f, 200);
+                    try {
+                        // Try to hide keyboard
+                        // Check if no view has focus:
+                        View view = MobPayActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    AndroidUtils.animateView(progressOverlay, View.VISIBLE, 1, 350);
                 } else {
                     AndroidUtils.animateView(progressOverlay, View.GONE, 0, 200);
                 }

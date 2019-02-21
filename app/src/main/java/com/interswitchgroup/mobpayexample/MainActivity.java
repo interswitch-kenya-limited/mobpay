@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
         String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
 
-        final Payment payment = new Payment("127", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES", orderId);
+        final Payment payment = new Payment("1270075", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES", orderId);
         final Customer customer = new Customer("1002");
         customer.setSecondName("Ongeri");
         customer.setEmail("japheth.ongeri@interswitch.com");
