@@ -10,180 +10,188 @@
             type="com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.fragments.card.CardPaymentFragment">
 
-        <TextView
-            android:id="@+id/fragment_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/enter_your_card_details"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout"
-            tools:layout_constraintLeft_creator="1"
-            tools:layout_constraintTop_creator="1" />
-
-
-        <TextView
-            android:id="@+id/card_number_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/card_number"
-            app:layout_constraintStart_toStartOf="@+id/card_number"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_title" />
-
-        <com.interswitchgroup.mobpaylib.ui.snippets.CrEditText
-            android:id="@+id/card_number"
-            android:layout_width="0dp"
-            style="@style/EditTextStyle"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:ems="10"
-            android:layout_height="@dimen/edit_text_height"
-            android:inputType="date"
-            android:text="@={cardVm.card.pan}"
-            app:disabledCards="discover|amex"
-            app:drawableGravity="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_number_label"
-            app:separator="spaces" />
-
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_number">
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/expiry_date_label"
+                android:id="@+id/fragment_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/enter_your_card_details"
+                android:textAlignment="center"
+                android:textFontWeight="300"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+                tools:layout_constraintLeft_creator="1"
+                tools:layout_constraintTop_creator="1"
+                tools:targetApi="p" />
+
+
+            <TextView
+                android:id="@+id/card_number_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/card_expiry_date"
-                app:layout_constraintStart_toStartOf="@+id/expiry_date"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginTop="32dp"
+                android:text="@string/card_number"
+                app:layout_constraintStart_toStartOf="@+id/card_number"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_title" />
 
-            <com.interswitchgroup.mobpaylib.ui.snippets.ExpiryText
-                android:id="@+id/expiry_date"
-                android:layout_width="0dp"
+            <com.interswitchgroup.mobpaylib.ui.snippets.CrEditText
+                android:id="@+id/card_number"
                 style="@style/EditTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/edit_text_height"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
                 android:ems="10"
-                android:layout_height="@dimen/edit_text_height"
-                android:inputType="numberDecimal"
-                android:maxLength="5"
-                android:text="@={cardVm.card.fullExpiry}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/divider2"
+                android:inputType="date"
+                android:text="@={cardVm.card.pan}"
+                app:disabledCards="discover|amex"
+                app:drawableGravity="end"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/expiry_date_label" />
+                app:layout_constraintTop_toBottomOf="@+id/card_number_label"
+                app:separator="spaces" />
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_number">
+
+                <TextView
+                    android:id="@+id/expiry_date_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/card_expiry_date"
+                    app:layout_constraintStart_toStartOf="@+id/expiry_date"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.interswitchgroup.mobpaylib.ui.snippets.ExpiryText
+                    android:id="@+id/expiry_date"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/edit_text_height"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:ems="10"
+                    android:inputType="numberDecimal"
+                    android:maxLength="5"
+                    android:text="@={cardVm.card.fullExpiry}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/divider2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/expiry_date_label" />
+
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?android:attr/listDivider"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cvv_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/cvv"
+                    app:layout_constraintStart_toStartOf="@+id/cvv"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/cvv"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/edit_text_height"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:text="@={cardVm.card.cvv}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/divider2"
+                    app:layout_constraintTop_toBottomOf="@+id/cvv_label" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <Button
+                android:id="@+id/pay_button"
+                style="@style/MainActionButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="?android:attr/listDivider"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:enabled="@{cardVm.card.valid}"
+                android:focusable="true"
+                android:onClick="@{() -> cardVm.makePayment()}"
+                android:text='@{"Pay "+ cardVm.paymentVm.payment.currency + " " + cardVm.paymentVm.payment.amountString}'
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                tools:text="Pay Kes 4,355.00" />
 
-            <TextView
-                android:id="@+id/cvv_label"
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/CancelButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/cvv"
-                app:layout_constraintStart_toStartOf="@+id/cvv"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/cvv"
-                android:layout_width="0dp"
-                style="@style/EditTextStyle"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_height="@dimen/edit_text_height"
-                android:maxLength="3"
-                android:text="@={cardVm.card.cvv}"
-                android:ems="10"
-                android:inputType="number"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/cancel"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/divider2"
-                app:layout_constraintTop_toBottomOf="@+id/cvv_label" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pay_button" />
 
         </android.support.constraint.ConstraintLayout>
-
-        <Button
-            android:id="@+id/pay_button"
-            style="@style/MainActionButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:clickable="true"
-            android:enabled="@{cardVm.card.valid}"
-            android:focusable="true"
-            android:onClick="@{() -> cardVm.makePayment()}"
-            tools:text="Pay Kes 4,355.00"
-            android:text='@{"Pay "+ cardVm.paymentVm.payment.currency + " " + cardVm.paymentVm.payment.amountString}'
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
-
-        <Button
-            android:id="@+id/cancel_button"
-            style="@style/CancelButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="@string/cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pay_button" />
-
-    </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 </layout>

@@ -40,6 +40,12 @@ public class CardPaymentFragment extends DaggerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentCardPaymentBinding fragmentCardPaymentBinding = FragmentCardPaymentBinding.inflate(inflater, container, false);
         fragmentCardPaymentBinding.setCardVm(cardVm);
+        fragmentCardPaymentBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
         return fragmentCardPaymentBinding.getRoot();
     }
 }

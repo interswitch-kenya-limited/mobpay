@@ -8,7 +8,10 @@
         <activity
             android:name=".ui.MobPayActivity"
             android:label="@string/title_activity_mob_pay"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:process=":MobPayProcess"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

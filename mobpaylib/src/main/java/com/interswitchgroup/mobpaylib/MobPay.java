@@ -65,6 +65,8 @@ public class MobPay implements Serializable {
         NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
         NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
         Intent intent = new Intent(context, MobPayActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("merchant", merchant);
         intent.putExtra("customer", customer);
         intent.putExtra("payment", payment);

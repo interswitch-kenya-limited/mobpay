@@ -45,15 +45,6 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/buttonOk"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:text="@string/button_ok" />
-
     </LinearLayout>
 
 </LinearLayout>

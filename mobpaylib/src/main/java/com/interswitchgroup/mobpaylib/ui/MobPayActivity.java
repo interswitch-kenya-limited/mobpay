@@ -3,6 +3,7 @@ package com.interswitchgroup.mobpaylib.ui;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
@@ -100,12 +101,19 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 imageView.setImageDrawable(ContextCompat.getDrawable(MobPayActivity.this, R.drawable.happy_face));
                 title.setText(R.string.payment_successful_title);
                 message.setText("Your transaction was completed successfully, your payment reference is " + transactionResponse.getTransactionReference());
-                // TODO Find a way to dismiss the mobpay activity and using passed context from calling activity to launch the success dialog on it
-                //                getActivity().finish();
-                new AlertDialog.Builder(MobPayActivity.this)
+                AlertDialog dialog = new AlertDialog.Builder(MobPayActivity.this)
                         .setView(dialogView)
-                        .create()
-                        .show();
+                        .setCancelable(false)
+                        .create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Proceed", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Find a way to dismiss the mobpay activity and using passed context from calling activity to launch the success dialog on it
+                        MobPayActivity.this.finish();
+                    }
+                });
+                dialog.show();
             }
         });
         paymentVm.setOnFailure(new TransactionFailureCallback() {
@@ -124,10 +132,26 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 } else {
                     message.setText(error.getMessage());
                 }
-                new AlertDialog.Builder(MobPayActivity.this)
+                AlertDialog dialog = new AlertDialog.Builder(MobPayActivity.this)
                         .setView(dialogView)
-                        .create()
-                        .show();
+                        .setCancelable(false)
+                        .create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Retry", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MobPayActivity.this, "Proceed button clicked", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+                });
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Quit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Find a way to dismiss the mobpay activity and using passed context from calling activity to launch the success dialog on it
+                        MobPayActivity.this.finish();
+                    }
+                });
+                dialog.show();
             }
         });
         ActivityMobPayBinding activityMobPayBinding = DataBindingUtil.setContentView(this, R.layout.activity_mob_pay);
@@ -224,5 +248,18 @@ public class MobPayActivity extends DaggerAppCompatActivity {
     public void onBackPressed() {
 //        TODO display an are-you-sure-you-want-to-exit dialog
         Toast.makeText(this, "Are you sure you wanna leave?", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Always destroy activity when it goes out of view, can use killprocess because it runs in its own process
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Runtime.getRuntime().gc();      //Hurry up and free that precious RAM!
     }
 }
