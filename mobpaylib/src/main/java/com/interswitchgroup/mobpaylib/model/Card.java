@@ -23,7 +23,7 @@ public class Card extends BaseObservable implements Serializable {
     private String expiryMonth;
     private String fullExpiry;
     public static final Map<Type, Integer> TYPE_DRAWABLE_MAP;
-    public static final Map<Pattern, Type> PATTERN_TYPE_MAP;
+    public static final Map<Pattern, Type> ACCEPTED_CARD_PATTERN_TYPES;
     public boolean valid;
 
     static {
@@ -32,9 +32,9 @@ public class Card extends BaseObservable implements Serializable {
         aMap.put(Pattern.compile("^(50)[0-9]{0,17}$"), Type.VERVE);
         aMap.put(Pattern.compile("^4[0-9]{1,12}(?:[0-9]{6})?$"), Type.VISA);
         aMap.put(Pattern.compile("^5[1-5][0-9]{0,14}$"), Type.MASTERCARD);
-        aMap.put(Pattern.compile("^6(?:011|5[0-9]{1,2})[0-9]{0,12}$"), Type.DISCOVER);
-        aMap.put(Pattern.compile("^3[47][0-9]{0,13}$"), Type.AMEX);
-        PATTERN_TYPE_MAP = Collections.unmodifiableMap(aMap);
+//        aMap.put(Pattern.compile("^6(?:011|5[0-9]{1,2})[0-9]{0,12}$"), Type.DISCOVER);
+//        aMap.put(Pattern.compile("^3[47][0-9]{0,13}$"), Type.AMEX);
+        ACCEPTED_CARD_PATTERN_TYPES = Collections.unmodifiableMap(aMap);
     }
 
     static {
@@ -130,10 +130,10 @@ public class Card extends BaseObservable implements Serializable {
             return null;
         }
         cardNumber = cardNumber.replaceAll("[^\\d.]", "");
-        for (Pattern pattern : PATTERN_TYPE_MAP.keySet()) {
+        for (Pattern pattern : ACCEPTED_CARD_PATTERN_TYPES.keySet()) {
             Matcher m = pattern.matcher(cardNumber);
             if (m.find()) {
-                return PATTERN_TYPE_MAP.get(pattern);
+                return ACCEPTED_CARD_PATTERN_TYPES.get(pattern);
             }
         }
         return null;
