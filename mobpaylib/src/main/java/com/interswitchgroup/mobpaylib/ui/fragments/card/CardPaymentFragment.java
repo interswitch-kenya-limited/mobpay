@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.interswitchgroup.mobpaylib.databinding.FragmentCardPaymentBinding;
+import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 
 import javax.inject.Inject;
 
@@ -43,7 +44,7 @@ public class CardPaymentFragment extends DaggerFragment {
         fragmentCardPaymentBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                ((MobPayActivity) getActivity()).quit();
             }
         });
         return fragmentCardPaymentBinding.getRoot();

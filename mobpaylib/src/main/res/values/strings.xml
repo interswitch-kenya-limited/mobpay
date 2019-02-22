@@ -15,4 +15,5 @@
     <string name="button_ok">Continue</string>
     <string name="payment_failed_title">Payment Failed</string>
     <string name="payment_successful_title">Payment Successful</string>
+    <string name="user_cancelled_payment_message">You quit before completing payment</string>
 </resources>

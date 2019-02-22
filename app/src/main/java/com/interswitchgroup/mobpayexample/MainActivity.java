@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(final View view) {
 
                 Card card = new Card("4111111111111111", "123", "20", "02");
-                new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").makeCardPayment(
+                MobPay.getInstance("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").makeCardPayment(
                         card,
                         merchant,
                         payment,
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.launchUiButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                new MobPay("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(MainActivity.this, merchant,
+                MobPay.getInstance("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(MainActivity.this, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

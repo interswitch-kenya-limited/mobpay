@@ -30,20 +30,38 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
+    private static MobPay singletonMobPayInstance;
     private final String LOG_TAG = this.getClass().getSimpleName();
-    private final String clientId;
-    private final String clientSecret;
-    Retrofit retrofit;
+    private String clientId;
+    private String clientSecret;
+    private Retrofit retrofit;
+    private TransactionFailureCallback transactionFailureCallback;
+    private TransactionSuccessCallback transactionSuccessCallback;
 
-    public MobPay(String clientId, String clientSecret) {
-        DaggerWrapper.getComponent(clientId, clientSecret).inject(this);
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
+    private MobPay() {
+    }
+
+    public static MobPay getInstance(String clientId, String clientSecret) {
+        if (singletonMobPayInstance == null) {
+            singletonMobPayInstance = new MobPay();
+            DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
+            singletonMobPayInstance.clientId = clientId;
+            singletonMobPayInstance.clientSecret = clientSecret;
+        }
+        return singletonMobPayInstance;
     }
 
     @Inject
     public void setRetrofit(Retrofit retrofit) {
         this.retrofit = retrofit;
+    }
+
+    public TransactionFailureCallback getTransactionFailureCallback() {
+        return transactionFailureCallback;
+    }
+
+    public TransactionSuccessCallback getTransactionSuccessCallback() {
+        return transactionSuccessCallback;
     }
 
     /**
@@ -64,6 +82,10 @@ public class MobPay implements Serializable {
         NullChecker.checkNull(payment, "payment must not be null");
         NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
         NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
+
+        this.transactionSuccessCallback = transactionSuccessCallback;
+        this.transactionFailureCallback = transactionFailureCallback;
+
         Intent intent = new Intent(context, MobPayActivity.class);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

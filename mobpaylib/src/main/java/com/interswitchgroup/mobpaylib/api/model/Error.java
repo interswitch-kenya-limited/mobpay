@@ -3,10 +3,10 @@ package com.interswitchgroup.mobpaylib.api.model;
 
 public class Error {
 
-    private String code;
-    private String message;
-    private String statusCode;
-    private String statusMessage;
+    private String code = "";
+    private String message = "";
+    private String statusCode = "";
+    private String statusMessage = "";
 
     public String getCode() {
         return code;

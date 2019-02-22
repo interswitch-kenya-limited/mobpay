@@ -76,6 +76,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
+    private MobPay mobPay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +86,15 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
+        this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
-        paymentVm.setMobPay(new MobPay(this.clientId, this.clientSecret));
+        paymentVm.setMobPay(mobPay);
         paymentVm.setCustomer(this.customer);
         paymentVm.setMerchant(this.merchant);
         paymentVm.setPayment(this.payment);
         paymentVm.setOnSuccess(new TransactionSuccessCallback() {
             @Override
-            public void onSuccess(TransactionResponse transactionResponse) {
+            public void onSuccess(final TransactionResponse transactionResponse) {
                 paymentVm.getLoading().set(false);
                 View dialogView = LayoutInflater.from(MobPayActivity.this).inflate(R.layout.result_dialog, (ViewGroup) getWindow().getDecorView().getRootView(), false);
                 TextView title = dialogView.findViewById(R.id.dialog_result_title);
@@ -109,7 +111,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Proceed", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO Find a way to dismiss the mobpay activity and using passed context from calling activity to launch the success dialog on it
+                        mobPay.getTransactionSuccessCallback().onSuccess(transactionResponse);
                         MobPayActivity.this.finish();
                     }
                 });
@@ -118,7 +120,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         });
         paymentVm.setOnFailure(new TransactionFailureCallback() {
             @Override
-            public void onError(Throwable error) {
+            public void onError(final Throwable error) {
                 paymentVm.getLoading().set(false);
                 View dialogView = LayoutInflater.from(MobPayActivity.this).inflate(R.layout.result_dialog, (ViewGroup) getWindow().getDecorView().getRootView(), false);
                 ImageView imageView = dialogView.findViewById(R.id.dialog_image);
@@ -128,7 +130,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 title.setText(R.string.payment_failed_title);
                 ErrorWrapper errorWrapper = NetUtil.parseError(error);
                 if (errorWrapper != null) {
-                    message.setText(errorWrapper.getError().getStatusMessage());
+                    message.setText(errorWrapper.getError().getCode() + " " + errorWrapper.getError().getMessage() + " " + errorWrapper.getError().getStatusMessage());
                 } else {
                     message.setText(error.getMessage());
                 }
@@ -140,14 +142,14 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Retry", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MobPayActivity.this, "Proceed button clicked", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MobPayActivity.this, "Try again", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 });
                 dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Quit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO Find a way to dismiss the mobpay activity and using passed context from calling activity to launch the success dialog on it
+                        mobPay.getTransactionFailureCallback().onError(error);
                         MobPayActivity.this.finish();
                     }
                 });
@@ -178,7 +180,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    AndroidUtils.animateView(progressOverlay, View.VISIBLE, 1, 350);
+                    AndroidUtils.animateView(progressOverlay, View.VISIBLE, 1, 200);
                 } else {
                     AndroidUtils.animateView(progressOverlay, View.GONE, 0, 200);
                 }
@@ -246,15 +248,38 @@ public class MobPayActivity extends DaggerAppCompatActivity {
 
     @Override
     public void onBackPressed() {
-//        TODO display an are-you-sure-you-want-to-exit dialog
-        Toast.makeText(this, "Are you sure you wanna leave?", Toast.LENGTH_LONG).show();
+        this.quit();
+    }
+
+    public void quit() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        mobPay.getTransactionFailureCallback().onError(new Exception(getString(R.string.user_cancelled_payment_message)));
+                        finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        dialog.dismiss();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to quit?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // Always destroy activity when it goes out of view, can use killprocess because it runs in its own process
-        android.os.Process.killProcess(android.os.Process.myPid());
+//        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     @Override

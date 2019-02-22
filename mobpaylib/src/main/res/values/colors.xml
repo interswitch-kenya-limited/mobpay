@@ -11,5 +11,5 @@
     <color name="edit_text_error_border_color">#ff0000</color>
     <color name="edit_text_valid_border_color">#00aa00</color>
     <color name="edit_text_probably_valid_border_color">#0000ee</color>
-    <color name="translucent_gray">#80000000</color>
+    <color name="translucent_gray">#CC555555</color>
 </resources>

@@ -9,9 +9,10 @@
             android:name=".ui.MobPayActivity"
             android:label="@string/title_activity_mob_pay"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:noHistory="true"
-            android:process=":MobPayProcess"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!--android:process=":MobPayProcess"-->
     </application>
 
 </manifest>
