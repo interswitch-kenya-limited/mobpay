@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
@@ -20,28 +21,69 @@ import com.interswitchgroup.mobpaylib.model.Payment;
 
 public class MainActivity extends AppCompatActivity {
 
+    private EditText customerEmailField;
+    private EditText customerIdField;
+    private EditText amountField;
+    private EditText clientIdField;
+    private EditText clientSecretField;
+    private EditText merchantIdField;
+    private EditText domainField;
+    private EditText terminalIdField;
+    private EditText currencyField;
+    private EditText cardNumberField;
+    private EditText cvvField;
+    private EditText expYearField;
+    private EditText expMonthField;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final Merchant merchant = new Merchant("ISWKEN0001", "ISWKE");
-        int lower = 100000000;
-        int upper = 999999999;
-        String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
-        String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
-
-        final Payment payment = new Payment("1270075", transactionRef, "MOBILE", "3TLP0001", "CRD", "KES", orderId);
-        final Customer customer = new Customer("1002");
-        customer.setSecondName("Ongeri");
-        customer.setEmail("japheth.ongeri@interswitch.com");
+        customerEmailField = findViewById(R.id.customer_email);
+        customerIdField = findViewById(R.id.customer_id);
+        amountField = findViewById(R.id.amount);
+        clientIdField = findViewById(R.id.client_id);
+        clientSecretField = findViewById(R.id.client_secret);
+        merchantIdField = findViewById(R.id.merchant_id);
+        domainField = findViewById(R.id.domain);
+        terminalIdField = findViewById(R.id.terminal_id);
+        currencyField = findViewById(R.id.currency);
+        cardNumberField = findViewById(R.id.card_field);
+        cvvField = findViewById(R.id.cvv);
+        expYearField = findViewById(R.id.expYear);
+        expMonthField = findViewById(R.id.expMonth);
         findViewById(R.id.payDirectFab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
-                Card card = new Card("4111111111111111", "123", "20", "02");
-                MobPay.getInstance("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").makeCardPayment(
+                String customerEmail = customerEmailField.getText().toString();
+                String customerId = customerIdField.getText().toString();
+                String amount = amountField.getText().toString();
+                String clientId = clientIdField.getText().toString();
+                String clientSecret = clientSecretField.getText().toString();
+                String merchantId = merchantIdField.getText().toString();
+                String domain = domainField.getText().toString();
+                String terminalId = terminalIdField.getText().toString();
+                String currency = currencyField.getText().toString();
+                String cardNumber = cardNumberField.getText().toString();
+                String cvv = cvvField.getText().toString();
+                String expYear = expYearField.getText().toString();
+                String expMonth = expMonthField.getText().toString();
+
+                final Merchant merchant = new Merchant(merchantId, domain);
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+                String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+
+                final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
+                final Customer customer = new Customer(customerId);
+                customer.setEmail(customerEmail);
+                Card card = new Card(cardNumber, cvv, expYear, expMonth);
+
+                MobPay.getInstance(clientId, clientSecret).makeCardPayment(
                         card,
                         merchant,
                         payment,
@@ -67,7 +109,28 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.launchUiButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                MobPay.getInstance("IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA", "dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=").pay(MainActivity.this, merchant,
+
+                String customerEmail = customerEmailField.getText().toString();
+                String customerId = customerIdField.getText().toString();
+                String amount = amountField.getText().toString();
+                String clientId = clientIdField.getText().toString();
+                String clientSecret = clientSecretField.getText().toString();
+                String merchantId = merchantIdField.getText().toString();
+                String domain = domainField.getText().toString();
+                String terminalId = terminalIdField.getText().toString();
+                String currency = currencyField.getText().toString();
+
+                final Merchant merchant = new Merchant(merchantId, domain);
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+                String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+
+                final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
+                final Customer customer = new Customer(customerId);
+                customer.setEmail(customerEmail);
+
+                MobPay.getInstance(clientId, clientSecret).pay(MainActivity.this, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

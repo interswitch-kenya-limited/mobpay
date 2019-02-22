@@ -1,28 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
-    tools:showIn="@layout/activity_main">
+    android:layout_width="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        tools:context=".MainActivity"
+        tools:showIn="@layout/activity_main">
 
-    <Button
-        android:id="@+id/launchUiButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pay_now"
-        tools:layout_editor_absoluteX="79dp"
-        tools:layout_editor_absoluteY="452dp" />
+        <EditText
+            android:id="@+id/customer_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="customer email"
+            android:inputType="textEmailAddress"
+            android:text="someone@somewhere.something" />
 
-</android.support.constraint.ConstraintLayout>
+        <EditText
+            android:id="@+id/customer_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="customer id"
+            android:inputType="text"
+            android:text="blabla" />
+
+        <EditText
+            android:id="@+id/merchant_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="merchant id"
+            android:inputType="text"
+            android:text="ISWKEN0001" />
+
+        <EditText
+            android:id="@+id/domain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Domain"
+            android:inputType="text"
+            android:text="ISWKE" />
+
+        <EditText
+            android:id="@+id/terminal_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="terminal id"
+            android:inputType="text"
+            android:text="3TLP0001" />
+
+        <EditText
+            android:id="@+id/client_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:enabled="false"
+            android:hint="Client Id"
+            android:inputType="text"
+            android:text="IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA" />
+
+        <EditText
+            android:id="@+id/client_secret"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:enabled="false"
+            android:hint="Client Secret"
+            android:inputType="text"
+            android:text="dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=" />
+
+
+        <EditText
+            android:id="@+id/amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="amount"
+            android:inputType="number"
+            android:text="1331" />
+
+        <EditText
+            android:id="@+id/currency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="currency"
+            android:inputType="number"
+            android:text="KES" />
+
+        <EditText
+            android:id="@+id/card_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Card Number"
+            android:inputType="number"
+            android:text="41111111111111111" />
+
+        <EditText
+            android:id="@+id/cvv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="CVV"
+            android:inputType="number"
+            android:maxLength="3"
+            android:text="123" />
+
+        <EditText
+            android:id="@+id/expYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Expiry Year"
+            android:inputType="number"
+            android:maxLength="2"
+            android:text="02" />
+
+        <EditText
+            android:id="@+id/expMonth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Expiry month"
+            android:inputType="number"
+            android:maxLength="2"
+            android:text="22" />
+
+        <Button
+            android:id="@+id/launchUiButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pay with ui" />
+
+    </LinearLayout>
+</ScrollView>
