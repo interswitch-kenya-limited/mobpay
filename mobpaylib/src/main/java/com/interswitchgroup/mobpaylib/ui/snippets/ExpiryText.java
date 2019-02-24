@@ -29,36 +29,11 @@ public class ExpiryText extends AppCompatEditText {
         super(context, attrs, defStyleAttr);
     }
 
-    @Override
-    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-
-        String textString = text.toString();
-        if (textString.length() > 0) {
-            String newText = sanitize(textString);
-            if (!textString.equalsIgnoreCase(newText)) {
-                int caretPosition = getSelectionEnd();
-                setText(newText);
-                if (caretPosition < newText.length())
-                    setSelection(caretPosition);
-                return;
-            }
-            if (textString.length() < 5) {
-                setBackgroundResource(R.drawable.probably_valid_textbox);
-            } else if (textString.length() == 5) {
-                if (Card.isExpiryValid(textString)) {
-                    setBackgroundResource(R.drawable.valid_textbox);
-                } else {
-                    setBackgroundResource(R.drawable.error_textbox);
-                }
-            }
-        } else {
-            setBackgroundResource(R.drawable.edit_text_basic);
-        }
-    }
-
-
     private static String sanitize(String text) {
-        String[] expiryParts = text.replaceAll("[^\\d]", "").split("(?<=\\G.{2})");
+        if (!text.contains(SEPARATOR)) {
+            text = text.replaceAll("(.{2})", "$1" + SEPARATOR);
+        }
+        String[] expiryParts = text.split(SEPARATOR);
         for (String expiryPart : expiryParts) {
             if (expiryPart.isEmpty()) {
                 expiryParts = ArrayUtils.removeElement(expiryParts, expiryPart);
@@ -88,7 +63,42 @@ public class ExpiryText extends AppCompatEditText {
                 expiryYear = newParts[1];
             }
         }
-        return expiryMonth + SEPARATOR + expiryYear;
+        return (expiryMonth.length() > 1 ? expiryMonth + SEPARATOR : expiryMonth) + expiryYear;
+    }
+
+    @Override
+    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
+
+        String textString = text.toString();
+        if (textString.length() > 0) {
+            String newText = sanitize(textString);
+            if (!textString.equalsIgnoreCase(newText)) {
+                // Text was modified by sanitizer, we need to set the new text and move the cursor to the expected position
+                int previousCaretPosition = getSelectionEnd();
+                setText(newText);
+                int newLength = newText.length();
+                int oldLength = textString.length();
+                int caretMoves = newLength - oldLength;
+                int sign = lengthAfter - lengthBefore;
+                int newCaretPosition = previousCaretPosition;
+                if (sign > 0) {// Checks if deleting or inserting new chars
+                    newCaretPosition = previousCaretPosition + caretMoves;
+                }
+                setSelection(newCaretPosition);
+                return;
+            }
+            if (textString.length() < 5) {
+                setBackgroundResource(R.drawable.probably_valid_textbox);
+            } else if (textString.length() == 5) {
+                if (Card.isExpiryValid(textString)) {
+                    setBackgroundResource(R.drawable.valid_textbox);
+                } else {
+                    setBackgroundResource(R.drawable.error_textbox);
+                }
+            }
+        } else {
+            setBackgroundResource(R.drawable.edit_text_basic);
+        }
     }
 
     public static String getTextWithoutSeparator(String text) {

@@ -54,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
         cvvField = findViewById(R.id.cvv);
         expYearField = findViewById(R.id.expYear);
         expMonthField = findViewById(R.id.expMonth);
-        findViewById(R.id.payDirectFab).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cardPaymentButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-
+                view.setEnabled(false);
                 String customerEmail = customerEmailField.getText().toString();
                 String customerId = customerIdField.getText().toString();
                 String amount = amountField.getText().toString();
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         new TransactionSuccessCallback() {
                             @Override
                             public void onSuccess(TransactionResponse transactionResponse) {
+                                view.setEnabled(true);
                                 Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         new TransactionFailureCallback() {
                             @Override
                             public void onError(Throwable error) {
+                                view.setEnabled(true);
                                 Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                                         .setAction("Action", null).show();
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.launchUiButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-
+                view.setEnabled(false);
                 String customerEmail = customerEmailField.getText().toString();
                 String customerId = customerIdField.getText().toString();
                 String amount = amountField.getText().toString();
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         new TransactionSuccessCallback() {
                             @Override
                             public void onSuccess(TransactionResponse transactionResponse) {
+                                view.setEnabled(true);
                                 Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                         new TransactionFailureCallback() {
                             @Override
                             public void onError(Throwable error) {
+                                view.setEnabled(true);
                                 Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                                         .setAction("Action", null).show();

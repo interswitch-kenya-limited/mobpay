@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="currency"
-            android:inputType="number"
+            android:inputType="text"
             android:text="KES" />
 
         <EditText
@@ -103,8 +103,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Card Number"
+            android:maxLength="16"
             android:inputType="number"
-            android:text="41111111111111111" />
+            android:text="4111111111111111" />
 
         <EditText
             android:id="@+id/cvv"
@@ -136,11 +137,25 @@
             android:maxLength="2"
             android:text="22" />
 
-        <Button
-            android:id="@+id/launchUiButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pay with ui" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/launchUiButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Launch UI" />
+
+            <Button
+                android:id="@+id/cardPaymentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Card Payment" />
+        </LinearLayout>
+
 
     </LinearLayout>
 </ScrollView>
