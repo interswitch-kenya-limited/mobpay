@@ -5,7 +5,7 @@
     <string name="card_number">Card number</string>
     <string name="card_expiry_date">Card expiry date</string>
     <string name="cvv">CVV</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">CANCEL</string>
     <string name="pay">Pay </string>
 
     <string name="button_ok">Continue</string>
