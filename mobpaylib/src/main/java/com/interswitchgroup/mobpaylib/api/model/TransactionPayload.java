@@ -7,6 +7,7 @@ import com.interswitchgroup.mobpaylib.model.Payment;
 class TransactionPayload {
     private final String amount;
     private final String transactionRef;
+    private final String preauth;
     private String orderId;
     private final String terminalType;
     private final String terminalId;
@@ -31,6 +32,7 @@ class TransactionPayload {
         this.customerInfor = customer.toString();
         this.country = customer.getCountry();
         this.city = customer.getCity();
+        this.preauth = payment.getPreauth();
     }
 
     public String getAmount() {
@@ -83,5 +85,9 @@ class TransactionPayload {
 
     public String getDomain() {
         return domain;
+    }
+
+    public String getPreauth() {
+        return preauth;
     }
 }

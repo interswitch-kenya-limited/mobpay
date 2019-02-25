@@ -102,7 +102,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 TextView message = dialogView.findViewById(R.id.dialog_message);
                 imageView.setImageDrawable(ContextCompat.getDrawable(MobPayActivity.this, R.drawable.happy_face));
                 title.setText(R.string.payment_successful_title);
-                message.setText("Your transaction was completed successfully, your payment reference is " + transactionResponse.getTransactionReference());
+                message.setText("Your transaction was completed successfully, your payment reference is " + transactionResponse.getTransactionOrderId());
                 AlertDialog dialog = new AlertDialog.Builder(MobPayActivity.this)
                         .setView(dialogView)
                         .setCancelable(false)

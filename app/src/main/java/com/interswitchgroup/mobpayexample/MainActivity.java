@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText cvvField;
     private EditText expYearField;
     private EditText expMonthField;
+    private EditText preauthField;
+    private EditText orderIdField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         cvvField = findViewById(R.id.cvv);
         expYearField = findViewById(R.id.expYear);
         expMonthField = findViewById(R.id.expMonth);
+        preauthField = findViewById(R.id.preauth);
+        orderIdField = findViewById(R.id.orderIdField);
         findViewById(R.id.cardPaymentButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -71,14 +75,16 @@ public class MainActivity extends AppCompatActivity {
                 String cvv = cvvField.getText().toString();
                 String expYear = expYearField.getText().toString();
                 String expMonth = expMonthField.getText().toString();
+                String preauth = preauthField.getText().toString();
+                String orderId = orderIdField.getText().toString();
 
                 final Merchant merchant = new Merchant(merchantId, domain);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
-                String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
 
                 final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
+                payment.setPreauth(preauth);
                 final Customer customer = new Customer(customerId);
                 customer.setEmail(customerEmail);
                 Card card = new Card(cardNumber, cvv, expYear, expMonth);
@@ -92,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(TransactionResponse transactionResponse) {
                                 view.setEnabled(true);
-                                Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Snackbar.LENGTH_LONG)
+                                Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
                             }
@@ -121,14 +127,16 @@ public class MainActivity extends AppCompatActivity {
                 String domain = domainField.getText().toString();
                 String terminalId = terminalIdField.getText().toString();
                 String currency = currencyField.getText().toString();
+                String preauth = preauthField.getText().toString();
+                String orderId = orderIdField.getText().toString();
 
                 final Merchant merchant = new Merchant(merchantId, domain);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
-                String orderId = "MobP_" + String.valueOf((int) (Math.random() * (upper - lower)) + lower);
 
                 final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
+                payment.setPreauth(preauth);
                 final Customer customer = new Customer(customerId);
                 customer.setEmail(customerEmail);
 
@@ -139,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(TransactionResponse transactionResponse) {
                                 view.setEnabled(true);
-                                Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionReference(), Snackbar.LENGTH_LONG)
+                                Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
                             }

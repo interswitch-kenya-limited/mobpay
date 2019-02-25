@@ -63,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:enabled="false"
+            android:enabled="true"
             android:hint="Client Id"
             android:inputType="text"
             android:text="IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA" />
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:enabled="false"
+            android:enabled="true"
             android:hint="Client Secret"
             android:inputType="text"
             android:text="dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=" />
@@ -96,6 +96,25 @@
             android:hint="currency"
             android:inputType="text"
             android:text="KES" />
+
+        <EditText
+            android:id="@+id/preauth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="preauth"
+            android:inputType="number"
+            android:maxLength="1"
+            android:text="1" />
+        <EditText
+            android:id="@+id/orderIdField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="orderId"
+            android:inputType="text"
+            android:maxLength="10"
+            android:text="oid_12121" />
 
         <EditText
             android:id="@+id/card_field"

@@ -84,7 +84,7 @@ public class CardPaymentResponse implements TransactionResponse{
     }
 
     @Override
-    public String getTransactionReference() {
-        return this.getTransactionRef();
+    public String getTransactionOrderId() {
+        return this.getOrderId();
     }
 }
