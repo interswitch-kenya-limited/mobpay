@@ -1,19 +1,17 @@
 <resources>
-    <string name="app_name">MobPayLib</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_mob_pay">MobPayActivity</string>
-    <string name="enter_your_card_details">Enter your Card Details</string>
-    <string name="card_number">Card Number</string>
-    <string name="card_expiry_date">Card Expiry Date</string>
+    <string name="enter_your_card_details">Enter your card details</string>
+    <string name="card_number">Card number</string>
+    <string name="card_expiry_date">Card expiry date</string>
     <string name="cvv">CVV</string>
     <string name="cancel">Cancel</string>
     <string name="pay">Pay </string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="button_ok">Continue</string>
-    <string name="payment_failed_title">Payment Failed</string>
-    <string name="payment_successful_title">Payment Successful</string>
-    <string name="user_cancelled_payment_message">You quit before completing payment</string>
+    <string name="payment_failed_title">Payment failed</string>
+    <string name="payment_successful_title">Payment successful</string>
+    <string name="user_cancelled_payment_message">You quit before completing the payment</string>
+    <string name="tool_tip_text">The CVV is a 3-digit security code at the back of your card</string>
+    <string name="tool_tip_title">What is this?</string>
 </resources>
