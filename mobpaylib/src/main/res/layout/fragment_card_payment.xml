@@ -65,6 +65,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:ems="10"
+                    android:hint="4123 4567 8901 2345"
                     android:inputType="date"
                     android:text="@={cardVm.card.pan}"
                     app:disabledCards="discover|amex"
@@ -198,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:clickable="true"
@@ -279,9 +280,9 @@
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/mobpay_icons_height"
+                android:layout_height="@dimen/mobpay_powered_by_logo_height"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="120dp"
                 app:srcCompat="@drawable/powered_by_interswitch"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>

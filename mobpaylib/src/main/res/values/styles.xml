@@ -29,8 +29,10 @@
 
     <style name="CancelButtonStyle">
         <item name="android:background">@drawable/cancel_button</item>
-        <item name="android:layout_height">@dimen/edit_text_height</item>
-        <item name="android:paddingLeft">@dimen/edit_text_padding</item>
-        <item name="android:paddingRight">@dimen/edit_text_padding</item>
+        <!--<item name="android:layout_height">@dimen/edit_text_height</item>-->
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">50dp</item>
+        <item name="android:paddingRight">50dp</item>
     </style>
 </resources>
