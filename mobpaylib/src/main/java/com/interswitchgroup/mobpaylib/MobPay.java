@@ -20,6 +20,8 @@ import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
 import java.io.Serializable;
 import java.security.PublicKey;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -37,13 +39,17 @@ public class MobPay implements Serializable {
     private Retrofit retrofit;
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
+    private static List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret) {
+    public static MobPay getInstance(String clientId, String clientSecret, PaymentChannel... channels) {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
+            if (channels != null && channels.length > 0) {
+                singletonMobPayInstance.channels = Arrays.asList(channels);
+            }
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
@@ -62,6 +68,10 @@ public class MobPay implements Serializable {
 
     public TransactionSuccessCallback getTransactionSuccessCallback() {
         return transactionSuccessCallback;
+    }
+
+    public static List<PaymentChannel> getChannels() {
+        return channels;
     }
 
     /**
@@ -130,6 +140,15 @@ public class MobPay implements Serializable {
                     });
         } catch (Exception e) {
             transactionFailureCallback.onError(e);
+        }
+    }
+
+    public enum PaymentChannel {
+        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode");
+        public String value;
+
+        PaymentChannel(String value) {
+            this.value = value;
         }
     }
 }

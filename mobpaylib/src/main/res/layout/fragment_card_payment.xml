@@ -10,14 +10,19 @@
             type="com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm" />
     </data>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
             android:id="@+id/card_scrollview"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/footer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:context=".ui.fragments.card.CardPaymentFragment">
 
             <android.support.constraint.ConstraintLayout
@@ -73,7 +78,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/card_number_label"
-                    app:separator="spaces" />
+                    app:separator="spaces"
+                    tools:ignore="HardcodedText" />
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/constraintLayout2"
@@ -112,7 +118,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/divider2"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/expiry_date_label" />
+                        app:layout_constraintTop_toBottomOf="@+id/expiry_date_label"
+                        tools:ignore="HardcodedText" />
 
                     <View
                         android:id="@+id/divider2"
@@ -159,7 +166,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/divider2"
-                        app:layout_constraintTop_toBottomOf="@+id/cvv_label" />
+                        app:layout_constraintTop_toBottomOf="@+id/cvv_label"
+                        tools:ignore="HardcodedText" />
 
                     <com.interswitchgroup.mobpaylib.ui.snippets.ToolTip
                         android:id="@+id/cvv_tooltip"
@@ -281,14 +289,16 @@
                 </android.support.constraint.ConstraintLayout>
 
             </android.support.constraint.ConstraintLayout>
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
 
         <RelativeLayout
             android:id="@+id/footer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white">
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -299,5 +309,5 @@
                 app:srcCompat="@drawable/powered_by_interswitch"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>

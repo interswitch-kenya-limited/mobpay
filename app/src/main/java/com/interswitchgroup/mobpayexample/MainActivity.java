@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 final Customer customer = new Customer(customerId);
                 customer.setEmail(customerEmail);
 
-                MobPay.getInstance(clientId, clientSecret).pay(MainActivity.this, merchant,
+                MobPay.getInstance(clientId, clientSecret, MobPay.PaymentChannel.CARD, MobPay.PaymentChannel.BANK).pay(MainActivity.this, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

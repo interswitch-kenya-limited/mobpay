@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -198,17 +199,28 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mSectionsPagerAdapter.addTab("Card");
-        mSectionsPagerAdapter.addTab("Mobile");
-        mSectionsPagerAdapter.addTab("Bank");
-        mSectionsPagerAdapter.addTab("Verve Paycode");
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
         TabLayout tabLayout = findViewById(R.id.tabs);
+
+        LinearLayout tabStrip = ((LinearLayout) tabLayout.getChildAt(0));
+        MobPay.PaymentChannel[] allChannels = MobPay.PaymentChannel.class.getEnumConstants();
+        List<MobPay.PaymentChannel> mobPayChannels = MobPay.getChannels();
+        for (MobPay.PaymentChannel paymentChannel : allChannels) {
+            mSectionsPagerAdapter.addTab(paymentChannel.value);
+        }
+
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            if (!mobPayChannels.contains(allChannels[i])) {
+                TabLayout.Tab tab = tabLayout.getTabAt(i);
+                View tabView = ((View) tab.view);
+                tabView.setEnabled(false);
+                tabView.setClickable(false);
+            }
+        }
     }
 
 
