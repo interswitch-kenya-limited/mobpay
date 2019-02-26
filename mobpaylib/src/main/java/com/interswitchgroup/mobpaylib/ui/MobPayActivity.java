@@ -103,7 +103,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 imageView.setImageDrawable(ContextCompat.getDrawable(MobPayActivity.this, R.drawable.happy_face));
                 title.setText(R.string.payment_successful_title);
                 message.setText("Your transaction was completed successfully, your payment reference is " + transactionResponse.getTransactionOrderId());
-                AlertDialog dialog = new AlertDialog.Builder(MobPayActivity.this)
+                final AlertDialog dialog = new AlertDialog.Builder(MobPayActivity.this)
                         .setView(dialogView)
                         .setCancelable(false)
                         .create();
@@ -115,7 +115,12 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                         MobPayActivity.this.finish();
                     }
                 });
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.mobpaySuccess));
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface arg0) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.mobpaySuccess));
+                    }
+                });
                 dialog.show();
             }
         });
