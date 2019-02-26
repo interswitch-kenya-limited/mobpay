@@ -115,6 +115,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                         MobPayActivity.this.finish();
                     }
                 });
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.mobpaySuccess));
                 dialog.show();
             }
         });
@@ -134,6 +135,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 } else {
                     message.setText(error.getMessage());
                 }
+                message.setText(R.string.failed_payment_message);
                 AlertDialog dialog = new AlertDialog.Builder(MobPayActivity.this)
                         .setView(dialogView)
                         .setCancelable(false)
@@ -273,13 +275,6 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to quit?").setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Always destroy activity when it goes out of view, can use killprocess because it runs in its own process
-//        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     @Override

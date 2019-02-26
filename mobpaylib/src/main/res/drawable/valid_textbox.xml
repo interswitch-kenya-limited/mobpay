@@ -4,7 +4,7 @@
     <solid android:color="@color/white" />
     <stroke
         android:width="@dimen/edit_text_border_width"
-        android:color="@color/edit_text_valid_border_color" />
+        android:color="@color/mobpaySuccess" />
     <corners
         android:bottomLeftRadius="@dimen/edit_text_box_radius"
         android:bottomRightRadius="@dimen/edit_text_box_radius"

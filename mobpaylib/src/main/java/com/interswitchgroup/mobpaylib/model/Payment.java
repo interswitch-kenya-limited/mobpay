@@ -81,7 +81,12 @@ public class Payment implements Serializable {
 
     public String getAmountString() {
 //        return String.format("%,.2f", Double.valueOf(amount) / 100); // Constant of two decimal places with up to two trailing zeros
-        return new DecimalFormat("#,###.##").format(Double.valueOf(amount) / 100); // Up to two decimal places but no trailing zeros
+        Double value = Double.valueOf(amount) / 100;
+        DecimalFormat format = new DecimalFormat("#,###.##"); // Up to two decimal places but no trailing zeros
+        if (value % 1 != 0) {// If the value is not whole set minimum two decimal places so that there can be one trailing zero if number has only one decimal
+            format.setMinimumFractionDigits(2);
+        }
+        return format.format(value);
     }
 
     public String getPreauth() {
