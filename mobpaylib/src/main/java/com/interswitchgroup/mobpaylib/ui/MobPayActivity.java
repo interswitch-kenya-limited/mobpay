@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -204,11 +203,10 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         mViewPager = findViewById(R.id.container);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
-        LinearLayout tabStrip = ((LinearLayout) tabLayout.getChildAt(0));
-        MobPay.PaymentChannel[] allChannels = MobPay.PaymentChannel.class.getEnumConstants();
-        List<MobPay.PaymentChannel> mobPayChannels = MobPay.getChannels();
+        final MobPay.PaymentChannel[] allChannels = MobPay.PaymentChannel.class.getEnumConstants();
+        final List<MobPay.PaymentChannel> mobPayChannels = MobPay.getChannels();
         for (MobPay.PaymentChannel paymentChannel : allChannels) {
-            mSectionsPagerAdapter.addTab(paymentChannel.value);
+            mSectionsPagerAdapter.addTab(paymentChannel);
         }
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -216,11 +214,40 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             if (!mobPayChannels.contains(allChannels[i])) {
                 TabLayout.Tab tab = tabLayout.getTabAt(i);
-                View tabView = ((View) tab.view);
+                View tabView = tab.view;
                 tabView.setEnabled(false);
                 tabView.setClickable(false);
             }
         }
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            private int previousPosition;
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (!mobPayChannels.contains(allChannels[position])) {
+                    // TODO show message that it is disabled
+                    int tabCount = allChannels.length;
+                    int newPosition;
+                    if (previousPosition < position) {
+                        newPosition = position + 1;
+                    } else {
+                        newPosition = position - 1;
+                    }
+                    mViewPager.setCurrentItem(newPosition % tabCount);
+                }
+                previousPosition = mViewPager.getCurrentItem();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 
@@ -234,7 +261,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private final List<String> mFragmentTitlesList = new ArrayList<>();
+        private final List<MobPay.PaymentChannel> paymentChannels = new ArrayList<>();
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -246,22 +273,22 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 case 0:
                     return new CardPaymentFragment();
                 default:
-                    return PlaceHolderFragment.newInstance(mFragmentTitlesList.get(position));
+                    return PlaceHolderFragment.newInstance(paymentChannels.get(position).value);
             }
         }
 
         @Override
         public int getCount() {
-            return mFragmentTitlesList.size();
+            return paymentChannels.size();
         }
 
-        public void addTab(String title) {
-            mFragmentTitlesList.add(title);
+        public void addTab(MobPay.PaymentChannel paymentChannel) {
+            paymentChannels.add(paymentChannel);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mFragmentTitlesList.get(position);
+            return paymentChannels.get(position).value;
         }
     }
 
