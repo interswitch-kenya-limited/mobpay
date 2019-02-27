@@ -220,31 +220,48 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 tabView.setClickable(false);
             }
         }
+        mViewPager.setCurrentItem(Arrays.asList(allChannels).indexOf(mobPayChannels.get(0)));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            private int currentPosition;
+            private int currentPosition = mViewPager.getCurrentItem();
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
 
+            /**
+             * This method is overridden to skip swiping to pages that are not enabled
+             *
+             * @param newPosition
+             */
             @Override
             public void onPageSelected(int newPosition) {
+                if (mobPayChannels.size() <= 1) {
+                    mViewPager.setCurrentItem(currentPosition);
+                    currentPosition = mViewPager.getCurrentItem();
+                    return;
+                }
                 int nextPosition = newPosition;
                 do {
                     if (mobPayChannels.contains(allChannels[nextPosition])) {
                         mViewPager.setCurrentItem(nextPosition);
-                        break;
+                        currentPosition = nextPosition;
+                        return;
                     }
                     if (newPosition > currentPosition) {
                         nextPosition++;
+                        if (nextPosition >= allChannels.length) {
+                            // We have reached the end
+                            mViewPager.setCurrentItem(currentPosition);
+                            return;
+                        }
                     } else {
                         nextPosition--;
                     }
                     nextPosition = Math.abs(nextPosition % allChannels.length);
-                } while (nextPosition != newPosition);
+                } while (nextPosition != currentPosition);
 
-                currentPosition = mViewPager.getCurrentItem();
+                mViewPager.setCurrentItem(currentPosition);
             }
 
             @Override
@@ -252,7 +269,6 @@ public class MobPayActivity extends DaggerAppCompatActivity {
 
             }
         });
-        mViewPager.setCurrentItem(Arrays.asList(allChannels).indexOf(mobPayChannels.get(0)));
     }
 
 
