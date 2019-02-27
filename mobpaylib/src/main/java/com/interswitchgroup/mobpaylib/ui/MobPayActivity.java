@@ -221,7 +221,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
             }
         }
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            private int previousPosition;
+            private int currentPosition;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -229,23 +229,22 @@ public class MobPayActivity extends DaggerAppCompatActivity {
             }
 
             @Override
-            public void onPageSelected(int position) {
-                if (mobPayChannels.contains(allChannels[position])) {
-                    return;
-                } else {
-                    // TODO show message that it is disabled
-                    int tabCount = allChannels.length;
-                    int newPosition;
-                    if (previousPosition < position) {
-                        newPosition = position + 1;
-                    } else {
-                        newPosition = position - 1;
+            public void onPageSelected(int newPosition) {
+                int nextPosition = newPosition;
+                do {
+                    if (mobPayChannels.contains(allChannels[nextPosition])) {
+                        mViewPager.setCurrentItem(nextPosition);
+                        break;
                     }
-                    int nextPage = Math.abs(newPosition % tabCount);
-                    mViewPager.setCurrentItem(nextPage);
-                    previousPosition = mViewPager.getCurrentItem();
-                }
-                previousPosition = mViewPager.getCurrentItem();
+                    if (newPosition > currentPosition) {
+                        nextPosition++;
+                    } else {
+                        nextPosition--;
+                    }
+                    nextPosition = Math.abs(nextPosition % allChannels.length);
+                } while (nextPosition != newPosition);
+
+                currentPosition = mViewPager.getCurrentItem();
             }
 
             @Override
