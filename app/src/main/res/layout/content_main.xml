@@ -116,6 +116,11 @@
             android:maxLength="10"
             android:text="oid_12121" />
 
+        <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
+            android:id="@+id/channels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <EditText
             android:id="@+id/card_field"
             android:layout_width="match_parent"

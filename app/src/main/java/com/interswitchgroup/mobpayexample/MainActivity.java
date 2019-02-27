@@ -19,6 +19,9 @@ import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Payment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText customerEmailField;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText expMonthField;
     private EditText preauthField;
     private EditText orderIdField;
+    private MultiSelectionSpinner paymentChannels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
         expMonthField = findViewById(R.id.expMonth);
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
+        paymentChannels = findViewById(R.id.channels);
+//        ArrayAdapter<MobPay.PaymentChannel> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, MobPay.PaymentChannel.class.getEnumConstants());
+        List<String> channelNames = new ArrayList<>();
+        for (MobPay.PaymentChannel channel : MobPay.PaymentChannel.class.getEnumConstants()) {
+            channelNames.add(channel.value);
+        }
+        paymentChannels.setItems(channelNames);
+
         findViewById(R.id.cardPaymentButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -139,8 +151,12 @@ public class MainActivity extends AppCompatActivity {
                 payment.setPreauth(preauth);
                 final Customer customer = new Customer(customerId);
                 customer.setEmail(customerEmail);
+                List<MobPay.PaymentChannel> selectedPaymentChannels = new ArrayList<>();
+                for (int selectedIndex : paymentChannels.getSelectedIndicies()) {
+                    selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
+                }
 
-                MobPay.getInstance(clientId, clientSecret, MobPay.PaymentChannel.CARD, MobPay.PaymentChannel.BANK).pay(MainActivity.this, merchant,
+                MobPay.getInstance(clientId, clientSecret, selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0])).pay(MainActivity.this, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

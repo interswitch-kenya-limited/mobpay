@@ -49,14 +49,14 @@ public class MobPay implements Serializable {
     public static MobPay getInstance(String clientId, String clientSecret, PaymentChannel... channels) {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
-            // If enabled channels was explicitly passed, override default enabled channels
-            if (channels != null && channels.length > 0) {
-                // Set enabled channels by first converting all channels varargs to set to remove duplicates
-                singletonMobPayInstance.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
-            }
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
+        }
+        // If enabled channels was explicitly passed, override default enabled channels
+        if (channels != null && channels.length > 0) {
+            // Set enabled channels by first converting all channels varargs to set to remove duplicates
+            singletonMobPayInstance.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
         }
         return singletonMobPayInstance;
     }

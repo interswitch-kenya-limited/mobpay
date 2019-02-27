@@ -46,6 +46,7 @@ import com.interswitchgroup.mobpaylib.utils.AndroidUtils;
 import com.interswitchgroup.mobpaylib.utils.NetUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -229,7 +230,9 @@ public class MobPayActivity extends DaggerAppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (!mobPayChannels.contains(allChannels[position])) {
+                if (mobPayChannels.contains(allChannels[position])) {
+                    return;
+                } else {
                     // TODO show message that it is disabled
                     int tabCount = allChannels.length;
                     int newPosition;
@@ -238,7 +241,9 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                     } else {
                         newPosition = position - 1;
                     }
-                    mViewPager.setCurrentItem(newPosition % tabCount);
+                    int nextPage = Math.abs(newPosition % tabCount);
+                    mViewPager.setCurrentItem(nextPage);
+                    previousPosition = mViewPager.getCurrentItem();
                 }
                 previousPosition = mViewPager.getCurrentItem();
             }
@@ -248,6 +253,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
 
             }
         });
+        mViewPager.setCurrentItem(Arrays.asList(allChannels).indexOf(mobPayChannels.get(0)));
     }
 
 
