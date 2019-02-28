@@ -291,23 +291,8 @@
             </android.support.constraint.ConstraintLayout>
         </android.support.v4.widget.NestedScrollView>
 
-        <RelativeLayout
+        <include
             android:id="@+id/footer"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/mobpay_powered_by_logo_height"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="100dp"
-                app:srcCompat="@drawable/powered_by_interswitch"
-                tools:ignore="ContentDescription" />
-        </RelativeLayout>
+            layout="@layout/footer" />
     </android.support.constraint.ConstraintLayout>
 </layout>

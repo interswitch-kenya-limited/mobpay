@@ -15,4 +15,7 @@
     <string name="tool_tip_text">The CVV is a 3-digit security code at the back of your card</string>
     <string name="tool_tip_title">What is this?</string>
     <string name="failed_payment_message">Please try again or select an alternative payment option.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

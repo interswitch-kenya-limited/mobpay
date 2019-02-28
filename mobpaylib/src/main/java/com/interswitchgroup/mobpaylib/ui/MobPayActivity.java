@@ -42,6 +42,7 @@ import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.fragments.PlaceHolderFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardPaymentFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
+import com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobilePaymentFragment;
 import com.interswitchgroup.mobpaylib.utils.AndroidUtils;
 import com.interswitchgroup.mobpaylib.utils.NetUtil;
 
@@ -298,6 +299,8 @@ public class MobPayActivity extends DaggerAppCompatActivity {
             switch (position) {
                 case 0:
                     return new CardPaymentFragment();
+                case 1:
+                    return new MobilePaymentFragment();
                 default:
                     return PlaceHolderFragment.newInstance(paymentChannels.get(position).value);
             }
