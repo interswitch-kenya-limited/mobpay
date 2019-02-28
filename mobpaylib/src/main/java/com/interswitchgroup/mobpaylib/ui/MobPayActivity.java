@@ -257,6 +257,11 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                         }
                     } else {
                         nextPosition--;
+                        if (nextPosition < 0) {
+                            // We have reached the end
+                            mViewPager.setCurrentItem(currentPosition);
+                            return;
+                        }
                     }
                     nextPosition = Math.abs(nextPosition % allChannels.length);
                 } while (nextPosition != currentPosition);
