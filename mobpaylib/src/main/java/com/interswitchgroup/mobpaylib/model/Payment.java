@@ -12,6 +12,7 @@ public class Payment implements Serializable {
     private String paymentItem;
     private String currency;
     private String preauth;
+    private String narration;
 
     public Payment(String amount, String transactionRef, String terminalType, String terminalId, String paymentItem, String currency, String orderId) {
         this.amount = amount;
@@ -95,5 +96,13 @@ public class Payment implements Serializable {
 
     public void setPreauth(String preauth) {
         this.preauth = preauth;
+    }
+
+    public String getNarration() {
+        return narration;
+    }
+
+    public void setNarration(String narration) {
+        this.narration = narration;
     }
 }

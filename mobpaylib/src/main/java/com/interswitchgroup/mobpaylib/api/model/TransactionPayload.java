@@ -8,7 +8,7 @@ class TransactionPayload {
     private final String amount;
     private final String transactionRef;
     private final String preauth;
-    private String orderId;
+    private final String orderId;
     private final String terminalType;
     private final String terminalId;
     private final String paymentItem;
@@ -18,6 +18,7 @@ class TransactionPayload {
     private final String country;
     private final String city;
     private final String domain;
+    private final String narration;
 
     public TransactionPayload(Merchant merchant, Payment payment, Customer customer) {
         this.amount = payment.getAmount();
@@ -33,6 +34,7 @@ class TransactionPayload {
         this.country = customer.getCountry();
         this.city = customer.getCity();
         this.preauth = payment.getPreauth();
+        this.narration = payment.getNarration();
     }
 
     public String getAmount() {
@@ -45,10 +47,6 @@ class TransactionPayload {
 
     public String getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
     }
 
     public String getTerminalType() {
@@ -89,5 +87,9 @@ class TransactionPayload {
 
     public String getPreauth() {
         return preauth;
+    }
+
+    public String getNarration() {
+        return narration;
     }
 }

@@ -14,7 +14,7 @@ import android.widget.Spinner;
 
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
-import com.interswitchgroup.mobpaylib.model.MobileMoneyProvider;
+import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.ui.ImageSpinnerAdapter;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm;
@@ -59,9 +59,9 @@ public class MobilePaymentFragment extends DaggerFragment {
         });
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
         Spinner spin = fragmentCardPaymentBinding.spinner;
-        final List<Pair<MobileMoneyProvider.Type, Integer>> namesAndImagesList = new ArrayList<>();
-        namesAndImagesList.add(new Pair<>(MobileMoneyProvider.Type.MPESA, R.drawable.mpesa));
-        namesAndImagesList.add(new Pair<>(MobileMoneyProvider.Type.EAZZYPAY, R.drawable.eazzypay));
+        final List<Pair<Mobile.Type, Integer>> namesAndImagesList = new ArrayList<>();
+        namesAndImagesList.add(new Pair<>(Mobile.Type.MPESA, R.drawable.mpesa));
+        namesAndImagesList.add(new Pair<>(Mobile.Type.EAZZYPAY, R.drawable.eazzypay));
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -75,7 +75,7 @@ public class MobilePaymentFragment extends DaggerFragment {
             }
         });
 
-        ImageSpinnerAdapter<MobileMoneyProvider.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(MobilePaymentFragment.this.getActivity().getApplicationContext(), namesAndImagesList);
+        ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(MobilePaymentFragment.this.getActivity().getApplicationContext(), namesAndImagesList);
         spin.setAdapter(imageSpinnerAdapter);
         return fragmentCardPaymentBinding.getRoot();
     }

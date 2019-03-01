@@ -6,13 +6,16 @@ import android.util.Log;
 
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
+import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
 import com.interswitchgroup.mobpaylib.api.service.CardPayment;
+import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
+import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
@@ -139,6 +142,32 @@ public class MobPay implements Serializable {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
                             Log.e(LOG_TAG, "Card payment failed, reason:\t" + throwable.getMessage());
+                            transactionFailureCallback.onError(throwable);
+                        }
+                    });
+        } catch (Exception e) {
+            transactionFailureCallback.onError(e);
+        }
+    }
+
+    public void makeMobileMoneyPayment(Mobile mobile, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+        NullChecker.checkNull(mobile, "mobile must not be null");
+        try {
+            MobilePaymentPayload mobilePaymentPayload = new MobilePaymentPayload(merchant, payment, customer, mobile);
+            Disposable subscribe = retrofit.create(MobilePayment.class)
+                    .mobilePayment(mobilePaymentPayload)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<CardPaymentResponse>() {
+                        @Override
+                        public void accept(CardPaymentResponse cardPaymentResponse) throws Exception {
+                            Log.i(LOG_TAG, "Mobile payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
+                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            Log.e(LOG_TAG, "Mobile payment failed, reason:\t" + throwable.getMessage());
                             transactionFailureCallback.onError(throwable);
                         }
                     });

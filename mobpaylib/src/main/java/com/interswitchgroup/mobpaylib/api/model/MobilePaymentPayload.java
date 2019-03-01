@@ -2,16 +2,18 @@ package com.interswitchgroup.mobpaylib.api.model;
 
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
+import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 
-public class CardPaymentPayload extends TransactionPayload {
+public class MobilePaymentPayload extends TransactionPayload {
 
     private String provider;
-    private String authData;
+    private String phone;
 
-    public CardPaymentPayload(Merchant merchant, Payment payment, Customer customer, String authData) {
+    public MobilePaymentPayload(Merchant merchant, Payment payment, Customer customer, Mobile mobile) {
         super(merchant, payment, customer);
-        this.authData = authData;
+        this.provider = mobile.getProvider();
+        this.phone = mobile.getPhone();
     }
 
     public String getProvider() {
@@ -21,13 +23,4 @@ public class CardPaymentPayload extends TransactionPayload {
     public void setProvider(String provider) {
         this.provider = provider;
     }
-
-    public String getAuthData() {
-        return authData;
-    }
-
-    public void setAuthData(String authData) {
-        this.authData = authData;
-    }
-
 }
