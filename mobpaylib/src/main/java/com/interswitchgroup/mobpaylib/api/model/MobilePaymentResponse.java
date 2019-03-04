@@ -5,10 +5,7 @@ public class MobilePaymentResponse implements TransactionResponse{
     private String transactionAmount;
     private String transactionRef;
     private String terminalId;
-    private String approvalCode;
-    private String token;
-    private String tokenExpiryDate;
-    private String panLast4Digits;
+    private String externalReference;
     private String orderId;
 
     public String getFee() {
@@ -43,36 +40,12 @@ public class MobilePaymentResponse implements TransactionResponse{
         this.terminalId = terminalId;
     }
 
-    public String getApprovalCode() {
-        return approvalCode;
+    public String getExternalReference() {
+        return externalReference;
     }
 
-    public void setApprovalCode(String approvalCode) {
-        this.approvalCode = approvalCode;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getTokenExpiryDate() {
-        return tokenExpiryDate;
-    }
-
-    public void setTokenExpiryDate(String tokenExpiryDate) {
-        this.tokenExpiryDate = tokenExpiryDate;
-    }
-
-    public String getPanLast4Digits() {
-        return panLast4Digits;
-    }
-
-    public void setPanLast4Digits(String panLast4Digits) {
-        this.panLast4Digits = panLast4Digits;
+    public void setExternalReference(String externalReference) {
+        this.externalReference = externalReference;
     }
 
     public String getOrderId() {

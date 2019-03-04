@@ -49,16 +49,16 @@ public class MobilePaymentFragment extends DaggerFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final FragmentMobilePaymentBinding fragmentCardPaymentBinding = FragmentMobilePaymentBinding.inflate(inflater, container, false);
-        fragmentCardPaymentBinding.setCardVm(cardVm);
-        fragmentCardPaymentBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
+        final FragmentMobilePaymentBinding fragmentMobilePaymentBinding = FragmentMobilePaymentBinding.inflate(inflater, container, false);
+        fragmentMobilePaymentBinding.setCardVm(cardVm);
+        fragmentMobilePaymentBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MobPayActivity) getActivity()).quit();
             }
         });
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
-        Spinner spin = fragmentCardPaymentBinding.spinner;
+        Spinner spin = fragmentMobilePaymentBinding.spinner;
         final List<Pair<Mobile.Type, Integer>> namesAndImagesList = new ArrayList<>();
         namesAndImagesList.add(new Pair<>(Mobile.Type.MPESA, R.drawable.mpesa));
         namesAndImagesList.add(new Pair<>(Mobile.Type.EAZZYPAY, R.drawable.eazzypay));
@@ -66,7 +66,7 @@ public class MobilePaymentFragment extends DaggerFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(LOG_TAG, "Spinner item was selected");
-                fragmentCardPaymentBinding.mnoContentText.setText(" Spinner item " + position + " was selected " + namesAndImagesList.get(position).first);
+                fragmentMobilePaymentBinding.mnoContentText.setText(" Spinner item " + position + " was selected " + namesAndImagesList.get(position).first);
             }
 
             @Override
@@ -77,6 +77,6 @@ public class MobilePaymentFragment extends DaggerFragment {
 
         ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(MobilePaymentFragment.this.getActivity().getApplicationContext(), namesAndImagesList);
         spin.setAdapter(imageSpinnerAdapter);
-        return fragmentCardPaymentBinding.getRoot();
+        return fragmentMobilePaymentBinding.getRoot();
     }
 }

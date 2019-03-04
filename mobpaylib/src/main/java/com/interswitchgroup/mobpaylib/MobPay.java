@@ -7,6 +7,7 @@ import android.util.Log;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
+import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.service.CardPayment;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
@@ -158,11 +159,11 @@ public class MobPay implements Serializable {
                     .mobilePayment(mobilePaymentPayload)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<CardPaymentResponse>() {
+                    .subscribe(new Consumer<MobilePaymentResponse>() {
                         @Override
-                        public void accept(CardPaymentResponse cardPaymentResponse) throws Exception {
-                            Log.i(LOG_TAG, "Mobile payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
-                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                        public void accept(MobilePaymentResponse mobilePaymentResponse) throws Exception {
+                            Log.i(LOG_TAG, "Mobile payment succeeded, ref:\t" + mobilePaymentResponse.getTransactionRef());
+                            transactionSuccessCallback.onSuccess(mobilePaymentResponse);
                         }
                     }, new Consumer<Throwable>() {
                         @Override

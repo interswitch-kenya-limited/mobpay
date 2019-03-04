@@ -2,9 +2,12 @@
     <item>
         <layer-list>
             <item android:drawable="@drawable/edit_text_basic" />
-            <item android:right="5dp">
-                <bitmap android:gravity="center_vertical|right" android:src="@drawable/ic_keyboard_arrow_down_gray_24dp" />
-            </item>
+            <!--Works for kitkat but causes lollipop and above to crash-->
+            <!--<item android:right="5dp">-->
+                <!--<bitmap android:gravity="center_vertical|right" android:src="@drawable/ic_keyboard_arrow_down_gray_24dp" />-->
+            <!--</item>-->
+            <!--Below works for >5.0 but width is stretched for kitkat and below-->
+            <!--<item android:width="24dp" android:drawable="@drawable/ic_keyboard_arrow_down_gray_24dp" android:gravity="center_vertical|right" android:right="5dp" />-->
         </layer-list>
     </item>
 </selector>
