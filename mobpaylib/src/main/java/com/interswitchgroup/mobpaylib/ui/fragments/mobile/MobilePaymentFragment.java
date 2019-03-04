@@ -66,6 +66,7 @@ public class MobilePaymentFragment extends DaggerFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(LOG_TAG, "Spinner item was selected");
                 fragmentMobilePaymentBinding.mnoContentText.setText(" Spinner item " + position + " was selected " + namesAndImagesList.get(position).first);
+                MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
             }
 
             @Override

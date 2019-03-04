@@ -70,7 +70,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     android:ems="10"
-                    android:hint="0712345678"
+                    android:hint="0700000000"
                     android:inputType="phone"
                     android:maxLength="10"
                     android:text="@={mobileVm.mobile.phone}"

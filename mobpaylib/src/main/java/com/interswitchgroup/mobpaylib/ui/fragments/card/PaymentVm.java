@@ -88,6 +88,13 @@ public class PaymentVm extends ViewModel {
     }
 
     public void makeMobilePayment(Mobile mobile) {
-
+        loading.set(true);
+        mobPay.makeMobileMoneyPayment(
+                mobile,
+                merchant,
+                payment,
+                customer,
+                onSuccess,
+                onFailure);
     }
 }

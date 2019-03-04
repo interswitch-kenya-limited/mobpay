@@ -70,7 +70,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:ems="10"
-                    android:hint="4123 4567 8901 2345"
+                    android:hint="0000 0000 0000 0000"
                     android:inputType="date"
                     android:text="@={cardVm.card.pan}"
                     app:disabledCards="discover|amex"
