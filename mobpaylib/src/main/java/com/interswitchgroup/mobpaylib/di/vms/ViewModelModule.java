@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider;
 
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
+import com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobileVm;
 
 import javax.inject.Singleton;
 
@@ -20,6 +21,12 @@ public abstract class ViewModelModule {
     @Singleton
     @ViewModelKey(CardVm.class)
     abstract ViewModel bindMapCardVm(CardVm cardVm);
+
+    @Binds
+    @IntoMap
+    @Singleton
+    @ViewModelKey(MobileVm.class)
+    abstract ViewModel bindMapMobileVm(MobileVm mobileVm);
 
     @Binds
     @IntoMap

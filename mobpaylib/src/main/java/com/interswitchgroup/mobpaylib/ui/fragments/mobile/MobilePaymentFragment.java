@@ -17,7 +17,6 @@ import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.ui.ImageSpinnerAdapter;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
-import com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import dagger.android.support.DaggerFragment;
 public class MobilePaymentFragment extends DaggerFragment {
 
     private static final String LOG_TAG = MobilePaymentFragment.class.getSimpleName();
-    CardVm cardVm;
+    MobileVm mobileVm;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
@@ -43,14 +42,14 @@ public class MobilePaymentFragment extends DaggerFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
-        cardVm = ViewModelProviders.of(this, viewModelFactory).get(CardVm.class);
-        cardVm.setPaymentVm(paymentVm);
+        mobileVm = ViewModelProviders.of(this, viewModelFactory).get(MobileVm.class);
+        mobileVm.setPaymentVm(paymentVm);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final FragmentMobilePaymentBinding fragmentMobilePaymentBinding = FragmentMobilePaymentBinding.inflate(inflater, container, false);
-        fragmentMobilePaymentBinding.setCardVm(cardVm);
+        fragmentMobilePaymentBinding.setMobileVm(mobileVm);
         fragmentMobilePaymentBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

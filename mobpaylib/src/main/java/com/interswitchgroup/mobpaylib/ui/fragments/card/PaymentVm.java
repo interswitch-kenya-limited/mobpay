@@ -9,6 +9,7 @@ import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
+import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 
 import javax.inject.Inject;
@@ -84,5 +85,9 @@ public class PaymentVm extends ViewModel {
                 customer,
                 onSuccess,
                 onFailure);
+    }
+
+    public void makeMobilePayment(Mobile mobile) {
+
     }
 }

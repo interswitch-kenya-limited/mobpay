@@ -1,13 +1,25 @@
 package com.interswitchgroup.mobpaylib.model;
 
-public class Mobile {
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import com.interswitchgroup.mobpaylib.BR;
+
+import java.io.Serializable;
+
+public class Mobile extends BaseObservable implements Serializable {
     private String phone;
     private Type type;
     private String provider;
+    public boolean valid;
 
     public Mobile(String phone, Type type) {
         this.phone = phone;
         this.setType(type);
+    }
+
+    public Mobile() {
+
     }
 
     public String getPhone() {
@@ -37,6 +49,16 @@ public class Mobile {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+
+    @Bindable
+    public boolean getValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+        notifyPropertyChanged(BR.valid);
     }
 
     public enum Type {

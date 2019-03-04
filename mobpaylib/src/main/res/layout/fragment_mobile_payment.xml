@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="cardVm"
-            type="com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm" />
+            name="mobileVm"
+            type="com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobileVm" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -23,7 +23,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:context=".ui.fragments.card.CardPaymentFragment">
+            tools:context=".ui.fragments.mobile.MobilePaymentFragment">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="32dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:text="@string/select_mno_title_hint"
@@ -51,39 +51,67 @@
 
                 <Spinner
                     android:id="@+id/spinner"
-                    android:layout_width="225dp"
+                    android:layout_width="255dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
-                    android:background="@drawable/image_spinner"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:background="@drawable/image_spinner"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title" />
 
-                <FrameLayout
-                    android:id="@+id/contentAndAction"
+
+                <EditText
+                    android:id="@+id/mobile"
+                    style="@style/EditTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/edit_text_height"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="0712345678"
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:text="@={mobileVm.mobile.phone}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner"
+                    tools:ignore="Autofill,HardcodedText"
+                    tools:text="0713365209" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/mno_content_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="mno content and action initial text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/mobile"
+                    tools:ignore="HardcodedText" />
+
+
+                <Button
+                    android:id="@+id/pay_button"
+                    style="@style/MainActionButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
+                    android:clickable="true"
+                    android:enabled="@{mobileVm.mobile.valid}"
+                    android:focusable="true"
+                    android:onClick="@{() -> mobileVm.makePayment()}"
+                    android:text='@{"Pay "+ mobileVm.paymentVm.payment.currency + " " + mobileVm.paymentVm.payment.amountString}'
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/spinner">
-
-                    <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/mno_content_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="mno content and action initial text" />
-
-                </FrameLayout>
-
+                    app:layout_constraintTop_toBottomOf="@+id/mno_content_text"
+                    tools:text="Pay Kes 4,355.00" />
                 <Button
                     android:id="@+id/cancel_button"
                     style="@style/CancelButtonStyle"
@@ -100,7 +128,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.595"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/contentAndAction" />
+                    app:layout_constraintTop_toBottomOf="@+id/pay_button" />
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/icons_layout"
