@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
 import com.interswitchgroup.mobpaylib.model.Mobile;
@@ -65,7 +66,16 @@ public class MobilePaymentFragment extends DaggerFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(LOG_TAG, "Spinner item was selected");
-                fragmentMobilePaymentBinding.mnoContentText.setText(" Spinner item " + position + " was selected " + namesAndImagesList.get(position).first);
+                String paybill = "";
+                switch (namesAndImagesList.get(position).first) {
+                    case EAZZYPAY:
+                        paybill = MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill();
+                        break;
+                    case MPESA:
+                        paybill = MobPay.getMerchantConfigResponse().getConfig().getMpesaPaybill();
+                        break;
+                }
+                fragmentMobilePaymentBinding.mnoContentText.setText(paybill);
                 MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
             }
 

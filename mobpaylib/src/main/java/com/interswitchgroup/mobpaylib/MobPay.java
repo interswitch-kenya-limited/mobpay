@@ -6,9 +6,11 @@ import android.util.Log;
 
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
+import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.service.CardPayment;
+import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
@@ -39,13 +41,14 @@ import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
     private static MobPay singletonMobPayInstance;
-    private final String LOG_TAG = this.getClass().getSimpleName();
+    private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
     private String clientSecret;
     private Retrofit retrofit;
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
     private static List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
+    private static MerchantConfigResponse merchantConfigResponse = new MerchantConfigResponse();
 
     private MobPay() {
     }
@@ -54,6 +57,20 @@ public class MobPay implements Serializable {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
+            Disposable subscribe = singletonMobPayInstance.retrofit.create(MerchantConfig.class).fetchMerchantConfig()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<MerchantConfigResponse>() {
+                        @Override
+                        public void accept(MerchantConfigResponse merchantConfigResponse) throws Exception {
+                            MobPay.merchantConfigResponse = merchantConfigResponse;
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            Log.i(LOG_TAG, "Could not fetch merchant config: " + throwable.getMessage());
+                        }
+                    });
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
         }
@@ -80,6 +97,10 @@ public class MobPay implements Serializable {
 
     public static List<PaymentChannel> getChannels() {
         return channels;
+    }
+
+    public static MerchantConfigResponse getMerchantConfigResponse() {
+        return merchantConfigResponse;
     }
 
     /**
