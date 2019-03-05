@@ -4,9 +4,6 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.BulletSpan;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,21 +64,11 @@ public class MobilePaymentFragment extends DaggerFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String mno = namesAndImagesList.get(position).first.value;
-                CharSequence t1 = getText(R.string.push_payment_instruction_1);
-                SpannableString s1 = new SpannableString(t1);
-                s1.setSpan(new BulletSpan(15), 0, t1.length(), 0);
-                String t2 = getString(R.string.push_payment_instruction_2);
+//                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
+//                t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                String t2 = getString(R.string.push_payment_instructions);
                 t2 = String.format(t2, mno);
-                SpannableString s2 = new SpannableString(t2);
-                s2.setSpan(new BulletSpan(15), 0, t2.length(), 0);
-                String t3 = getString(R.string.push_payment_instruction_3);
-                t3 = String.format(t3, mno);
-                SpannableString s3 = new SpannableString(t3);
-                s3.setSpan(new BulletSpan(15), 0, t3.length(), 0);
-                CharSequence t4 = getText(R.string.push_payment_instruction_4);
-                SpannableString s4 = new SpannableString(t4);
-                s4.setSpan(new BulletSpan(15), 0, t4.length(), 0);
-                fragmentMobilePaymentBinding.mnoContentText.setText(TextUtils.concat(s1, s2, s3, s4));
+                fragmentMobilePaymentBinding.mnoContentText.setText(t2);
                 MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
             }
 
