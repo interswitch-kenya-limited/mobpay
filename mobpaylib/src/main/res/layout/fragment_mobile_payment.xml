@@ -5,6 +5,7 @@
 
     <data>
 
+        <import type="com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobileVm" />
         <variable
             name="mobileVm"
             type="com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobileVm" />
@@ -14,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/card_scrollview"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
@@ -53,13 +54,41 @@
 
                 <Spinner
                     android:id="@+id/spinner"
-                    android:layout_width="255dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/image_spinner"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title" />
 
+                <RadioGroup
+                    android:id="@+id/payMethodRadioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner">
+
+                    <RadioButton
+                        android:id="@+id/radioButton2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="@{mobileVm.paymentMethod.equals(MobileVm.EXPRESS)}"
+                        android:onClick="@{()->mobileVm.setPaymentMethod(MobileVm.EXPRESS)}"
+                        android:text="Express checkout" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="@{mobileVm.paymentMethod.equals(MobileVm.PAYBIll)}"
+                        android:onClick="@{()->mobileVm.setPaymentMethod(MobileVm.PAYBIll)}"
+                        android:text="Paybill" />
+                </RadioGroup>
 
                 <EditText
                     android:id="@+id/mobile"
@@ -73,7 +102,7 @@
                     android:maxLength="10"
                     android:text="@={mobileVm.mobile.phone}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/spinner"
+                    app:layout_constraintTop_toBottomOf="@+id/payMethodRadioGroup"
                     tools:ignore="Autofill,HardcodedText"
                     tools:text="0713365209" />
 
@@ -193,7 +222,7 @@
                 </android.support.constraint.ConstraintLayout>
 
             </android.support.constraint.ConstraintLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
         <include
             android:id="@+id/footer"

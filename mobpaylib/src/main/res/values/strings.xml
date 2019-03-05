@@ -20,10 +20,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_mno_title_hint">Select your mobile payment option</string>
     <string name="push_payment_instructions">
-        &#8226;\t Click on the Pay button to generate a payment request on your phone
-        \n&#8226;\t Enter your %1$s PIN when prompted on your phone to complete the payment
-        \n&#8226;\t You will get your receipt from %1$s and an SMS confirmation from Interswitch
-        \n&#8226;\t Didn\'t get the prompt on your phone? Display payment instructions
+        &#8226;\t Click on the Pay button
+        \n&#8226;\t Enter your %1$s PIN when prompted on your phone
+        \n\nDidn\'t get the prompt on your phone? Choose paybill mode and follow the instructions
     </string>
     <string name="eazzypay_manual_payment_instructions">
         &#8226;\t On your Equitel menu, select My Money and then select Eazzy Pay
@@ -33,16 +32,15 @@
         \n&#8226;\t Enter the EXACT amount (%3$s)
         \n&#8226;\t Enter your Equitel M-Banking PIN
         \n&#8226;\t Confirm details and complete the transaction
-        \n&#8226;\t Once you receive a confirmation SMS from Equitel, click on the Pay button below
+        \n\nOnce you receive a confirmation SMS from Equitel, click on the Pay button below
     </string>
     <string name="mpesa_manual_payment_instructions">
-        &#8226;\t Go to the M-PESA menu on your phone
-        \n&#8226;\t Select Lipa na M-PESA
-        \n&#8226;\t Select PayBill Option
-        \n&#8226;\t Enter Business Number:%1$s
-        \n&#8226;\t Enter %2$s as the Account Number
-        \n&#8226;\t Enter the EXACT amount (%3$s)
-        \n&#8226;\t Enter your PIN and press OK to send
-        \n&#8226;\t Complete your transaction on your phone
+        Go to M-PESA on your phone
+        \n&#8226;\t Select Lipa na Mpesa option
+        \n&#8226;\t Select Pay Bill option
+        \n&#8226;\t Enter Business no. %1$s
+        \n&#8226;\t Enter Account no. %2$s
+        \n&#8226;\t Enter the Amount %3$s
+        \n&#8226;\t Enter your M-PESA PIN and send
     </string>
 </resources>

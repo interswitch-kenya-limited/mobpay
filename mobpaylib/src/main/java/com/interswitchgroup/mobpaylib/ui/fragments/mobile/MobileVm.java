@@ -8,12 +8,23 @@ import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 import javax.inject.Inject;
 
 public class MobileVm extends ViewModel {
+    public static String EXPRESS = "Express";
+    public static String PAYBIll = "Paybill";
+    private String paymentMethod = EXPRESS;
     private PaymentVm paymentVm;
     private Mobile mobile;
 
     @Inject
     public MobileVm() {
         this.mobile = new Mobile();
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public PaymentVm getPaymentVm() {
