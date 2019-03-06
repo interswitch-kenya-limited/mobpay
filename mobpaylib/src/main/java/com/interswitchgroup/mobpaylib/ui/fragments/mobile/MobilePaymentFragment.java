@@ -47,6 +47,7 @@ public class MobilePaymentFragment extends DaggerFragment {
     ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
     private final List<Pair<Mobile.Type, Integer>> namesAndImagesList = new ArrayList<>();
+    private FragmentMobilePaymentBinding fragmentMobilePaymentBinding;
 
 
     public MobilePaymentFragment() {
@@ -87,12 +88,11 @@ public class MobilePaymentFragment extends DaggerFragment {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Retry", new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Try Paybill", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getContext(), "Trying again", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
-                        mobileVm.makePayment();
+                        fragmentMobilePaymentBinding.paybill.setChecked(true);
                     }
                 });
                 dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Quit", new DialogInterface.OnClickListener() {
@@ -155,7 +155,7 @@ public class MobilePaymentFragment extends DaggerFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final FragmentMobilePaymentBinding fragmentMobilePaymentBinding = FragmentMobilePaymentBinding.inflate(inflater, container, false);
+        fragmentMobilePaymentBinding = FragmentMobilePaymentBinding.inflate(inflater, container, false);
         fragmentMobilePaymentBinding.setMobileVm(mobileVm);
         fragmentMobilePaymentBinding.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +172,9 @@ public class MobilePaymentFragment extends DaggerFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String t2 = getInstructionText(position, mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.EXPRESS));
                 fragmentMobilePaymentBinding.mnoContentText.setText(t2);
-                MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
+                if (mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.EXPRESS)) {
+                    MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
+                }
             }
 
             @Override
@@ -188,6 +190,7 @@ public class MobilePaymentFragment extends DaggerFragment {
                     t2 = getInstructionText(spin.getSelectedItemPosition(), true);
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.VISIBLE);
                     fragmentMobilePaymentBinding.payButton.setText("Pay " + mobileVm.getPaymentVm().getPayment().getCurrency() + " " + mobileVm.getPaymentVm().getPayment().getAmountString());
+                    mobileVm.getMobile().refreshValidity();
                     fragmentMobilePaymentBinding.payButton.setEnabled(mobileVm.getMobile().valid);
                 } else if (checkedId == R.id.paybill) {
                     t2 = getInstructionText(spin.getSelectedItemPosition(), false);
