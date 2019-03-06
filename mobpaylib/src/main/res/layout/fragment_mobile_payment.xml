@@ -72,7 +72,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/spinner">
 
                     <RadioButton
-                        android:id="@+id/radioButton2"
+                        android:id="@+id/express"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -81,7 +81,7 @@
                         android:text="Express checkout" />
 
                     <RadioButton
-                        android:id="@+id/radioButton"
+                        android:id="@+id/paybill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

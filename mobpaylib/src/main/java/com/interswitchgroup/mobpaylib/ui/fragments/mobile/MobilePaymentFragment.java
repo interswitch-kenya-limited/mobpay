@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
 import com.interswitchgroup.mobpaylib.model.Mobile;
@@ -25,6 +27,9 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
+import static com.interswitchgroup.mobpaylib.model.Mobile.Type.EAZZYPAY;
+import static com.interswitchgroup.mobpaylib.model.Mobile.Type.MPESA;
+
 public class MobilePaymentFragment extends DaggerFragment {
 
     private static final String LOG_TAG = MobilePaymentFragment.class.getSimpleName();
@@ -32,6 +37,8 @@ public class MobilePaymentFragment extends DaggerFragment {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
+    private final List<Pair<Mobile.Type, Integer>> namesAndImagesList = new ArrayList<>();
+
 
     public MobilePaymentFragment() {
         // Required empty public constructor
@@ -56,18 +63,13 @@ public class MobilePaymentFragment extends DaggerFragment {
             }
         });
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
-        Spinner spin = fragmentMobilePaymentBinding.spinner;
-        final List<Pair<Mobile.Type, Integer>> namesAndImagesList = new ArrayList<>();
-        namesAndImagesList.add(new Pair<>(Mobile.Type.MPESA, R.drawable.mpesa));
-        namesAndImagesList.add(new Pair<>(Mobile.Type.EAZZYPAY, R.drawable.eazzypay));
+        final Spinner spin = fragmentMobilePaymentBinding.spinner;
+        namesAndImagesList.add(new Pair<>(MPESA, R.drawable.mpesa));
+        namesAndImagesList.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String mno = namesAndImagesList.get(position).first.value;
-//                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
-//                t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
-                String t2 = getString(R.string.push_payment_instructions);
-                t2 = String.format(t2, mno);
+                String t2 = getInstructionText(position, mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.EXPRESS));
                 fragmentMobilePaymentBinding.mnoContentText.setText(t2);
                 MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
             }
@@ -77,9 +79,48 @@ public class MobilePaymentFragment extends DaggerFragment {
 
             }
         });
-
+        fragmentMobilePaymentBinding.payMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                String t2 = "";
+                if (checkedId == R.id.express) {
+                    t2 = getInstructionText(spin.getSelectedItemPosition(), true);
+                    fragmentMobilePaymentBinding.mobile.setVisibility(View.VISIBLE);
+                    fragmentMobilePaymentBinding.payButton.setText("Pay " + mobileVm.getPaymentVm().getPayment().getCurrency() + " " + mobileVm.getPaymentVm().getPayment().getAmountString());
+                    fragmentMobilePaymentBinding.payButton.setEnabled(mobileVm.getMobile().valid);
+                } else if (checkedId == R.id.paybill) {
+                    t2 = getInstructionText(spin.getSelectedItemPosition(), false);
+                    fragmentMobilePaymentBinding.mobile.setVisibility(View.GONE);
+                    fragmentMobilePaymentBinding.payButton.setText("Confirm Payment");
+                    fragmentMobilePaymentBinding.payButton.setEnabled(true);
+                }
+                fragmentMobilePaymentBinding.mnoContentText.setText(t2);
+            }
+        });
         ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(MobilePaymentFragment.this.getActivity().getApplicationContext(), namesAndImagesList);
         spin.setAdapter(imageSpinnerAdapter);
         return fragmentMobilePaymentBinding.getRoot();
+    }
+
+    private String getInstructionText(int provider, boolean express) {
+        String t2 = "";
+        if (express) {
+            String mno = namesAndImagesList.get(provider).first.value;
+//                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
+            t2 = getString(R.string.push_payment_instructions);
+            t2 = String.format(t2, mno);
+        } else {
+            //
+            switch (namesAndImagesList.get(provider).first) {
+                case MPESA:
+                    t2 = getString(R.string.mpesa_manual_payment_instructions);
+                    break;
+                case EAZZYPAY:
+                    t2 = getString(R.string.eazzypay_manual_payment_instructions);
+                    break;
+            }
+            t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+        }
+        return t2;
     }
 }
