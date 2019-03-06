@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int selectedIndex : paymentChannels.getSelectedIndicies()) {
                     selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
                 }
-                Mobile mobile = new Mobile("0713365209", Mobile.Type.MPESA);
+                Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
                 MobPay.getInstance(clientId, clientSecret).makeMobileMoneyPayment(mobile, merchant,
                         payment,
                         customer,

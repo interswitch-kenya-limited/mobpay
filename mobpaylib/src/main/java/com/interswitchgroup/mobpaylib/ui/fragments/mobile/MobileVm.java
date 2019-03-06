@@ -3,6 +3,7 @@ package com.interswitchgroup.mobpaylib.ui.fragments.mobile;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 
@@ -15,6 +16,8 @@ public class MobileVm extends ViewModel {
     private String paymentMethod = EXPRESS;
     private PaymentVm paymentVm;
     private Mobile mobile;
+    private TransactionFailureCallback expressTransactionFailureCallback;
+    private TransactionFailureCallback paybillTransactionFailureCallback;
 
     @Inject
     public MobileVm() {
@@ -45,12 +48,20 @@ public class MobileVm extends ViewModel {
         this.mobile = mobile;
     }
 
+    public void setExpressTransactionFailureCallback(TransactionFailureCallback expressTransactionFailureCallback) {
+        this.expressTransactionFailureCallback = expressTransactionFailureCallback;
+    }
+
+    public void setPaybillTransactionFailureCallback(TransactionFailureCallback paybillTransactionFailureCallback) {
+        this.paybillTransactionFailureCallback = paybillTransactionFailureCallback;
+    }
+
     public void makePayment() {
         if (paymentMethod.equalsIgnoreCase(EXPRESS)) {
-            paymentVm.makeMobilePayment(mobile);
+            paymentVm.makeMobilePayment(mobile, expressTransactionFailureCallback);
         } else if (paymentMethod.equalsIgnoreCase(PAYBIll)) {
             Log.e(LOG_TAG, "Not working yet");
-//            paymentVm.confirmPayment(paymentVm.getPayment().getOrderId(), );
+            paymentVm.confirmMobilePayment(paymentVm.getPayment().getOrderId(), paybillTransactionFailureCallback);
         }
     }
 }

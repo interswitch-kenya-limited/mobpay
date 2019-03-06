@@ -87,7 +87,7 @@ public class PaymentVm extends ViewModel {
                 onFailure);
     }
 
-    public void makeMobilePayment(Mobile mobile) {
+    public void makeMobilePayment(Mobile mobile, TransactionFailureCallback expressTransactionFailureCallback) {
         loading.set(true);
         mobPay.makeMobileMoneyPayment(
                 mobile,
@@ -95,6 +95,14 @@ public class PaymentVm extends ViewModel {
                 payment,
                 customer,
                 onSuccess,
-                onFailure);
+                expressTransactionFailureCallback);
+    }
+
+    public void confirmMobilePayment(String orderId, TransactionFailureCallback paybillTransactionFailureCallback) {
+        loading.set(true);
+        mobPay.confirmMobilePayment(
+                orderId,
+                onSuccess,
+                paybillTransactionFailureCallback);
     }
 }

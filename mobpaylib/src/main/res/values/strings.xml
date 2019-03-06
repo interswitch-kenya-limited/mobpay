@@ -25,8 +25,8 @@
         \n\nDidn\'t get the prompt on your phone? Choose paybill mode and follow the instructions
     </string>
     <string name="eazzypay_manual_payment_instructions">
-        &#8226;\t On your Equitel menu, select My Money and then select Eazzy Pay
-        \n&#8226;\t Select Pay bill and select account
+        &#8226;\t Go to Equitel menu and select My Money
+        \n&#8226;\t Select Eazzy Pay, Pay bill then select account
         \n&#8226;\t Enter:%1$s as the Business number
         \n&#8226;\t Enter %2$s as the Account Number
         \n&#8226;\t Enter the EXACT amount (%3$s)
