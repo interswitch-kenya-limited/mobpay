@@ -88,7 +88,7 @@ public class MobilePaymentFragment extends DaggerFragment {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Try Paybill", new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Re-Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -218,12 +218,13 @@ public class MobilePaymentFragment extends DaggerFragment {
             switch (namesAndImagesList.get(provider).first) {
                 case MPESA:
                     t2 = getString(R.string.mpesa_manual_payment_instructions);
+                    t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
                 case EAZZYPAY:
                     t2 = getString(R.string.eazzypay_manual_payment_instructions);
+                    t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
             }
-            t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
         }
         return t2;
     }

@@ -4,7 +4,8 @@
     <color name="enabled_main_button">@color/mobPayColorAccent</color>
     <color name="disabled_main_button">#8000455F</color>
     <color name="mobPayColorPrimary">#fff</color>
-    <color name="mobPayGrayText">#888</color>
+    <!--Mademoni color!-->
+    <color name="mobPayGrayText">#666</color>
     <color name="mobPayGrayButton">#dedede</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>

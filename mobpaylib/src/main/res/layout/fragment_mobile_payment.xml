@@ -58,6 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/image_spinner"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -76,6 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="@color/mobPayGrayText"
                         android:checked="@{mobileVm.paymentMethod.equals(MobileVm.EXPRESS)}"
                         android:onClick="@{()->mobileVm.setPaymentMethod(MobileVm.EXPRESS)}"
                         android:text="Express checkout" />
@@ -85,6 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="@color/mobPayGrayText"
                         android:checked="@{mobileVm.paymentMethod.equals(MobileVm.PAYBIll)}"
                         android:onClick="@{()->mobileVm.setPaymentMethod(MobileVm.PAYBIll)}"
                         android:text="Paybill" />
@@ -93,14 +96,15 @@
                 <EditText
                     android:id="@+id/mobile"
                     style="@style/EditTextStyle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/edit_text_height"
                     android:layout_marginTop="8dp"
                     android:ems="10"
-                    android:hint="0700000000"
+                    android:hint="0712 345 678"
                     android:inputType="phone"
                     android:maxLength="10"
                     android:text="@={mobileVm.mobile.phone}"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/payMethodRadioGroup"
                     tools:ignore="Autofill,HardcodedText"
@@ -108,15 +112,22 @@
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/mno_content_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
+                    android:lineSpacingMultiplier="1.5"
                     android:text="mno content and action initial text"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/mobile"
                     tools:ignore="HardcodedText" />
+                <!---->
+                <!--android:textSize="14sp"-->
+                <!--android:lineSpacingExtra=""-->
 
 
                 <Button

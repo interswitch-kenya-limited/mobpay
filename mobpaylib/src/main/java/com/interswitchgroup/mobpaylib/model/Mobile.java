@@ -85,7 +85,7 @@ public class Mobile extends BaseObservable implements Serializable {
     }
 
     public enum Type {
-        MPESA("M-PESA"), EAZZYPAY("Equitel Eazzy Pay");
+        MPESA("M-PESA"), EAZZYPAY("Eazzy Pay");
         public String value;
 
         Type(String value) {
