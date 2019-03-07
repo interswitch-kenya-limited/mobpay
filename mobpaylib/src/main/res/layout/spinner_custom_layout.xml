@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -17,11 +18,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center|end"
-        android:layout_weight=".4"
-        android:padding="10dp"
-        android:src="@drawable/cvv" />
+        android:layout_width="85dp"
+        android:layout_height="45dp"
+        android:paddingEnd="40dp"
+        android:paddingRight="40dp"
+        android:src="@drawable/cvv"
+        tools:ignore="ContentDescription" />
 
 </LinearLayout>

@@ -19,13 +19,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_mno_title_hint">Select your mobile payment option</string>
-    <string name="push_payment_instructions">
-        &#8226;\t Click on the Pay button
+    <string name="push_payment_instructions">&#8226;\t Enter your <b>%1$s</b> number above
+        \n&#8226;\t Click on the Pay button
         \n&#8226;\t Enter your <b>%1$s PIN</b> when prompted on your phone
         \nDidn\'t get the prompt on your phone? Choose paybill and follow the instructions
     </string>
-    <string name="eazzypay_manual_payment_instructions">
-        &#8226;\t Go to Equitel menu and select My Money
+    <string name="eazzypay_manual_payment_instructions">&#8226;\t Go to Equitel menu and select My Money
         \n&#8226;\t Select Eazzy Pay, Pay Bill then select account
         \n&#8226;\t Enter:<b>%1$s</b> as the <b>business number</b>
         \n&#8226;\t Enter <b>%2$s</b> as the <b>account number</b>
@@ -34,8 +33,7 @@
         \n&#8226;\t Confirm details and complete the transaction
         \nOnce you receive a confirmation SMS from Equitel, click on the confirm payment button below
     </string>
-    <string name="mpesa_manual_payment_instructions">
-        Go to M-PESA on your phone
+    <string name="mpesa_manual_payment_instructions">Go to M-PESA on your phone
         \n&#8226;\t Select Lipa na Mpesa option
         \n&#8226;\t Select Pay Bill option
         \n&#8226;\t Enter <b>business no. %1$s</b>

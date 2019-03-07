@@ -148,7 +148,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                         .setCancelable(false)
                         .create();
                 dialog.setCanceledOnTouchOutside(false);
-                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Retry", new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Back", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(MobPayActivity.this, "Try again", Toast.LENGTH_SHORT).show();

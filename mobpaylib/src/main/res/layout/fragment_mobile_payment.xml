@@ -57,7 +57,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/image_spinner"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title" />
@@ -177,58 +176,28 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="64dp"
                         android:layout_marginLeft="64dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/imageView4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/verve_safe_token"
-                        tools:ignore="ContentDescription" />
-
-                    <ImageView
-                        android:id="@+id/imageView4"
-                        android:layout_width="@dimen/mobpay_icons_height"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/imageView5"
-                        app:layout_constraintStart_toEndOf="@id/imageView3"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/verified_by_visa"
-                        tools:ignore="ContentDescription" />
-
-                    <ImageView
-                        android:id="@+id/imageView5"
-                        android:layout_width="@dimen/mobpay_icons_height"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginRight="4dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/imageView6"
-                        app:layout_constraintStart_toEndOf="@id/imageView4"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/mastercard_securecode"
+                        app:srcCompat="@drawable/gray_mpesa"
                         tools:ignore="ContentDescription" />
 
                     <ImageView
                         android:id="@+id/imageView6"
                         android:layout_width="@dimen/mobpay_icons_height"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginLeft="4dp"
                         android:layout_marginEnd="64dp"
                         android:layout_marginRight="64dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/imageView5"
+                        app:layout_constraintStart_toEndOf="@id/imageView3"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/pci_dss_certified"
+                        app:srcCompat="@drawable/gray_eazzypay"
                         tools:ignore="ContentDescription" />
                 </android.support.constraint.ConstraintLayout>
 

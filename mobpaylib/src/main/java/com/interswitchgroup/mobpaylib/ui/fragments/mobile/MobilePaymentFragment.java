@@ -3,6 +3,7 @@ package com.interswitchgroup.mobpaylib.ui.fragments.mobile;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -165,6 +166,11 @@ public class MobilePaymentFragment extends DaggerFragment {
         });
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
         final Spinner spin = fragmentMobilePaymentBinding.spinner;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            spin.setBackground(getResources().getDrawable(R.drawable.spinner_new));
+        } else {
+            spin.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
+        }
         namesAndImagesList.add(new Pair<>(MPESA, R.drawable.mpesa));
         namesAndImagesList.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
