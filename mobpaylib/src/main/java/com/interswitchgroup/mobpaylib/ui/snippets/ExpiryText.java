@@ -88,16 +88,16 @@ public class ExpiryText extends AppCompatEditText {
                 return;
             }
             if (textString.length() < 5) {
-                setBackgroundResource(R.drawable.probably_valid_textbox);
+                setBackgroundResource(R.drawable.textbox_probably_valid);
             } else if (textString.length() == 5) {
                 if (Card.isExpiryValid(textString)) {
-                    setBackgroundResource(R.drawable.valid_textbox);
+                    setBackgroundResource(R.drawable.textbox_valid);
                 } else {
-                    setBackgroundResource(R.drawable.error_textbox);
+                    setBackgroundResource(R.drawable.textbox_invalid);
                 }
             }
         } else {
-            setBackgroundResource(R.drawable.edit_text_basic);
+            setBackgroundResource(R.drawable.textbox_neutral);
         }
     }
 

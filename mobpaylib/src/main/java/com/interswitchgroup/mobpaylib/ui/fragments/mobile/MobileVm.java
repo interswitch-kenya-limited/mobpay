@@ -13,6 +13,7 @@ public class MobileVm extends ViewModel {
     private static String LOG_TAG = MobileVm.class.getSimpleName();
     public static String EXPRESS = "Express";
     public static String PAYBIll = "Paybill";
+    public String providerHint = "0700 000 000";
     private String paymentMethod = EXPRESS;
     private PaymentVm paymentVm;
     private Mobile mobile;

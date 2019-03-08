@@ -10,8 +10,8 @@
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="edit_text_default_border_color">#D3D3D3</color>
-    <color name="mobpayError">#FF1744</color>
-    <color name="mobpaySuccess">#009688</color>
-    <color name="edit_text_probably_valid_border_color">#2979FF</color>
+    <color name="mobpayError">#B71C1C</color>
+    <color name="mobpaySuccess">#4CAF50</color>
+    <color name="edit_text_probably_valid_border_color">#3F51B5</color>
     <color name="translucent_gray">#CC555555</color>
 </resources>

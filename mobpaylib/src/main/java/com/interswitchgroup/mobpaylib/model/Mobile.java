@@ -12,7 +12,8 @@ public class Mobile extends BaseObservable implements Serializable {
     private String phone;
     private Type type;
     private String provider;
-    public boolean valid = true;
+    private boolean mobileFullyValid;
+    private boolean mobilePartiallyValid;
     private Pattern pattern;
 
     public Mobile(String phone, Type type) {
@@ -25,7 +26,8 @@ public class Mobile extends BaseObservable implements Serializable {
     }
 
     public void refreshValidity() {
-        setValid(this.pattern != null && this.phone != null && this.pattern.matcher(this.phone).matches());
+        setMobilePartiallyValid(this.pattern != null && this.phone != null && this.pattern.matcher(this.phone).matches());
+        setMobileFullyValid(this.mobilePartiallyValid && phone.length() == 10);
     }
 
     public String getPhone() {
@@ -45,11 +47,11 @@ public class Mobile extends BaseObservable implements Serializable {
         switch (type) {
             case MPESA:
                 this.provider = "702";
-                this.setPattern(Pattern.compile("^(?:254|\\+254|0)?(7(?:(?:[12][0-9])|(?:0[0-8])|(9[0-2]))[0-9]{6})$"));
+                this.setPattern(Pattern.compile("^(\\+?254|0)[7]([0-2][0-9]|[9][0-3])[0-9]{0,6}$"));
                 break;
             case EAZZYPAY:
                 this.provider = "708";
-                this.setPattern(Pattern.compile("^(?:254|\\+254|0)?(76[34][0-9]{6})$"));
+                this.setPattern(Pattern.compile("^(?:254|\\+254|0)?76[34]([0-9]{0,6})$"));
                 break;
             default:
                 throw new IllegalArgumentException("The type selected does not have a corresponding provider set");
@@ -66,13 +68,23 @@ public class Mobile extends BaseObservable implements Serializable {
     }
 
     @Bindable
-    public boolean getValid() {
-        return valid;
+    public boolean isMobileFullyValid() {
+        return mobileFullyValid;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
-        notifyPropertyChanged(BR.valid);
+    public void setMobileFullyValid(boolean mobileFullyValid) {
+        this.mobileFullyValid = mobileFullyValid;
+        notifyPropertyChanged(BR.mobileFullyValid);
+    }
+
+    @Bindable
+    public boolean isMobilePartiallyValid() {
+        return mobilePartiallyValid;
+    }
+
+    public void setMobilePartiallyValid(boolean mobilePartiallyValid) {
+        this.mobilePartiallyValid = mobilePartiallyValid;
+        notifyPropertyChanged(BR.mobilePartiallyValid);
     }
 
     public Pattern getPattern() {
