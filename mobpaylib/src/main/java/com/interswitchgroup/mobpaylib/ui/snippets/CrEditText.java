@@ -73,16 +73,16 @@ public class CrEditText extends AppCompatEditText {
             mCurrentDrawableResId = mDrawableResId;
             String pan = text.toString().replaceAll("[^\\d]", "");
             if (Card.isPanValid(pan)) {
-                setBackgroundResource(R.drawable.valid_textbox);
+                setBackgroundResource(R.drawable.textbox_valid);
             } else {
-                setBackgroundResource(R.drawable.probably_valid_textbox);
+                setBackgroundResource(R.drawable.textbox_probably_valid);
             }
         } else {
             mCurrentDrawableResId = R.drawable.creditcard;
             if (textWithoutSeparator.length() > 0) {
-                setBackgroundResource(R.drawable.error_textbox);
+                setBackgroundResource(R.drawable.textbox_invalid);
             } else {
-                setBackgroundResource(R.drawable.edit_text_basic);
+                setBackgroundResource(R.drawable.textbox_neutral);
             }
         }
         addDrawable();

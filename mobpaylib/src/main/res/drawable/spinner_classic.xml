@@ -1,7 +1,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <layer-list>
-            <item android:drawable="@drawable/edit_text_basic" />
+            <item android:drawable="@drawable/textbox_neutral" />
             <!--Works for kitkat but causes lollipop and above to crash-->
             <item android:right="10dp">
                 <bitmap android:gravity="center_vertical|right" android:src="@drawable/ic_keyboard_arrow_down_gray_24dp" />

@@ -24,7 +24,7 @@ public class Card extends BaseObservable implements Serializable {
     private String fullExpiry;
     public static final Map<Type, Integer> TYPE_DRAWABLE_MAP;
     public static final Map<Pattern, Type> ACCEPTED_CARD_PATTERN_TYPES;
-    public boolean valid;
+    private boolean cardFullyValid;
 
     static {
         Map<Pattern, Type> aMap = new HashMap<>();
@@ -52,11 +52,11 @@ public class Card extends BaseObservable implements Serializable {
         this.cvv = cvv;
         this.expiryYear = expiryYear;
         this.expiryMonth = expiryMonth;
-        this.valid = isCardValid();
+        this.cardFullyValid = isCardValid();
     }
 
     public Card() {
-        this.valid = isCardValid();
+        this.cardFullyValid = isCardValid();
     }
 
     // Returns a sanitized string without any non-numeric characters
@@ -66,7 +66,7 @@ public class Card extends BaseObservable implements Serializable {
 
     public void setPan(String pan) {
         this.pan = pan != null ? pan.replaceAll("[^\\d]", "") : pan;
-        setValid(isCardValid());
+        setCardFullyValid(isCardValid());
     }
 
     public String getCvv() {
@@ -75,7 +75,7 @@ public class Card extends BaseObservable implements Serializable {
 
     public void setCvv(String cvv) {
         this.cvv = cvv;
-        setValid(isCardValid());
+        setCardFullyValid(isCardValid());
     }
 
     public String getExpiryYear() {
@@ -84,7 +84,7 @@ public class Card extends BaseObservable implements Serializable {
 
     public void setExpiryYear(String expiryYear) {
         this.expiryYear = expiryYear;
-        setValid(isCardValid());
+        setCardFullyValid(isCardValid());
     }
 
     public String getExpiryMonth() {
@@ -93,7 +93,7 @@ public class Card extends BaseObservable implements Serializable {
 
     public void setExpiryMonth(String expiryMonth) {
         this.expiryMonth = expiryMonth;
-        setValid(isCardValid());
+        setCardFullyValid(isCardValid());
     }
 
     public String getFullExpiry() {
@@ -112,17 +112,17 @@ public class Card extends BaseObservable implements Serializable {
             }
         }
         this.fullExpiry = fullExpiry;
-        setValid(isCardValid());
+        setCardFullyValid(isCardValid());
     }
 
     @Bindable
-    public boolean getValid() {
-        return valid;
+    public boolean getCardFullyValid() {
+        return cardFullyValid;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
-        notifyPropertyChanged(BR.valid);
+    public void setCardFullyValid(boolean cardFullyValid) {
+        this.cardFullyValid = cardFullyValid;
+        notifyPropertyChanged(BR.cardFullyValid);
     }
 
     public static Type getType(String cardNumber) {

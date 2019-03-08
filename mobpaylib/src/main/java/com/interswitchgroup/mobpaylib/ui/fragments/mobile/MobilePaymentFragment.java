@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,7 +91,7 @@ public class MobilePaymentFragment extends DaggerFragment {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Re-Confirm", new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Try Paybill", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -134,7 +136,7 @@ public class MobilePaymentFragment extends DaggerFragment {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Retry", new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Re-Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getContext(), "Trying again", Toast.LENGTH_SHORT).show();
@@ -178,9 +180,16 @@ public class MobilePaymentFragment extends DaggerFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String t2 = getInstructionText(position, mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.EXPRESS));
                 fragmentMobilePaymentBinding.mnoContentText.setText(t2);
-                if (mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.EXPRESS)) {
-                    MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
+                MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
+                switch (namesAndImagesList.get(position).first) {
+                    case EAZZYPAY:
+                        fragmentMobilePaymentBinding.mobile.setHint("0763 000 000");
+                        break;
+                    case MPESA:
+                        fragmentMobilePaymentBinding.mobile.setHint("0712 000 000");
+                        break;
                 }
+                changeMobileValidityBackground();
             }
 
             @Override
@@ -197,19 +206,50 @@ public class MobilePaymentFragment extends DaggerFragment {
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.VISIBLE);
                     fragmentMobilePaymentBinding.payButton.setText("Pay " + mobileVm.getPaymentVm().getPayment().getCurrency() + " " + mobileVm.getPaymentVm().getPayment().getAmountString());
                     mobileVm.getMobile().refreshValidity();
-                    fragmentMobilePaymentBinding.payButton.setEnabled(mobileVm.getMobile().valid);
+                    fragmentMobilePaymentBinding.payButton.setEnabled(mobileVm.getMobile().isMobileFullyValid());
                 } else if (checkedId == R.id.paybill) {
                     t2 = getInstructionText(spin.getSelectedItemPosition(), false);
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.GONE);
                     fragmentMobilePaymentBinding.payButton.setText("Confirm Payment");
                     fragmentMobilePaymentBinding.payButton.setEnabled(true);
                 }
+                fragmentMobilePaymentBinding.cardScrollview.scrollTo(0, 0);
                 fragmentMobilePaymentBinding.mnoContentText.setText(t2);
+            }
+        });
+        fragmentMobilePaymentBinding.mobile.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                changeMobileValidityBackground();
             }
         });
         ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(getContext(), namesAndImagesList);
         spin.setAdapter(imageSpinnerAdapter);
         return fragmentMobilePaymentBinding.getRoot();
+    }
+
+    private void changeMobileValidityBackground() {
+        if (mobileVm.getMobile().isMobileFullyValid()) {
+            fragmentMobilePaymentBinding.mobile.setBackground(getResources().getDrawable(R.drawable.textbox_valid));
+        } else if (mobileVm.getMobile().isMobilePartiallyValid()) {
+            fragmentMobilePaymentBinding.mobile.setBackground(getResources().getDrawable(R.drawable.textbox_probably_valid));
+        } else {
+            if (fragmentMobilePaymentBinding.mobile.getText().length() > 3) {
+                fragmentMobilePaymentBinding.mobile.setBackground(getResources().getDrawable(R.drawable.textbox_invalid));
+            } else {
+                fragmentMobilePaymentBinding.mobile.setBackground(getResources().getDrawable(R.drawable.textbox_neutral));
+            }
+        }
     }
 
     private String getInstructionText(int provider, boolean express) {
