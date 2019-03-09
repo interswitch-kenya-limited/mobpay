@@ -202,12 +202,14 @@ public class MobilePaymentFragment extends DaggerFragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 String t2 = "";
                 if (checkedId == R.id.express) {
+                    mobileVm.setPaymentMethod(MobileVm.EXPRESS);// Redundant because of binding but necessary when switching programmatically
                     t2 = getInstructionText(spin.getSelectedItemPosition(), true);
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.VISIBLE);
                     fragmentMobilePaymentBinding.payButton.setText("Pay " + mobileVm.getPaymentVm().getPayment().getCurrency() + " " + mobileVm.getPaymentVm().getPayment().getAmountString());
                     mobileVm.getMobile().refreshValidity();
                     fragmentMobilePaymentBinding.payButton.setEnabled(mobileVm.getMobile().isMobileFullyValid());
                 } else if (checkedId == R.id.paybill) {
+                    mobileVm.setPaymentMethod(MobileVm.PAYBIll);// Redundant because of binding but necessary when switching programmatically
                     t2 = getInstructionText(spin.getSelectedItemPosition(), false);
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.GONE);
                     fragmentMobilePaymentBinding.payButton.setText("Confirm Payment");
