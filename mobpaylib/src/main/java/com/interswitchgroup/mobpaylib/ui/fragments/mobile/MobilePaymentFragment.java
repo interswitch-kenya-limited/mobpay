@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +48,7 @@ public class MobilePaymentFragment extends DaggerFragment {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
-    private final List<Pair<Mobile.Type, Integer>> namesAndImagesList = new ArrayList<>();
+    private final List<Pair<Mobile.Type, Integer>> providereEnumLogoPairs = new ArrayList<>();
     private FragmentMobilePaymentBinding fragmentMobilePaymentBinding;
 
 
@@ -167,21 +166,20 @@ public class MobilePaymentFragment extends DaggerFragment {
             }
         });
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
-        final Spinner spin = fragmentMobilePaymentBinding.spinner;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            spin.setBackground(getResources().getDrawable(R.drawable.spinner_new));
+            fragmentMobilePaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_new));
         } else {
-            spin.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
+            fragmentMobilePaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
-        namesAndImagesList.add(new Pair<>(MPESA, R.drawable.mpesa));
-        namesAndImagesList.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
-        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        providereEnumLogoPairs.add(new Pair<>(MPESA, R.drawable.mpesa));
+        providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
+        fragmentMobilePaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String t2 = getInstructionText(position, mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.EXPRESS));
                 fragmentMobilePaymentBinding.mnoContentText.setText(t2);
-                MobilePaymentFragment.this.mobileVm.getMobile().setType(namesAndImagesList.get(position).first);
-                switch (namesAndImagesList.get(position).first) {
+                MobilePaymentFragment.this.mobileVm.getMobile().setType(providereEnumLogoPairs.get(position).first);
+                switch (providereEnumLogoPairs.get(position).first) {
                     case EAZZYPAY:
                         fragmentMobilePaymentBinding.mobile.setHint("0763 000 000");
                         break;
@@ -190,6 +188,11 @@ public class MobilePaymentFragment extends DaggerFragment {
                         break;
                 }
                 changeMobileValidityBackground();
+                if (mobileVm.getPaymentMethod().equalsIgnoreCase(MobileVm.PAYBIll)) {
+                    // Button should ignore mobile validity if method is express
+                    fragmentMobilePaymentBinding.payButton.setEnabled(true);
+                    mobileVm.getMobile().setMobileFullyValid(true);
+                }
             }
 
             @Override
@@ -203,14 +206,14 @@ public class MobilePaymentFragment extends DaggerFragment {
                 String t2 = "";
                 if (checkedId == R.id.express) {
                     mobileVm.setPaymentMethod(MobileVm.EXPRESS);// Redundant because of binding but necessary when switching programmatically
-                    t2 = getInstructionText(spin.getSelectedItemPosition(), true);
+                    t2 = getInstructionText(fragmentMobilePaymentBinding.spinner.getSelectedItemPosition(), true);
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.VISIBLE);
                     fragmentMobilePaymentBinding.payButton.setText("Pay " + mobileVm.getPaymentVm().getPayment().getCurrency() + " " + mobileVm.getPaymentVm().getPayment().getAmountString());
                     mobileVm.getMobile().refreshValidity();
                     fragmentMobilePaymentBinding.payButton.setEnabled(mobileVm.getMobile().isMobileFullyValid());
                 } else if (checkedId == R.id.paybill) {
                     mobileVm.setPaymentMethod(MobileVm.PAYBIll);// Redundant because of binding but necessary when switching programmatically
-                    t2 = getInstructionText(spin.getSelectedItemPosition(), false);
+                    t2 = getInstructionText(fragmentMobilePaymentBinding.spinner.getSelectedItemPosition(), false);
                     fragmentMobilePaymentBinding.mobile.setVisibility(View.GONE);
                     fragmentMobilePaymentBinding.payButton.setText("Confirm Payment");
                     fragmentMobilePaymentBinding.payButton.setEnabled(true);
@@ -235,8 +238,8 @@ public class MobilePaymentFragment extends DaggerFragment {
                 changeMobileValidityBackground();
             }
         });
-        ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(getContext(), namesAndImagesList);
-        spin.setAdapter(imageSpinnerAdapter);
+        ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(getContext(), providereEnumLogoPairs);
+        fragmentMobilePaymentBinding.spinner.setAdapter(imageSpinnerAdapter);
         return fragmentMobilePaymentBinding.getRoot();
     }
 
@@ -257,13 +260,13 @@ public class MobilePaymentFragment extends DaggerFragment {
     private String getInstructionText(int provider, boolean express) {
         String t2 = "";
         if (express) {
-            String mno = namesAndImagesList.get(provider).first.value;
+            String mno = providereEnumLogoPairs.get(provider).first.value;
 //                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
             t2 = getString(R.string.push_payment_instructions);
             t2 = String.format(t2, mno);
         } else {
             //
-            switch (namesAndImagesList.get(provider).first) {
+            switch (providereEnumLogoPairs.get(provider).first) {
                 case MPESA:
                     t2 = getString(R.string.mpesa_manual_payment_instructions);
                     t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
