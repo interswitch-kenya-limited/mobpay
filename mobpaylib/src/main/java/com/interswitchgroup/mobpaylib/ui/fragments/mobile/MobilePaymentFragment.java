@@ -171,6 +171,7 @@ public class MobilePaymentFragment extends DaggerFragment {
         } else {
             fragmentMobilePaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
+        providereEnumLogoPairs.clear();
         providereEnumLogoPairs.add(new Pair<>(MPESA, R.drawable.mpesa));
         providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
         fragmentMobilePaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
