@@ -7,7 +7,7 @@ public class CardPaymentResponse implements TransactionResponse{
     private String terminalId;
     private String approvalCode;
     private String token;
-    private String tokenExpiryDate;
+    private String expiry;
     private String panLast4Digits;
     private String orderId;
 
@@ -59,12 +59,12 @@ public class CardPaymentResponse implements TransactionResponse{
         this.token = token;
     }
 
-    public String getTokenExpiryDate() {
-        return tokenExpiryDate;
+    public String getExpiry() {
+        return expiry;
     }
 
-    public void setTokenExpiryDate(String tokenExpiryDate) {
-        this.tokenExpiryDate = tokenExpiryDate;
+    public void setExpiry(String expiry) {
+        this.expiry = expiry;
     }
 
     public String getPanLast4Digits() {

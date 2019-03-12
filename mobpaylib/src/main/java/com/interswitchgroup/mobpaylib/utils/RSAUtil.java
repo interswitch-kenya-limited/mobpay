@@ -2,9 +2,8 @@ package com.interswitchgroup.mobpaylib.utils;
 
 import android.util.Base64;
 
-import com.interswitchgroup.mobpaylib.model.Card;
-
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
@@ -19,11 +18,11 @@ public class RSAUtil {
         return factory.generatePublic(publicKeyspec);
     }
 
-    public static String getAuthDataMerchant(PublicKey publicKey, Card card) throws Exception {
-        String authDataCipher = card.getPan() + "D" + card.getCvv() + "D" + card.getExpiryYear() + card.getExpiryMonth();
+    public static String getAuthDataMerchant(PublicKey publicKey, String panOrToken, String cvv, String expiry, int tokenize) throws Exception {
+        String authDataCipher = panOrToken + "D" + cvv + "D" + expiry + "D" + "" + "D" + tokenize;
         Cipher encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        byte[] authDataBytes = encryptCipher.doFinal(authDataCipher.getBytes("UTF8"));
+        byte[] authDataBytes = encryptCipher.doFinal(authDataCipher.getBytes(StandardCharsets.UTF_8));
         return Base64.encodeToString(authDataBytes, Base64.NO_WRAP);
     }
 }

@@ -3,6 +3,7 @@ package com.interswitchgroup.mobpaylib.ui.fragments.card;
 import android.arch.lifecycle.ViewModel;
 
 import com.interswitchgroup.mobpaylib.model.Card;
+import com.interswitchgroup.mobpaylib.model.CardToken;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,14 @@ public class CardVm extends ViewModel {
     }
 
     public void makePayment() {
-        paymentVm.makeCardPayment(card);
+        switch (cardInfoSource) {
+            case TOKEN:
+                paymentVm.makeCardTokenPayment(new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "123", "2002"));
+                break;
+            case MANUAL_INPUT:
+                paymentVm.makeCardPayment(card);
+                break;
+        }
     }
 
     public enum CardInfoSource {MANUAL_INPUT, TOKEN}

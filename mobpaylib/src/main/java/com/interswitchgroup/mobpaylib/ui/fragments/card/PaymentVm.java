@@ -7,6 +7,7 @@ import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
+import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
@@ -80,6 +81,17 @@ public class PaymentVm extends ViewModel {
         loading.set(true);
         mobPay.makeCardPayment(
                 card,
+                merchant,
+                payment,
+                customer,
+                onSuccess,
+                onFailure);
+    }
+
+    public void makeCardTokenPayment(CardToken cardToken) {
+        loading.set(true);
+        mobPay.makeCardTokenPayment(
+                cardToken,
                 merchant,
                 payment,
                 customer,
