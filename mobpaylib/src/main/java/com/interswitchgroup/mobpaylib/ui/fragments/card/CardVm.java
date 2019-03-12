@@ -9,6 +9,7 @@ import javax.inject.Inject;
 public class CardVm extends ViewModel {
     private PaymentVm paymentVm;
     private Card card;
+    private CardInfoSource cardInfoSource;
 
     @Inject
     public CardVm() {
@@ -31,7 +32,13 @@ public class CardVm extends ViewModel {
         this.card = card;
     }
 
+    public void setCardInfoSource(CardInfoSource cardInfoSource) {
+        this.cardInfoSource = cardInfoSource;
+    }
+
     public void makePayment() {
         paymentVm.makeCardPayment(card);
     }
+
+    public enum CardInfoSource {MANUAL_INPUT, TOKEN}
 }
