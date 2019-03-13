@@ -61,7 +61,7 @@ public class CardPaymentFragment extends DaggerFragment {
             fragmentCardPaymentBinding.cardTokensSpinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
 
-        switch (MobPay.getMerchantConfigResponse().getConfig().getTokenize()) {
+        switch (MobPay.getConfig().getTokenization()) {
             case 0: //Always tokenize,
                 cardVm.getCard().setTokenize(true);//Set card tokenize to true
                 // TODO If merchant passed tokens, show and initialize spinner, hide card input and select saved card radio button
@@ -81,6 +81,7 @@ public class CardPaymentFragment extends DaggerFragment {
                 cardVm.getCard().setTokenize(false);//Set card tokenize to true
                 fragmentCardPaymentBinding.savedCard.setChecked(false);
                 fragmentCardPaymentBinding.newCard.setChecked(true);
+                fragmentCardPaymentBinding.cardTokensSpinner.setVisibility(View.GONE);
                 fragmentCardPaymentBinding.cardSourceRadioGroup.setVisibility(View.GONE);
                 break;
         }
@@ -102,7 +103,12 @@ public class CardPaymentFragment extends DaggerFragment {
                     fragmentCardPaymentBinding.cardNumber.setVisibility(View.GONE);
                     fragmentCardPaymentBinding.cardTokensSpinner.setVisibility(View.VISIBLE);
                     cardVm.setCardInfoSource(CardVm.CardInfoSource.TOKEN);
+                    cardVm.getCard().setTokenize(false);
+                    fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.GONE);
                 } else if (checkedId == R.id.new_card) {
+                    if (MobPay.getConfig().getTokenization() == 1) {// When tokenization is optional show checkbox
+                        fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.VISIBLE);
+                    }
                     fragmentCardPaymentBinding.cardNumber.setVisibility(View.VISIBLE);
                     fragmentCardPaymentBinding.cardTokensSpinner.setVisibility(View.GONE);
                     cardVm.setCardInfoSource(CardVm.CardInfoSource.MANUAL_INPUT);

@@ -88,7 +88,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
-        this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret);
+        this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
         paymentVm.setMobPay(mobPay);
         paymentVm.setCustomer(this.customer);
@@ -206,7 +206,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
 
         final MobPay.PaymentChannel[] allChannels = MobPay.PaymentChannel.class.getEnumConstants();
-        final List<MobPay.PaymentChannel> mobPayChannels = MobPay.getChannels();
+        final List<MobPay.PaymentChannel> mobPayChannels = MobPay.getConfig().getChannels();
         for (MobPay.PaymentChannel paymentChannel : allChannels) {
             mSectionsPagerAdapter.addTab(paymentChannel);
         }

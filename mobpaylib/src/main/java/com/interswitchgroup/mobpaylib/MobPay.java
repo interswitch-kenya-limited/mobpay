@@ -49,13 +49,13 @@ public class MobPay implements Serializable {
     private Retrofit retrofit;
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
-    private static List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
     private static MerchantConfigResponse merchantConfigResponse = new MerchantConfigResponse();
+    private static Config config;
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, PaymentChannel... channels) {
+    public static MobPay getInstance(String clientId, String clientSecret, Config config) {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
@@ -77,9 +77,8 @@ public class MobPay implements Serializable {
             singletonMobPayInstance.clientSecret = clientSecret;
         }
         // If enabled channels was explicitly passed, override default enabled channels
-        if (channels != null && channels.length > 0) {
-            // Set enabled channels by first converting all channels varargs to set to remove duplicates
-            MobPay.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
+        if (config != null) {
+            MobPay.config = config;
         }
         return singletonMobPayInstance;
     }
@@ -97,8 +96,8 @@ public class MobPay implements Serializable {
         return transactionSuccessCallback;
     }
 
-    public static List<PaymentChannel> getChannels() {
-        return channels;
+    public static Config getConfig() {
+        return config;
     }
 
     public static MerchantConfigResponse getMerchantConfigResponse() {
@@ -116,8 +115,8 @@ public class MobPay implements Serializable {
      * @param transactionSuccessCallback
      * @param transactionFailureCallback
      */
-    public void pay(Activity context, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
-        NullChecker.checkNull(context, "Activity context must not be null");
+    public void pay(Activity activity, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+        NullChecker.checkNull(activity, "Activity context must not be null");
         NullChecker.checkNull(merchant, "merchant must not be null");
         NullChecker.checkNull(customer, "customer must not be null");
         NullChecker.checkNull(payment, "payment must not be null");
@@ -127,7 +126,7 @@ public class MobPay implements Serializable {
         this.transactionSuccessCallback = transactionSuccessCallback;
         this.transactionFailureCallback = transactionFailureCallback;
 
-        Intent intent = new Intent(context, MobPayActivity.class);
+        Intent intent = new Intent(activity, MobPayActivity.class);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("merchant", merchant);
@@ -135,7 +134,7 @@ public class MobPay implements Serializable {
         intent.putExtra("payment", payment);
         intent.putExtra("clientId", clientId);
         intent.putExtra("clientSecret", clientSecret);
-        context.startActivity(intent);
+        activity.startActivity(intent);
         /*
         Launch ui
         collect card data
@@ -259,6 +258,39 @@ public class MobPay implements Serializable {
 
         PaymentChannel(String value) {
             this.value = value;
+        }
+    }
+
+    public static class Config {
+        private int tokenization;
+        private List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
+        private List<CardToken> cardTokens = new ArrayList<>();
+
+        public int getTokenization() {
+            return tokenization;
+        }
+
+        public void setTokenization(int tokenization) {
+            this.tokenization = tokenization;
+        }
+
+        public List<PaymentChannel> getChannels() {
+            return channels;
+        }
+
+        public void setChannels(PaymentChannel... channels) {
+            if (channels != null && channels.length > 0) {
+                // Set enabled channels by first converting all channels varargs to set to remove duplicates
+                this.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
+            }
+        }
+
+        public List<CardToken> getCardTokens() {
+            return cardTokens;
+        }
+
+        public void setCardTokens(List<CardToken> cardTokens) {
+            this.cardTokens = cardTokens;
         }
     }
 }
