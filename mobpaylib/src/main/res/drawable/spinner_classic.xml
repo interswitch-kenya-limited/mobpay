@@ -3,7 +3,7 @@
         <layer-list>
             <item android:drawable="@drawable/textbox_neutral" />
             <!--Works for kitkat but causes lollipop and above to crash-->
-            <item android:right="10dp">
+            <item android:gravity="center|right" android:right="10dp">
                 <bitmap android:gravity="center_vertical|right" android:src="@drawable/ic_keyboard_arrow_down_gray_24dp" />
             </item>
         </layer-list>

@@ -2,12 +2,15 @@ package com.interswitchgroup.mobpaylib.model;
 
 import android.databinding.BaseObservable;
 
+import com.interswitchgroup.mobpaylib.R;
+
 import java.io.Serializable;
 
 public class CardToken extends BaseObservable implements Serializable {
     private String token;
     private String expiry;
     private String panLast4Digits;
+    private String panFirst6Digits;
     private String cvv;
 
     public CardToken(String token, String cvv, String expiry) {
@@ -40,11 +43,32 @@ public class CardToken extends BaseObservable implements Serializable {
         this.panLast4Digits = panLast4Digits;
     }
 
+    public String getPanFirst6Digits() {
+        return panFirst6Digits;
+    }
+
+    public void setPanFirst6Digits(String panFirst6Digits) {
+        this.panFirst6Digits = panFirst6Digits;
+    }
+
     public String getCvv() {
         return cvv;
     }
 
     public void setCvv(String cvv) {
         this.cvv = cvv;
+    }
+
+    public Integer getImageResource() {
+        Integer imageResource = Card.TYPE_DRAWABLE_MAP.get(Card.getType(panFirst6Digits));
+        if (imageResource == null || imageResource <= 0) {
+            imageResource = R.drawable.creditcard;
+        }
+        return imageResource;
+    }
+
+    @Override
+    public String toString() {
+        return getPanFirst6Digits() + "******" + getPanLast4Digits();
     }
 }

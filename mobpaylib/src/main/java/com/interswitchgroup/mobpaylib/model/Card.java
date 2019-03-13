@@ -25,7 +25,7 @@ public class Card extends BaseObservable implements Serializable {
     public static final Map<Type, Integer> TYPE_DRAWABLE_MAP;
     public static final Map<Pattern, Type> ACCEPTED_CARD_PATTERN_TYPES;
     private boolean cardFullyValid;
-    private int tokenize = 1;
+    private boolean tokenize;
 
     static {
         Map<Pattern, Type> aMap = new HashMap<>();
@@ -191,11 +191,11 @@ public class Card extends BaseObservable implements Serializable {
         return cvvValid && panValid && expiryValid;
     }
 
-    public int getTokenize() {
+    public boolean isTokenize() {
         return tokenize;
     }
 
-    public void setTokenize(int tokenize) {
+    public void setTokenize(boolean tokenize) {
         this.tokenize = tokenize;
     }
 

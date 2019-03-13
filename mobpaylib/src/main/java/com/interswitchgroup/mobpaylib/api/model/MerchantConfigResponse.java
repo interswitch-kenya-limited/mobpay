@@ -30,6 +30,19 @@ public class MerchantConfigResponse {
         this.config = config;
     }
 
+    public enum TOKENIZATIONTYPE {
+        ALWAYS(1), OPTIONAL(2), NEVER(3);
+        private int value;
+
+        TOKENIZATIONTYPE(int i) {
+            value = i;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
     public class Config {
 
         private String merchantId = "";
@@ -44,6 +57,7 @@ public class MerchantConfigResponse {
         private int paycodeStatus;
         private String mpesaPaybill = "";
         private String equitelPaybill = "";
+        private int tokenize;
 
         public String getMerchantId() {
             return merchantId;
@@ -141,6 +155,13 @@ public class MerchantConfigResponse {
             this.equitelPaybill = equitelPaybill;
         }
 
+        public int getTokenize() {
+            return tokenize;
+        }
+
+        public void setTokenize(int tokenize) {
+            this.tokenize = tokenize;
+        }
     }
 }
 
