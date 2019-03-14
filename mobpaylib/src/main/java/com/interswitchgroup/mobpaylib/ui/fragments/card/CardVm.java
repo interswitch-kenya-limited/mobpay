@@ -10,6 +10,7 @@ import javax.inject.Inject;
 public class CardVm extends ViewModel {
     private PaymentVm paymentVm;
     private Card card;
+    private CardToken cardToken;
     private CardInfoSource cardInfoSource;
 
     @Inject
@@ -37,10 +38,16 @@ public class CardVm extends ViewModel {
         this.cardInfoSource = cardInfoSource;
     }
 
+    public void setCardToken(CardToken cardToken) {
+        this.cardToken = cardToken;
+    }
+
     public void makePayment() {
         switch (cardInfoSource) {
             case TOKEN:
-                paymentVm.makeCardTokenPayment(new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "123", "2002"));
+                cardToken.setCvv(card.getCvv());
+                cardToken.setExpiry(card.getFullExpiry());
+                paymentVm.makeCardTokenPayment(cardToken);
                 break;
             case MANUAL_INPUT:
                 paymentVm.makeCardPayment(card);

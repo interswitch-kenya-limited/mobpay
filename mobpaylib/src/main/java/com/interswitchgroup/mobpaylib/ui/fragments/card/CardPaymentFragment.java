@@ -101,15 +101,16 @@ public class CardPaymentFragment extends DaggerFragment {
                     fragmentCardPaymentBinding.cardNumber.setVisibility(View.GONE);
                     fragmentCardPaymentBinding.cardTokensSpinner.setVisibility(View.VISIBLE);
                     cardVm.setCardInfoSource(CardVm.CardInfoSource.TOKEN);
-                    cardVm.getCard().setTokenize(false);
+                    cardVm.getCard().setPayWithToken(true);
                     fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.GONE);
                     fragmentCardPaymentBinding.expiryDate.setEnabled(false);
-                    String[] expiry = MobPay.getConfig().getCardTokens().get(fragmentCardPaymentBinding.cardTokensSpinner.getSelectedItemPosition()).getExpiry().split("(?<=\\G.{2})");
-                    fragmentCardPaymentBinding.expiryDate.setText(expiry[1] + expiry[0]);
+                    String expiry = CardToken.getDateForDisplay(MobPay.getConfig().getCardTokens().get(fragmentCardPaymentBinding.cardTokensSpinner.getSelectedItemPosition()).getExpiry());
+                    fragmentCardPaymentBinding.expiryDate.setText(expiry);
                 } else if (checkedId == R.id.new_card) {
                     if (MobPay.getMerchantConfig().getTokenizeStatus() == 1) {// When tokenization is optional show checkbox
                         fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.VISIBLE);
                     }
+                    cardVm.getCard().setPayWithToken(false);
                     fragmentCardPaymentBinding.expiryDate.setEnabled(true);
                     fragmentCardPaymentBinding.expiryDate.setText("");// Maybe I should save the previous manually entered value and re-set it here
                     fragmentCardPaymentBinding.cardNumber.setVisibility(View.VISIBLE);
@@ -127,8 +128,8 @@ public class CardPaymentFragment extends DaggerFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 CardToken selectedCardToken = MobPay.getConfig().getCardTokens().get(position);
-                String[] expiryParts = selectedCardToken.getExpiry().split("(?<=\\G.{2})");
-                fragmentCardPaymentBinding.expiryDate.setText(expiryParts[1] + expiryParts[0]);
+                cardVm.setCardToken(selectedCardToken);
+                fragmentCardPaymentBinding.expiryDate.setText(CardToken.getDateForDisplay(selectedCardToken.getExpiry()));
             }
 
             @Override

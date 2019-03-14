@@ -26,6 +26,7 @@ public class Card extends BaseObservable implements Serializable {
     public static final Map<Pattern, Type> ACCEPTED_CARD_PATTERN_TYPES;
     private boolean cardFullyValid;
     private boolean tokenize;
+    private boolean payWithToken;
 
     static {
         Map<Pattern, Type> aMap = new HashMap<>();
@@ -101,19 +102,18 @@ public class Card extends BaseObservable implements Serializable {
         return fullExpiry;
     }
 
-    public void setFullExpiry(String fullExpiry) {
-        if (fullExpiry != null) {
-            fullExpiry = fullExpiry.replaceAll("[^\\d]", ""); // Remove non numeric characters including / separator
-            String[] expiryParts = fullExpiry.split("(?<=\\G.{2})");// Split into twos
-            if (expiryParts.length > 0) {
-                this.expiryMonth = expiryParts[0];
-                if (expiryParts.length > 1) {
-                    this.expiryYear = expiryParts[1];
-                }
-            }
+    private static Date getExpiryAsDate(String fullExpiry) {
+        if (fullExpiry == null || fullExpiry.isEmpty()) {
+            return null;
         }
-        this.fullExpiry = fullExpiry;
-        setCardFullyValid(isCardValid());
+        String[] expiryParts = fullExpiry.replaceAll("[^\\d]", "").split("(?<=\\G.{2})");
+        if (expiryParts.length < 2) {
+            return null;
+        }
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.YEAR, Integer.valueOf("20" + expiryParts[0]));
+        calendar.set(Calendar.MONTH, Integer.valueOf(expiryParts[1]) - 1);//Less 1 because months in calender are 0 based
+        return calendar.getTime();
     }
 
     @Bindable
@@ -165,18 +165,19 @@ public class Card extends BaseObservable implements Serializable {
         return cvv != null && cvv.length() == 3;
     }
 
-    private static Date getExpiryAsDate(String fullExpiry) {
-        if (fullExpiry == null || fullExpiry.isEmpty()) {
-            return null;
+    public void setFullExpiry(String fullExpiry) {
+        if (fullExpiry != null) {
+            fullExpiry = fullExpiry.replaceAll("[^\\d]", ""); // Remove non numeric characters including / separator
+            String[] expiryParts = fullExpiry.split("(?<=\\G.{2})");// Split into twos
+            if (expiryParts.length > 0) {
+                this.expiryMonth = expiryParts[0];
+                if (expiryParts.length > 1) {
+                    this.expiryYear = expiryParts[1];
+                }
+            }
         }
-        String[] expiryParts = fullExpiry.replaceAll("[^\\d]", "").split("(?<=\\G.{2})");
-        if (expiryParts.length < 2) {
-            return null;
-        }
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.YEAR, Integer.valueOf("20" + expiryParts[1]));
-        calendar.set(Calendar.MONTH, Integer.valueOf(expiryParts[0]));
-        return calendar.getTime();
+        this.fullExpiry = expiryYear + expiryMonth;
+        setCardFullyValid(isCardValid());
     }
 
     public static boolean isExpiryValid(String fullExpiry) {
@@ -186,7 +187,7 @@ public class Card extends BaseObservable implements Serializable {
 
     private boolean isCardValid() {
         boolean cvvValid = isCvvValid(this.cvv);
-        boolean panValid = isPanValid(this.pan);
+        boolean panValid = payWithToken || isPanValid(this.pan);
         boolean expiryValid = isExpiryValid(this.fullExpiry);
         return cvvValid && panValid && expiryValid;
     }
@@ -197,6 +198,14 @@ public class Card extends BaseObservable implements Serializable {
 
     public void setTokenize(boolean tokenize) {
         this.tokenize = tokenize;
+    }
+
+    public boolean isPayWithToken() {
+        return payWithToken;
+    }
+
+    public void setPayWithToken(boolean payWithToken) {
+        this.payWithToken = payWithToken;
     }
 
     public enum Type {

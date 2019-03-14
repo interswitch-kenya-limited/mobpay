@@ -90,7 +90,9 @@ public class ExpiryText extends AppCompatEditText {
             if (textString.length() < 5) {
                 setBackgroundResource(R.drawable.textbox_probably_valid);
             } else if (textString.length() == 5) {
-                if (Card.isExpiryValid(textString)) {
+                String[] expiryParts = textString.replaceAll("[^\\d]", "").split("(?<=\\G.{2})");
+                String apiExpiry = expiryParts[1] + expiryParts[0];
+                if (Card.isExpiryValid(apiExpiry)) {
                     setBackgroundResource(R.drawable.textbox_valid);
                 } else {
                     setBackgroundResource(R.drawable.textbox_invalid);

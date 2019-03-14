@@ -312,7 +312,8 @@ public class MobPay implements Serializable {
         }
 
         public void setCardTokens(List<CardToken> cardTokens) {
-            this.cardTokens = cardTokens;
+            this.cardTokens.clear();
+            this.cardTokens.addAll(cardTokens);
         }
     }
 }
