@@ -10,6 +10,7 @@ public class CardPaymentResponse implements TransactionResponse{
     private String expiry;
     private String panLast4Digits;
     private String orderId;
+    private String panFirst6Digits;
 
     public String getFee() {
         return fee;
@@ -86,5 +87,13 @@ public class CardPaymentResponse implements TransactionResponse{
     @Override
     public String getTransactionOrderId() {
         return this.getOrderId();
+    }
+
+    public String getPanFirst6Digits() {
+        return panFirst6Digits;
+    }
+
+    public void setPanFirst6Digits(String panFirst6Digits) {
+        this.panFirst6Digits = panFirst6Digits;
     }
 }

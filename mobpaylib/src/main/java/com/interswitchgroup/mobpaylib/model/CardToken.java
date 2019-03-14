@@ -13,10 +13,9 @@ public class CardToken extends BaseObservable implements Serializable {
     private String panFirst6Digits;
     private String cvv;
 
-    public CardToken(String token, String cvv, String expiry) {
+    public CardToken(String token, String expiry) {
         this.token = token;
         this.expiry = expiry;
-        this.cvv = cvv;
     }
 
     public String getToken() {

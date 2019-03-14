@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.interswitchgroup.mobpaylib.MobPay;
+import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText merchantTokenizationField;
     private MultiSelectionSpinner paymentChannels;
     private MultiSelectionSpinner tokensSpinner;
+    final ArrayList<CardToken> cardTokens = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         }
         paymentChannels.setItems(channelNames);
         tokensSpinner = findViewById(R.id.tokens);
-        final ArrayList<CardToken> cardTokens = new ArrayList<>();
-        CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "123", "2002");
+        cardTokens.clear();
+        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "2002");
         cardToken.setPanLast4Digits("1895");
         cardToken.setPanFirst6Digits("506183");
         cardTokens.add(cardToken);
@@ -132,6 +134,20 @@ public class MainActivity extends AppCompatActivity {
                                 Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
+                                if (transactionResponse instanceof CardPaymentResponse) {
+                                    CardPaymentResponse cardPaymentResponse = (CardPaymentResponse) transactionResponse;
+                                    if (cardPaymentResponse.getToken() != null && !cardPaymentResponse.getToken().isEmpty()) {
+                                        CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
+                                        token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
+                                        token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
+                                        cardTokens.add(token);
+                                        String[] cardTokenLabelsArray = new String[cardTokens.size()];
+                                        for (int i = 0; i < cardTokens.size(); i++) {
+                                            cardTokenLabelsArray[i] = cardTokens.get(i).toString();
+                                        }
+                                        tokensSpinner.setItems(cardTokenLabelsArray);
+                                    }
+                                }
                             }
                         },
                         new TransactionFailureCallback() {
@@ -196,6 +212,21 @@ public class MainActivity extends AppCompatActivity {
                                 Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
+                                if (transactionResponse instanceof CardPaymentResponse) {
+                                    CardPaymentResponse cardPaymentResponse = (CardPaymentResponse) transactionResponse;
+                                    if (cardPaymentResponse.getToken() != null && !cardPaymentResponse.getToken().isEmpty()) {
+                                        CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
+                                        token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
+                                        token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
+                                        cardTokens.add(token);
+                                        String[] cardTokenLabelsArray = new String[cardTokens.size()];
+                                        for (int i = 0; i < cardTokens.size(); i++) {
+                                            cardTokenLabelsArray[i] = cardTokens.get(i).toString();
+                                        }
+                                        tokensSpinner.setItems(cardTokenLabelsArray);
+                                    }
+                                }
+
                             }
                         },
                         new TransactionFailureCallback() {

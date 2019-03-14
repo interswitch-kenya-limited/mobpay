@@ -11,7 +11,7 @@ public class CardVm extends ViewModel {
     private PaymentVm paymentVm;
     private Card card;
     private CardToken cardToken;
-    private CardInfoSource cardInfoSource;
+    private CardInfoSource cardInfoSource = CardInfoSource.MANUAL_INPUT;
 
     @Inject
     public CardVm() {
