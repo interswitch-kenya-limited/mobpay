@@ -277,6 +277,20 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (MobPay.getMerchantConfig() == null) {
+            try {
+                paymentVm.getLoading().set(true);
+                MobPay.initializeMerchantConfig();
+                paymentVm.getLoading().set(false);
+            } catch (Exception e) {
+                mobPay.getTransactionFailureCallback().onError(e);
+                finish();
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

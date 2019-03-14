@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,6 @@ import com.interswitchgroup.mobpaylib.databinding.FragmentCardPaymentBinding;
 import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.ui.adapters.TokensSpinnerAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,7 +32,6 @@ public class CardPaymentFragment extends DaggerFragment {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
-    private final List<CardToken> cardTokens = new ArrayList<>();
     private FragmentCardPaymentBinding fragmentCardPaymentBinding;
 
     public CardPaymentFragment() {
@@ -61,20 +56,22 @@ public class CardPaymentFragment extends DaggerFragment {
             fragmentCardPaymentBinding.cardTokensSpinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
 
-        switch (MobPay.getConfig().getTokenization()) {
+        switch (MobPay.getMerchantConfig().getTokenizeStatus()) {
             case 0: //Always tokenize,
                 cardVm.getCard().setTokenize(true);//Set card tokenize to true
-                // TODO If merchant passed tokens, show and initialize spinner, hide card input and select saved card radio button
-                initializeCardSourceRadioGroup();
-                initializeTokensSpinner();
-                fragmentCardPaymentBinding.savedCard.setChecked(true);
+                if (MobPay.getConfig().getCardTokens() != null && MobPay.getConfig().getCardTokens().size() > 0) {
+                    initializeCardSourceRadioGroup();
+                    initializeTokensSpinner();
+                    fragmentCardPaymentBinding.savedCard.setChecked(true);
+                }
                 break;
             case 1: //Optional tokenization
                 // Display the save card option, which when selected sets card tokenize to true.
                 fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.VISIBLE);
-                // TODO If merchant passed tokens, show and initialize spinner, hide card input and select saved card radio button
-                initializeCardSourceRadioGroup();
-                initializeTokensSpinner();
+                if (MobPay.getConfig().getCardTokens() != null && MobPay.getConfig().getCardTokens().size() > 0) {
+                    initializeCardSourceRadioGroup();
+                    initializeTokensSpinner();
+                }
                 fragmentCardPaymentBinding.savedCard.setChecked(true);
                 break;
             case 2: //Never tokenize, hide everything, set card tokenization to false, and follow normal flow
@@ -96,6 +93,7 @@ public class CardPaymentFragment extends DaggerFragment {
     }
 
     private void initializeCardSourceRadioGroup() {
+        fragmentCardPaymentBinding.cardSourceRadioGroup.setVisibility(View.VISIBLE);
         fragmentCardPaymentBinding.cardSourceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -105,10 +103,15 @@ public class CardPaymentFragment extends DaggerFragment {
                     cardVm.setCardInfoSource(CardVm.CardInfoSource.TOKEN);
                     cardVm.getCard().setTokenize(false);
                     fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.GONE);
+                    fragmentCardPaymentBinding.expiryDate.setEnabled(false);
+                    String[] expiry = MobPay.getConfig().getCardTokens().get(fragmentCardPaymentBinding.cardTokensSpinner.getSelectedItemPosition()).getExpiry().split("(?<=\\G.{2})");
+                    fragmentCardPaymentBinding.expiryDate.setText(expiry[1] + expiry[0]);
                 } else if (checkedId == R.id.new_card) {
-                    if (MobPay.getConfig().getTokenization() == 1) {// When tokenization is optional show checkbox
+                    if (MobPay.getMerchantConfig().getTokenizeStatus() == 1) {// When tokenization is optional show checkbox
                         fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.VISIBLE);
                     }
+                    fragmentCardPaymentBinding.expiryDate.setEnabled(true);
+                    fragmentCardPaymentBinding.expiryDate.setText("");// Maybe I should save the previous manually entered value and re-set it here
                     fragmentCardPaymentBinding.cardNumber.setVisibility(View.VISIBLE);
                     fragmentCardPaymentBinding.cardTokensSpinner.setVisibility(View.GONE);
                     cardVm.setCardInfoSource(CardVm.CardInfoSource.MANUAL_INPUT);
@@ -118,23 +121,14 @@ public class CardPaymentFragment extends DaggerFragment {
     }
 
     private void initializeTokensSpinner() {
-        cardTokens.clear();
-        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "123", "2002");
-        cardToken.setPanLast4Digits("1895");
-        cardToken.setPanFirst6Digits("506183");
-        cardTokens.add(cardToken);
-
-        TokensSpinnerAdapter<CardToken> imageSpinnerAdapter = new TokensSpinnerAdapter<>(getContext(), cardTokens);
+        TokensSpinnerAdapter<CardToken> imageSpinnerAdapter = new TokensSpinnerAdapter<>(getContext(), MobPay.getConfig().getCardTokens());
         fragmentCardPaymentBinding.cardTokensSpinner.setAdapter(imageSpinnerAdapter);
         fragmentCardPaymentBinding.cardTokensSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                CardToken selectedCardToken = cardTokens.get(position);
-                Snackbar.make(parent, "Token selected:\t" + selectedCardToken.getToken(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                CardToken selectedCardToken = MobPay.getConfig().getCardTokens().get(position);
                 String[] expiryParts = selectedCardToken.getExpiry().split("(?<=\\G.{2})");
                 fragmentCardPaymentBinding.expiryDate.setText(expiryParts[1] + expiryParts[0]);
-                fragmentCardPaymentBinding.expiryDate.setEnabled(false);
             }
 
             @Override

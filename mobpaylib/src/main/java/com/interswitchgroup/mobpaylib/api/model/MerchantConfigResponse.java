@@ -4,7 +4,7 @@ public class MerchantConfigResponse {
 
     private String responseCode;
     private String responseMessage;
-    private Config config = new Config();
+    private Config config;
 
     public String getResponseCode() {
         return responseCode;
@@ -45,19 +45,21 @@ public class MerchantConfigResponse {
 
     public class Config {
 
-        private String merchantId = "";
-        private String merchantName = "";
-        private String clientId = "";
-        private String clientSecret = "";
-        private int cardStatus;
-        private int mpesaStatus;
-        private int equitelStatus;
-        private int tkashStatus;
-        private int airtelStatus;
-        private int paycodeStatus;
-        private String mpesaPaybill = "";
-        private String equitelPaybill = "";
-        private int tokenize;
+        private String merchantId;
+        private String merchantName;
+        private String clientId;
+        private String clientSecret;
+        private Integer cardStatus;
+        private Integer mpesaStatus;
+        private Integer equitelStatus;
+        private Integer tkashStatus;
+        private Integer airtelStatus;
+        private Integer paycodeStatus;
+        private String mpesaPaybill;
+        private String equitelPaybill;
+        private Integer tokenizeStatus;
+        private Integer cardauthStatus;
+        private Integer cardPreauth;
 
         public String getMerchantId() {
             return merchantId;
@@ -91,51 +93,51 @@ public class MerchantConfigResponse {
             this.clientSecret = clientSecret;
         }
 
-        public int getCardStatus() {
+        public Integer getCardStatus() {
             return cardStatus;
         }
 
-        public void setCardStatus(int cardStatus) {
+        public void setCardStatus(Integer cardStatus) {
             this.cardStatus = cardStatus;
         }
 
-        public int getMpesaStatus() {
+        public Integer getMpesaStatus() {
             return mpesaStatus;
         }
 
-        public void setMpesaStatus(int mpesaStatus) {
+        public void setMpesaStatus(Integer mpesaStatus) {
             this.mpesaStatus = mpesaStatus;
         }
 
-        public int getEquitelStatus() {
+        public Integer getEquitelStatus() {
             return equitelStatus;
         }
 
-        public void setEquitelStatus(int equitelStatus) {
+        public void setEquitelStatus(Integer equitelStatus) {
             this.equitelStatus = equitelStatus;
         }
 
-        public int getTkashStatus() {
+        public Integer getTkashStatus() {
             return tkashStatus;
         }
 
-        public void setTkashStatus(int tkashStatus) {
+        public void setTkashStatus(Integer tkashStatus) {
             this.tkashStatus = tkashStatus;
         }
 
-        public int getAirtelStatus() {
+        public Integer getAirtelStatus() {
             return airtelStatus;
         }
 
-        public void setAirtelStatus(int airtelStatus) {
+        public void setAirtelStatus(Integer airtelStatus) {
             this.airtelStatus = airtelStatus;
         }
 
-        public int getPaycodeStatus() {
+        public Integer getPaycodeStatus() {
             return paycodeStatus;
         }
 
-        public void setPaycodeStatus(int paycodeStatus) {
+        public void setPaycodeStatus(Integer paycodeStatus) {
             this.paycodeStatus = paycodeStatus;
         }
 
@@ -155,12 +157,28 @@ public class MerchantConfigResponse {
             this.equitelPaybill = equitelPaybill;
         }
 
-        public int getTokenize() {
-            return tokenize;
+        public Integer getTokenizeStatus() {
+            return tokenizeStatus;
         }
 
-        public void setTokenize(int tokenize) {
-            this.tokenize = tokenize;
+        public void setTokenizeStatus(Integer tokenizeStatus) {
+            this.tokenizeStatus = tokenizeStatus;
+        }
+
+        public Integer getCardauthStatus() {
+            return cardauthStatus;
+        }
+
+        public void setCardauthStatus(Integer cardauthStatus) {
+            this.cardauthStatus = cardauthStatus;
+        }
+
+        public Integer getCardPreauth() {
+            return cardPreauth;
+        }
+
+        public void setCardPreauth(Integer cardPreauth) {
+            this.cardPreauth = cardPreauth;
         }
     }
 }

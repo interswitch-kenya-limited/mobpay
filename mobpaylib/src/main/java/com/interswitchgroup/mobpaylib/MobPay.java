@@ -2,6 +2,7 @@ package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
@@ -26,12 +27,14 @@ import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -59,20 +62,6 @@ public class MobPay implements Serializable {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
-            Disposable subscribe = singletonMobPayInstance.retrofit.create(MerchantConfig.class).fetchMerchantConfig()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<MerchantConfigResponse>() {
-                        @Override
-                        public void accept(MerchantConfigResponse merchantConfigResponse) {
-                            MobPay.merchantConfigResponse = merchantConfigResponse;
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) {
-                            Log.i(LOG_TAG, "Could not fetch merchant config: " + throwable.getMessage());
-                        }
-                    });
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
         }
@@ -100,8 +89,41 @@ public class MobPay implements Serializable {
         return config;
     }
 
-    public static MerchantConfigResponse getMerchantConfigResponse() {
-        return merchantConfigResponse;
+    public static void initializeMerchantConfig() throws ExecutionException, InterruptedException {
+        merchantConfigResponse = new MerchantConfigInitializationTask().execute().get();
+    }
+
+    public static MerchantConfigResponse.Config getMerchantConfig() {
+        return merchantConfigResponse.getConfig();
+    }
+
+    private static class MerchantConfigInitializationTask extends AsyncTask<String, Void, MerchantConfigResponse> {
+
+        @Override
+        protected MerchantConfigResponse doInBackground(String... params) {
+            try {
+                return singletonMobPayInstance.retrofit.create(MerchantConfig.class)
+                        .fetchMerchantConfig()
+                        .execute()
+                        .body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(MerchantConfigResponse result) {
+            merchantConfigResponse = result;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
     }
 
     /**
@@ -266,7 +288,7 @@ public class MobPay implements Serializable {
         private List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
         private List<CardToken> cardTokens = new ArrayList<>();
 
-        public int getTokenization() {
+        private int getTokenization() {
             return tokenization;
         }
 

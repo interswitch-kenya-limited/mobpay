@@ -127,6 +127,11 @@
             android:text="0" />
 
         <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
+            android:id="@+id/tokens"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
             android:id="@+id/channels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

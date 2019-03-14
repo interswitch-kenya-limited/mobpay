@@ -15,6 +15,7 @@ import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
+import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText orderIdField;
     private EditText merchantTokenizationField;
     private MultiSelectionSpinner paymentChannels;
+    private MultiSelectionSpinner tokensSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +68,22 @@ public class MainActivity extends AppCompatActivity {
         orderIdField = findViewById(R.id.orderIdField);
         merchantTokenizationField = findViewById(R.id.merchant_tokenization_field);
         paymentChannels = findViewById(R.id.channels);
-//        ArrayAdapter<MobPay.PaymentChannel> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, MobPay.PaymentChannel.class.getEnumConstants());
         List<String> channelNames = new ArrayList<>();
         for (MobPay.PaymentChannel channel : MobPay.PaymentChannel.class.getEnumConstants()) {
             channelNames.add(channel.value);
         }
         paymentChannels.setItems(channelNames);
-
+        tokensSpinner = findViewById(R.id.tokens);
+        final ArrayList<CardToken> cardTokens = new ArrayList<>();
+        CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "123", "2002");
+        cardToken.setPanLast4Digits("1895");
+        cardToken.setPanFirst6Digits("506183");
+        cardTokens.add(cardToken);
+        String[] cardTokenLabelsArray = new String[cardTokens.size()];
+        for (int i = 0; i < cardTokens.size(); i++) {
+            cardTokenLabelsArray[i] = cardTokens.get(i).toString();
+        }
+        tokensSpinner.setItems(cardTokenLabelsArray);
         findViewById(R.id.cardPaymentButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -165,10 +176,14 @@ public class MainActivity extends AppCompatActivity {
                 for (int selectedIndex : paymentChannels.getSelectedIndicies()) {
                     selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
                 }
-
+                List<CardToken> selectedTokens = new ArrayList<>();
+                for (int selectedTokenIndex : tokensSpinner.getSelectedIndicies()) {
+                    selectedTokens.add(cardTokens.get(selectedTokenIndex));
+                }
                 MobPay.Config config = new MobPay.Config();
                 config.setTokenization(tokenization);
                 config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
+                config.setCardTokens(selectedTokens);
                 MobPay.getInstance(clientId, clientSecret, config)
                         .pay(MainActivity.this,
                                 merchant,
