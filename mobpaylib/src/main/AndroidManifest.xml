@@ -10,10 +10,10 @@
             android:label="@string/title_activity_mob_pay"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--android:process=":MobPayProcess"-->
-        <!--android:excludeFromRecents="true"-->
-        <!--android:noHistory="true"-->
     </application>
 
 </manifest>

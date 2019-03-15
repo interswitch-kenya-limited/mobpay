@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.databinding.FragmentCardPaymentBinding;
+import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.ui.adapters.TokensSpinnerAdapter;
@@ -42,6 +43,7 @@ public class CardPaymentFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
         cardVm = ViewModelProviders.of(this, viewModelFactory).get(CardVm.class);
+        cardVm.setCard(new Card());// Reset the model so that form is cleared
         cardVm.setPaymentVm(paymentVm);
     }
 

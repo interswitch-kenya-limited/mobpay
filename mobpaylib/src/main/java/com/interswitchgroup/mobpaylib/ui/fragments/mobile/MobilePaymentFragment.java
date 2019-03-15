@@ -61,6 +61,7 @@ public class MobilePaymentFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
         mobileVm = ViewModelProviders.of(this, viewModelFactory).get(MobileVm.class);
+        mobileVm.setMobile(new Mobile());// Reset the model so that form is cleared
         mobileVm.setPaymentVm(paymentVm);
         mobileVm.setExpressTransactionFailureCallback(new TransactionFailureCallback() {
             @Override
