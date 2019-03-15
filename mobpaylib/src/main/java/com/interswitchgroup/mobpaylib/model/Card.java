@@ -25,7 +25,7 @@ public class Card extends BaseObservable implements Serializable {
     public static final Map<Type, Integer> TYPE_DRAWABLE_MAP;
     public static final Map<Pattern, Type> ACCEPTED_CARD_PATTERN_TYPES;
     private boolean cardFullyValid;
-    private boolean tokenize;
+    private boolean tokenize = true;
     private boolean payWithToken;
 
     static {

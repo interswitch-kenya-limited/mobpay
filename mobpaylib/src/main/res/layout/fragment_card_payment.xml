@@ -233,7 +233,7 @@
                     android:id="@+id/tokenize_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="@{cardVm.card.tokenize}"
+                    android:checked="@={cardVm.card.tokenize}"
                     android:text="Save card"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
