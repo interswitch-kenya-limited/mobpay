@@ -41,7 +41,7 @@
                     android:text="@string/enter_your_card_details"
                     android:textAlignment="center"
                     android:textFontWeight="400"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/constraintLayout"
@@ -65,26 +65,31 @@
                     android:id="@+id/cardSourceRadioGroup"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/card_number_label"
                     app:layout_constraintEnd_toEndOf="parent">
 
                     <RadioButton
-                        android:id="@+id/existing_card"
+                        android:id="@+id/saved_card"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Existing Card"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:text="Saved"
                         android:textColor="@color/mobPayGrayText" />
 
                     <RadioButton
-                        android:id="@+id/other_card"
+                        android:id="@+id/new_card"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Other Card"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:text="New"
                         android:textColor="@color/mobPayGrayText" />
                 </RadioGroup>
 
@@ -96,6 +101,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
+                    android:visibility="gone"
                     android:layout_marginRight="8dp"
                     android:background="@drawable/spinner_new"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -223,6 +229,16 @@
 
                 </android.support.constraint.ConstraintLayout>
 
+                <CheckBox
+                    android:id="@+id/tokenize_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="@{cardVm.card.tokenize}"
+                    android:text="Save card"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
                 <Button
                     android:id="@+id/pay_button"
                     style="@style/MainActionButtonStyle"
@@ -240,7 +256,7 @@
                     android:text='@{"Pay "+ cardVm.paymentVm.payment.currency + " " + cardVm.paymentVm.payment.amountString}'
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                    app:layout_constraintTop_toBottomOf="@+id/tokenize_checkbox"
                     tools:text="Pay Kes 4,355.00" />
 
                 <Button

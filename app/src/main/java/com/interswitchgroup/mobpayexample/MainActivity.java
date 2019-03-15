@@ -11,10 +11,12 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.interswitchgroup.mobpaylib.MobPay;
+import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
+import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
@@ -40,13 +42,16 @@ public class MainActivity extends AppCompatActivity {
     private EditText expMonthField;
     private EditText preauthField;
     private EditText orderIdField;
+    private EditText merchantTokenizationField;
     private MultiSelectionSpinner paymentChannels;
+    private MultiSelectionSpinner tokensSpinner;
+    final ArrayList<CardToken> cardTokens = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         customerEmailField = findViewById(R.id.customer_email);
         customerIdField = findViewById(R.id.customer_id);
@@ -63,14 +68,24 @@ public class MainActivity extends AppCompatActivity {
         expMonthField = findViewById(R.id.expMonth);
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
+        merchantTokenizationField = findViewById(R.id.merchant_tokenization_field);
         paymentChannels = findViewById(R.id.channels);
-//        ArrayAdapter<MobPay.PaymentChannel> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, MobPay.PaymentChannel.class.getEnumConstants());
         List<String> channelNames = new ArrayList<>();
         for (MobPay.PaymentChannel channel : MobPay.PaymentChannel.class.getEnumConstants()) {
             channelNames.add(channel.value);
         }
         paymentChannels.setItems(channelNames);
-
+        tokensSpinner = findViewById(R.id.tokens);
+        cardTokens.clear();
+        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "2002");
+        cardToken.setPanLast4Digits("1895");
+        cardToken.setPanFirst6Digits("506183");
+        cardTokens.add(cardToken);
+        String[] cardTokenLabelsArray = new String[cardTokens.size()];
+        for (int i = 0; i < cardTokens.size(); i++) {
+            cardTokenLabelsArray[i] = cardTokens.get(i).toString();
+        }
+        tokensSpinner.setItems(cardTokenLabelsArray);
         findViewById(R.id.cardPaymentButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -90,8 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 String expMonth = expMonthField.getText().toString();
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
+                String merchantTokenization = merchantTokenizationField.getText().toString();
 
                 final Merchant merchant = new Merchant(merchantId, domain);
+                int tokenization = Integer.parseInt(merchantTokenization);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
@@ -102,7 +119,10 @@ public class MainActivity extends AppCompatActivity {
                 customer.setEmail(customerEmail);
                 Card card = new Card(cardNumber, cvv, expYear, expMonth);
 
-                MobPay.getInstance(clientId, clientSecret).makeCardPayment(
+                MobPay.Config config = new MobPay.Config();
+                config.setTokenization(tokenization);
+                MobPay.getInstance(clientId, clientSecret, config)
+                        .makeCardPayment(
                         card,
                         merchant,
                         payment,
@@ -114,6 +134,20 @@ public class MainActivity extends AppCompatActivity {
                                 Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
+                                if (transactionResponse instanceof CardPaymentResponse) {
+                                    CardPaymentResponse cardPaymentResponse = (CardPaymentResponse) transactionResponse;
+                                    if (cardPaymentResponse.getToken() != null && !cardPaymentResponse.getToken().isEmpty()) {
+                                        CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
+                                        token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
+                                        token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
+                                        cardTokens.add(token);
+                                        String[] cardTokenLabelsArray = new String[cardTokens.size()];
+                                        for (int i = 0; i < cardTokens.size(); i++) {
+                                            cardTokenLabelsArray[i] = cardTokens.get(i).toString();
+                                        }
+                                        tokensSpinner.setItems(cardTokenLabelsArray);
+                                    }
+                                }
                             }
                         },
                         new TransactionFailureCallback() {
@@ -142,8 +176,10 @@ public class MainActivity extends AppCompatActivity {
                 String currency = currencyField.getText().toString();
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
+                String merchantTokenization = merchantTokenizationField.getText().toString();
 
                 final Merchant merchant = new Merchant(merchantId, domain);
+                int tokenization = Integer.parseInt(merchantTokenization);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
@@ -156,10 +192,19 @@ public class MainActivity extends AppCompatActivity {
                 for (int selectedIndex : paymentChannels.getSelectedIndicies()) {
                     selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
                 }
-
-                MobPay.getInstance(clientId, clientSecret, selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0])).pay(MainActivity.this, merchant,
-                        payment,
-                        customer,
+                List<CardToken> selectedTokens = new ArrayList<>();
+                for (int selectedTokenIndex : tokensSpinner.getSelectedIndicies()) {
+                    selectedTokens.add(cardTokens.get(selectedTokenIndex));
+                }
+                MobPay.Config config = new MobPay.Config();
+                config.setTokenization(tokenization);
+                config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
+                config.setCardTokens(selectedTokens);
+                MobPay.getInstance(clientId, clientSecret, config)
+                        .pay(MainActivity.this,
+                                merchant,
+                                payment,
+                                customer,
                         new TransactionSuccessCallback() {
                             @Override
                             public void onSuccess(TransactionResponse transactionResponse) {
@@ -167,6 +212,21 @@ public class MainActivity extends AppCompatActivity {
                                 Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                         .setAction("Action", null).show();
+                                if (transactionResponse instanceof CardPaymentResponse) {
+                                    CardPaymentResponse cardPaymentResponse = (CardPaymentResponse) transactionResponse;
+                                    if (cardPaymentResponse.getToken() != null && !cardPaymentResponse.getToken().isEmpty()) {
+                                        CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
+                                        token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
+                                        token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
+                                        cardTokens.add(token);
+                                        String[] cardTokenLabelsArray = new String[cardTokens.size()];
+                                        for (int i = 0; i < cardTokens.size(); i++) {
+                                            cardTokenLabelsArray[i] = cardTokens.get(i).toString();
+                                        }
+                                        tokensSpinner.setItems(cardTokenLabelsArray);
+                                    }
+                                }
+
                             }
                         },
                         new TransactionFailureCallback() {
@@ -211,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
                 }
                 Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
-                MobPay.getInstance(clientId, clientSecret).makeMobileMoneyPayment(mobile, merchant,
+                MobPay.getInstance(clientId, clientSecret, null).makeMobileMoneyPayment(mobile, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

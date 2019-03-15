@@ -10,4 +10,7 @@ import retrofit2.http.POST;
 public interface CardPayment {
     @POST("merchant/transact/cards")
     Single<CardPaymentResponse> merchantCardPayment(@Body CardPaymentPayload cardPaymentPayload);
+
+    @POST("merchant/transact/tokens")
+    Single<CardPaymentResponse> merchantCardTokenPayment(@Body CardPaymentPayload cardPaymentPayload);
 }

@@ -3,13 +3,15 @@ package com.interswitchgroup.mobpaylib.ui.fragments.card;
 import android.arch.lifecycle.ViewModel;
 
 import com.interswitchgroup.mobpaylib.model.Card;
+import com.interswitchgroup.mobpaylib.model.CardToken;
 
 import javax.inject.Inject;
 
 public class CardVm extends ViewModel {
     private PaymentVm paymentVm;
     private Card card;
-    private CardInfoSource cardInfoSource;
+    private CardToken cardToken;
+    private CardInfoSource cardInfoSource = CardInfoSource.MANUAL_INPUT;
 
     @Inject
     public CardVm() {
@@ -36,8 +38,21 @@ public class CardVm extends ViewModel {
         this.cardInfoSource = cardInfoSource;
     }
 
+    public void setCardToken(CardToken cardToken) {
+        this.cardToken = cardToken;
+    }
+
     public void makePayment() {
-        paymentVm.makeCardPayment(card);
+        switch (cardInfoSource) {
+            case TOKEN:
+                cardToken.setCvv(card.getCvv());
+                cardToken.setExpiry(card.getFullExpiry());
+                paymentVm.makeCardTokenPayment(cardToken);
+                break;
+            case MANUAL_INPUT:
+                paymentVm.makeCardPayment(card);
+                break;
+        }
     }
 
     public enum CardInfoSource {MANUAL_INPUT, TOKEN}
