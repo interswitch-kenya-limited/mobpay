@@ -118,11 +118,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/tab_height"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/tab_height"
+                    android:layout_marginTop="@dimen/appbar_padding_top"
                     android:gravity="center"
                     android:textColor="@color/mobPayGrayText"
                     app:tabGravity="fill"
-                    android:layout_margin="0dp"
                     app:tabMode="scrollable"
                     app:tabSelectedTextColor="@color/mobPayColorAccent"
                     app:tabTextColor="@color/mobPayGrayText" />

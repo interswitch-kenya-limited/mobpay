@@ -65,6 +65,15 @@ public class MobPay implements Serializable {
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
         }
+
+        if (MobPay.getMerchantConfig() == null) {
+            try {
+                MobPay.initializeMerchantConfig();
+            } catch (Exception e) {
+                singletonMobPayInstance.getTransactionFailureCallback().onError(e);
+            }
+        }
+
         // If enabled channels was explicitly passed, override default enabled channels
         if (config != null) {
             MobPay.config = config;

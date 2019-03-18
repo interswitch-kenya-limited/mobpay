@@ -43,4 +43,5 @@
         \n&#8226;\t Enter your <b>M-PESA PIN</b> and send
         \nOnce you receive a confirmation SMS from M-PESA, click on the confirm payment button below
     </string>
+    <string name="save_card">Save card</string>
 </resources>
