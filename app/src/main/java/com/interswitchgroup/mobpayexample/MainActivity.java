@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.interswitchgroup.mobpaylib.MobPay;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText expMonthField;
     private EditText preauthField;
     private EditText orderIdField;
-    private EditText merchantTokenizationField;
+    private CheckBox tokenizeCheckbox;
     private MultiSelectionSpinner paymentChannels;
     private MultiSelectionSpinner tokensSpinner;
     final ArrayList<CardToken> cardTokens = new ArrayList<>();
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         expMonthField = findViewById(R.id.expMonth);
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
-        merchantTokenizationField = findViewById(R.id.merchant_tokenization_field);
+        tokenizeCheckbox = findViewById(R.id.tokenization_checkBox);
         paymentChannels = findViewById(R.id.channels);
         List<String> channelNames = new ArrayList<>();
         for (MobPay.PaymentChannel channel : MobPay.PaymentChannel.class.getEnumConstants()) {
@@ -105,10 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 String expMonth = expMonthField.getText().toString();
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
-                String merchantTokenization = merchantTokenizationField.getText().toString();
 
                 final Merchant merchant = new Merchant(merchantId, domain);
-                int tokenization = Integer.parseInt(merchantTokenization);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
@@ -118,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 final Customer customer = new Customer(customerId);
                 customer.setEmail(customerEmail);
                 Card card = new Card(cardNumber, cvv, expYear, expMonth);
+                card.setTokenize(tokenizeCheckbox.isChecked());
 
                 MobPay.Config config = new MobPay.Config();
-                config.setTokenization(tokenization);
                 MobPay.getInstance(clientId, clientSecret, config)
                         .makeCardPayment(
                         card,
@@ -176,10 +175,8 @@ public class MainActivity extends AppCompatActivity {
                 String currency = currencyField.getText().toString();
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
-                String merchantTokenization = merchantTokenizationField.getText().toString();
 
                 final Merchant merchant = new Merchant(merchantId, domain);
-                int tokenization = Integer.parseInt(merchantTokenization);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
@@ -197,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
                     selectedTokens.add(cardTokens.get(selectedTokenIndex));
                 }
                 MobPay.Config config = new MobPay.Config();
-                config.setTokenization(tokenization);
                 config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                 config.setCardTokens(selectedTokens);
                 MobPay.getInstance(clientId, clientSecret, config)

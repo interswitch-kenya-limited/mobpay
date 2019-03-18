@@ -293,17 +293,8 @@ public class MobPay implements Serializable {
     }
 
     public static class Config {
-        private int tokenization;
         private List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
         private List<CardToken> cardTokens = new ArrayList<>();
-
-        private int getTokenization() {
-            return tokenization;
-        }
-
-        public void setTokenization(int tokenization) {
-            this.tokenization = tokenization;
-        }
 
         public List<PaymentChannel> getChannels() {
             return channels;
