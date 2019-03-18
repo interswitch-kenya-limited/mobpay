@@ -72,11 +72,9 @@ public class CardToken extends BaseObservable implements Serializable {
         if (apiDate != null) {
             apiDate = apiDate.replaceAll("[^\\d]", ""); // Remove non numeric characters including / separator
             String[] expiryParts = apiDate.split("(?<=\\G.{2})");// Split into twos
-            if (expiryParts.length > 0) {
-                expiryYear = expiryParts[0];
-                if (expiryParts.length > 1) {
-                    expiryMonth = expiryParts[1];
-                }
+            if (expiryParts.length > 1) {
+                expiryMonth = expiryParts[0];
+                expiryYear = expiryParts[1];
             }
         }
         return expiryMonth + expiryYear;

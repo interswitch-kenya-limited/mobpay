@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         paymentChannels.setItems(channelNames);
         tokensSpinner = findViewById(R.id.tokens);
         cardTokens.clear();
-        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "2002");
+        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "02/20");
         cardToken.setPanLast4Digits("1895");
         cardToken.setPanFirst6Digits("506183");
         cardTokens.add(cardToken);

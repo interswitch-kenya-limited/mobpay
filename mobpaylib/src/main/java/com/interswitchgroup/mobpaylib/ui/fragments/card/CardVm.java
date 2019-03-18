@@ -46,7 +46,7 @@ public class CardVm extends ViewModel {
         switch (cardInfoSource) {
             case TOKEN:
                 cardToken.setCvv(card.getCvv());
-                cardToken.setExpiry(card.getFullExpiry());
+//                cardToken.setExpiry(card.getFullExpiry());
                 paymentVm.makeCardTokenPayment(cardToken);
                 break;
             case MANUAL_INPUT:
