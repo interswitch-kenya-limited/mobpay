@@ -1,13 +1,13 @@
-***MobPay - An Android library for Interswitch payments integration***
+# MobPay - An Android library for integrating card and mobile payments through Interswitch
 
 This SDK library enables you to integrate Interswitch payments to your mobile app
 
-**Adding to project**
+## Adding it to a project
 
 To get the library add the following dependency to your module gradle file(app.gradle):
 
 ```groovy
-implementation 'com.github.interswitch-kenya-limited:mobpay:0.0.2.001'
+implementation 'com.github.interswitch-kenya-limited:mobpay:0.0.3'
 ```
 
 *Ensure that the jitpack io repository is part of your project* by adding it to the root build.gradle in the allprojects => repositories section
@@ -16,9 +16,9 @@ implementation 'com.github.interswitch-kenya-limited:mobpay:0.0.2.001'
 maven { url "https://jitpack.io" }
 ```
 
-**Usage examples**
+## Usage examples
 
-To complete a payment using the SDK instantiate a mobpay object by calling 
+Get an interswitch client Id and client secret for your interswitch merchant account then instantiate a mobpay object by doing the following:
 
 ```java
 // Initialize payment and merchant details
@@ -27,14 +27,12 @@ final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId
 payment.setPreauth(preauth);
 final Customer customer = new Customer(customerId);
 customer.setEmail(customerEmail);
-Card card = new Card(cardNumber, cvv, expYear, expMonth);
-card.setTokenize(tokenizeCheckbox.isChecked());
 
 MobPay.Config config = new MobPay.Config();// May be used for advanced configuration, can be null
 MobPay.getInstance(clientId, clientSecret, config)// Instantiate the mobpay library object to make a payment and get the results in the callbacks
         .pay(
-        card,
-        merchant,
+    	MainActivity.this,// The instance of an activity that will be active untill the payment is completed
+    	merchant,
         payment,
         customer,
         new TransactionSuccessCallback() { // Callback object to handle success
@@ -49,3 +47,7 @@ MobPay.getInstance(clientId, clientSecret, config)// Instantiate the mobpay libr
             }
         });
 ```
+
+## Source code
+
+Visit https://github.com/interswitch-kenya-limited/mobpay/ to get the source code and releases of this project if you want to try a manual integration process that does not make use of gradle.
