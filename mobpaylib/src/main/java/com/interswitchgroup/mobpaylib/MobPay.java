@@ -2,6 +2,7 @@ package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
@@ -17,6 +18,7 @@ import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
+import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
@@ -25,12 +27,14 @@ import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -48,37 +52,31 @@ public class MobPay implements Serializable {
     private Retrofit retrofit;
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
-    private static List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
     private static MerchantConfigResponse merchantConfigResponse = new MerchantConfigResponse();
+    private static Config config;
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, PaymentChannel... channels) {
+    public static MobPay getInstance(String clientId, String clientSecret, Config config) {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
-            Disposable subscribe = singletonMobPayInstance.retrofit.create(MerchantConfig.class).fetchMerchantConfig()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<MerchantConfigResponse>() {
-                        @Override
-                        public void accept(MerchantConfigResponse merchantConfigResponse) throws Exception {
-                            MobPay.merchantConfigResponse = merchantConfigResponse;
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
-                            Log.i(LOG_TAG, "Could not fetch merchant config: " + throwable.getMessage());
-                        }
-                    });
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
         }
+
+        if (MobPay.getMerchantConfig() == null) {
+            try {
+                MobPay.initializeMerchantConfig();
+            } catch (Exception e) {
+                singletonMobPayInstance.getTransactionFailureCallback().onError(e);
+            }
+        }
+
         // If enabled channels was explicitly passed, override default enabled channels
-        if (channels != null && channels.length > 0) {
-            // Set enabled channels by first converting all channels varargs to set to remove duplicates
-            singletonMobPayInstance.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
+        if (config != null) {
+            MobPay.config = config;
         }
         return singletonMobPayInstance;
     }
@@ -96,12 +94,45 @@ public class MobPay implements Serializable {
         return transactionSuccessCallback;
     }
 
-    public static List<PaymentChannel> getChannels() {
-        return channels;
+    public static Config getConfig() {
+        return config;
     }
 
-    public static MerchantConfigResponse getMerchantConfigResponse() {
-        return merchantConfigResponse;
+    public static void initializeMerchantConfig() throws ExecutionException, InterruptedException {
+        merchantConfigResponse = new MerchantConfigInitializationTask().execute().get();
+    }
+
+    public static MerchantConfigResponse.Config getMerchantConfig() {
+        return merchantConfigResponse.getConfig();
+    }
+
+    private static class MerchantConfigInitializationTask extends AsyncTask<String, Void, MerchantConfigResponse> {
+
+        @Override
+        protected MerchantConfigResponse doInBackground(String... params) {
+            try {
+                return singletonMobPayInstance.retrofit.create(MerchantConfig.class)
+                        .fetchMerchantConfig()
+                        .execute()
+                        .body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(MerchantConfigResponse result) {
+            merchantConfigResponse = result;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
     }
 
     /**
@@ -115,8 +146,8 @@ public class MobPay implements Serializable {
      * @param transactionSuccessCallback
      * @param transactionFailureCallback
      */
-    public void pay(Activity context, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
-        NullChecker.checkNull(context, "Activity context must not be null");
+    public void pay(Activity activity, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+        NullChecker.checkNull(activity, "Activity context must not be null");
         NullChecker.checkNull(merchant, "merchant must not be null");
         NullChecker.checkNull(customer, "customer must not be null");
         NullChecker.checkNull(payment, "payment must not be null");
@@ -126,7 +157,7 @@ public class MobPay implements Serializable {
         this.transactionSuccessCallback = transactionSuccessCallback;
         this.transactionFailureCallback = transactionFailureCallback;
 
-        Intent intent = new Intent(context, MobPayActivity.class);
+        Intent intent = new Intent(activity, MobPayActivity.class);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("merchant", merchant);
@@ -134,7 +165,7 @@ public class MobPay implements Serializable {
         intent.putExtra("payment", payment);
         intent.putExtra("clientId", clientId);
         intent.putExtra("clientSecret", clientSecret);
-        context.startActivity(intent);
+        activity.startActivity(intent);
         /*
         Launch ui
         collect card data
@@ -149,7 +180,7 @@ public class MobPay implements Serializable {
         try {
             // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
-            String authData = RSAUtil.getAuthDataMerchant(publicKey, card);
+            String authData = RSAUtil.getAuthDataMerchant(publicKey, card.getPan(), card.getCvv(), card.getExpiryYear() + card.getExpiryMonth(), card.isTokenize() ? 1 : 0);
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
             Disposable subscribe = retrofit.create(CardPayment.class)
                     .merchantCardPayment(cardPaymentPayload)
@@ -157,14 +188,43 @@ public class MobPay implements Serializable {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<CardPaymentResponse>() {
                         @Override
-                        public void accept(CardPaymentResponse cardPaymentResponse) throws Exception {
+                        public void accept(CardPaymentResponse cardPaymentResponse) {
                             Log.i(LOG_TAG, "Card payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
                             transactionSuccessCallback.onSuccess(cardPaymentResponse);
                         }
                     }, new Consumer<Throwable>() {
                         @Override
-                        public void accept(Throwable throwable) throws Exception {
+                        public void accept(Throwable throwable) {
                             Log.e(LOG_TAG, "Card payment failed, reason:\t" + throwable.getMessage());
+                            transactionFailureCallback.onError(throwable);
+                        }
+                    });
+        } catch (Exception e) {
+            transactionFailureCallback.onError(e);
+        }
+    }
+
+    public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+        NullChecker.checkNull(cardToken, "cardToken must not be null");
+        try {
+            // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
+            PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
+            String authData = RSAUtil.getAuthDataMerchant(publicKey, cardToken.getToken(), cardToken.getCvv(), cardToken.getExpiry().replaceAll("[^\\d]", ""), 0);
+            CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
+            Disposable subscribe = retrofit.create(CardPayment.class)
+                    .merchantCardTokenPayment(cardPaymentPayload)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<CardPaymentResponse>() {
+                        @Override
+                        public void accept(CardPaymentResponse cardPaymentResponse) {
+                            Log.i(LOG_TAG, "Card token payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
+                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) {
+                            Log.e(LOG_TAG, "Card token payment failed, reason:\t" + throwable.getMessage());
                             transactionFailureCallback.onError(throwable);
                         }
                     });
@@ -183,13 +243,13 @@ public class MobPay implements Serializable {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<MobilePaymentResponse>() {
                         @Override
-                        public void accept(MobilePaymentResponse mobilePaymentResponse) throws Exception {
+                        public void accept(MobilePaymentResponse mobilePaymentResponse) {
                             Log.i(LOG_TAG, "Mobile payment succeeded, ref:\t" + mobilePaymentResponse.getTransactionRef());
                             transactionSuccessCallback.onSuccess(mobilePaymentResponse);
                         }
                     }, new Consumer<Throwable>() {
                         @Override
-                        public void accept(Throwable throwable) throws Exception {
+                        public void accept(Throwable throwable) {
                             Log.e(LOG_TAG, "Mobile payment failed, reason:\t" + throwable.getMessage());
                             transactionFailureCallback.onError(throwable);
                         }
@@ -207,13 +267,13 @@ public class MobPay implements Serializable {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<PaybillQueryResponse>() {
                         @Override
-                        public void accept(PaybillQueryResponse mobilePaymentResponse) throws Exception {
+                        public void accept(PaybillQueryResponse mobilePaymentResponse) {
                             Log.i(LOG_TAG, "Mobile payment succeeded, ref:\t" + mobilePaymentResponse.getTransactionRef());
                             transactionSuccessCallback.onSuccess(mobilePaymentResponse);
                         }
                     }, new Consumer<Throwable>() {
                         @Override
-                        public void accept(Throwable throwable) throws Exception {
+                        public void accept(Throwable throwable) {
                             Log.e(LOG_TAG, "Mobile payment failed, reason:\t" + throwable.getMessage());
                             transactionFailureCallback.onError(throwable);
                         }
@@ -229,6 +289,31 @@ public class MobPay implements Serializable {
 
         PaymentChannel(String value) {
             this.value = value;
+        }
+    }
+
+    public static class Config {
+        private List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
+        private List<CardToken> cardTokens = new ArrayList<>();
+
+        public List<PaymentChannel> getChannels() {
+            return channels;
+        }
+
+        public void setChannels(PaymentChannel... channels) {
+            if (channels != null && channels.length > 0) {
+                // Set enabled channels by first converting all channels varargs to set to remove duplicates
+                this.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
+            }
+        }
+
+        public List<CardToken> getCardTokens() {
+            return cardTokens;
+        }
+
+        public void setCardTokens(List<CardToken> cardTokens) {
+            this.cardTokens.clear();
+            this.cardTokens.addAll(cardTokens);
         }
     }
 }

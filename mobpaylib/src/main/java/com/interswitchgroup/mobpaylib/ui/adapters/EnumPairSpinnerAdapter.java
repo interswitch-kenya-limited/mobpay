@@ -1,4 +1,4 @@
-package com.interswitchgroup.mobpaylib.ui;
+package com.interswitchgroup.mobpaylib.ui.adapters;
 
 import android.content.Context;
 import android.util.Pair;
@@ -13,12 +13,12 @@ import com.interswitchgroup.mobpaylib.R;
 
 import java.util.List;
 
-public class ImageSpinnerAdapter<T extends Enum<T>> extends BaseAdapter {
+public class EnumPairSpinnerAdapter<T extends Enum<T>> extends BaseAdapter {
     Context context;
     LayoutInflater inflter;
     List<Pair<T, Integer>> namesAndImagesMap;
 
-    public ImageSpinnerAdapter(Context applicationContext, List<Pair<T, Integer>> namesAndImagesMap) {
+    public EnumPairSpinnerAdapter(Context applicationContext, List<Pair<T, Integer>> namesAndImagesMap) {
         this.context = applicationContext;
         this.namesAndImagesMap = namesAndImagesMap;
         this.inflter = (LayoutInflater.from(applicationContext));

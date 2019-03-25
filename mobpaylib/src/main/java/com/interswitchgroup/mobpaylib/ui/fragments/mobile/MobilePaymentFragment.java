@@ -26,8 +26,8 @@ import com.interswitchgroup.mobpaylib.api.model.ErrorWrapper;
 import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.model.Mobile;
-import com.interswitchgroup.mobpaylib.ui.ImageSpinnerAdapter;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
+import com.interswitchgroup.mobpaylib.ui.adapters.EnumPairSpinnerAdapter;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 import com.interswitchgroup.mobpaylib.utils.NetUtil;
 
@@ -61,6 +61,7 @@ public class MobilePaymentFragment extends DaggerFragment {
         super.onCreate(savedInstanceState);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
         mobileVm = ViewModelProviders.of(this, viewModelFactory).get(MobileVm.class);
+        mobileVm.setMobile(new Mobile());// Reset the model so that form is cleared
         mobileVm.setPaymentVm(paymentVm);
         mobileVm.setExpressTransactionFailureCallback(new TransactionFailureCallback() {
             @Override
@@ -239,8 +240,8 @@ public class MobilePaymentFragment extends DaggerFragment {
                 changeMobileValidityBackground();
             }
         });
-        ImageSpinnerAdapter<Mobile.Type> imageSpinnerAdapter = new ImageSpinnerAdapter<>(getContext(), providereEnumLogoPairs);
-        fragmentMobilePaymentBinding.spinner.setAdapter(imageSpinnerAdapter);
+        EnumPairSpinnerAdapter<Mobile.Type> enumPairSpinnerAdapter = new EnumPairSpinnerAdapter<>(getContext(), providereEnumLogoPairs);
+        fragmentMobilePaymentBinding.spinner.setAdapter(enumPairSpinnerAdapter);
         return fragmentMobilePaymentBinding.getRoot();
     }
 
@@ -270,11 +271,11 @@ public class MobilePaymentFragment extends DaggerFragment {
             switch (providereEnumLogoPairs.get(provider).first) {
                 case MPESA:
                     t2 = getString(R.string.mpesa_manual_payment_instructions);
-                    t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, MobPay.getMerchantConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
                 case EAZZYPAY:
                     t2 = getString(R.string.eazzypay_manual_payment_instructions);
-                    t2 = String.format(t2, MobPay.getMerchantConfigResponse().getConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, MobPay.getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
             }
         }

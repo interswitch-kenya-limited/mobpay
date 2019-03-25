@@ -41,7 +41,7 @@
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/mobpay_toolbar_height"
+                    android:layout_height="wrap_content"
                     android:contentInsetStart="0dp"
                     android:contentInsetLeft="0dp"
                     android:contentInsetEnd="0dp"
@@ -54,53 +54,62 @@
                     app:contentInsetRight="0dp"
                     app:contentInsetStart="0dp"
                     app:elevation="0dp"
-                    app:layout_scrollFlags="scroll|enterAlways"
+                    android:layout_marginBottom="0dp"
+                    app:layout_scrollFlags="enterAlways"
                     app:popupTheme="@style/AppTheme.PopupOverlay"
                     tools:targetApi="lollipop">
 
-                    <LinearLayout
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/linearLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/activity_vertical_margin">
+                        android:layout_weight="1">
 
                         <ImageView
                             android:id="@+id/interSwitchIcon"
-                            android:layout_width="@dimen/icon_width"
-                            android:layout_height="match_parent"
+                            android:layout_width="100dp"
+                            android:layout_height="@dimen/mobpay_toolbar_height"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
                             app:srcCompat="@drawable/interswitch_icon"
                             tools:ignore="ContentDescription" />
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="bottom"
-                            android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/toolbarValue"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:text='@{paymentVm.payment.currency + " " + paymentVm.payment.amountString}'
-                                android:textAlignment="viewEnd"
-                                android:textColor="@color/mobPayColorAccent"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/toolbarValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginBottom="4dp"
+                            android:text='@{paymentVm.payment.currency + " " + paymentVm.payment.amountString}'
+                            android:textColor="@color/mobPayColorAccent"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/headerEmail"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintVertical_chainStyle="packed" />
 
-                            <TextView
-                                android:id="@+id/headerEmail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:text='@{paymentVm.customer.email}'
-                                android:textAlignment="viewEnd"
-                                android:textColor="@color/mobPayGrayText" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/headerEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text='@{paymentVm.customer.email}'
+                            android:textColor="@color/mobPayGrayText"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
 
-                    </LinearLayout>
+
+                    </android.support.constraint.ConstraintLayout>
 
                 </android.support.v7.widget.Toolbar>
 
@@ -109,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/tab_height"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/tab_height"
+                    android:layout_marginTop="@dimen/appbar_padding_top"
                     android:gravity="center"
                     android:textColor="@color/mobPayGrayText"
                     app:tabGravity="fill"

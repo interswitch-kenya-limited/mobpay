@@ -2,7 +2,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_mob_pay">MobPayActivity</string>
     <string name="enter_your_card_details">Enter your card details</string>
-    <string name="card_number">Card number</string>
+    <string name="card_input_label">Card number</string>
     <string name="card_expiry_date">Card expiry date</string>
     <string name="cvv">CVV</string>
     <string name="cancel">CANCEL</string>
@@ -43,4 +43,5 @@
         \n&#8226;\t Enter your <b>M-PESA PIN</b> and send
         \nOnce you receive a confirmation SMS from M-PESA, click on the confirm payment button below
     </string>
+    <string name="save_card">Save card</string>
 </resources>

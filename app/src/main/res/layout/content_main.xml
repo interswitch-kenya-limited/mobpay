@@ -38,7 +38,7 @@
             android:ems="10"
             android:hint="merchant id"
             android:inputType="text"
-            android:text="ISWKEN0001" />
+            android:text="GEPGTZ0001" />
 
         <EditText
             android:id="@+id/domain"
@@ -66,7 +66,7 @@
             android:enabled="true"
             android:hint="Client Id"
             android:inputType="text"
-            android:text="IKIAB8FA9382D1FAC6FCA2F30195029B0A1558A9FECA" />
+            android:text="IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64" />
 
         <EditText
             android:id="@+id/client_secret"
@@ -76,7 +76,7 @@
             android:enabled="true"
             android:hint="Client Secret"
             android:inputType="text"
-            android:text="dxdmtf12FhLVIFRz8IzhnuAJzNd6AAFVgx/3LlJHc+4=" />
+            android:text="J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=" />
 
 
         <EditText
@@ -86,7 +86,7 @@
             android:ems="10"
             android:hint="amount"
             android:inputType="number"
-            android:text="1331" />
+            android:text="993" />
 
         <EditText
             android:id="@+id/currency"
@@ -117,6 +117,17 @@
             android:text="oid_12121" />
 
         <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
+            android:id="@+id/tokens"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <CheckBox
+            android:id="@+id/tokenization_checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tokenize" />
+
+        <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
             android:id="@+id/channels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -129,7 +140,7 @@
             android:hint="Card Number"
             android:maxLength="16"
             android:inputType="number"
-            android:text="4111111111111111" />
+            android:text="5061830100001895" />
 
         <EditText
             android:id="@+id/cvv"
@@ -149,7 +160,7 @@
             android:hint="Expiry Year"
             android:inputType="number"
             android:maxLength="2"
-            android:text="02" />
+            android:text="20" />
 
         <EditText
             android:id="@+id/expMonth"
@@ -159,7 +170,7 @@
             android:hint="Expiry month"
             android:inputType="number"
             android:maxLength="2"
-            android:text="22" />
+            android:text="02" />
 
         <LinearLayout
             android:layout_width="match_parent"

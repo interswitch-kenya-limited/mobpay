@@ -54,10 +54,61 @@
                     android:id="@+id/card_number_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_marginTop="16dp"
-                    android:text="@string/card_number"
-                    app:layout_constraintStart_toStartOf="@+id/card_number"
+                    android:text="@string/card_input_label"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/fragment_title" />
+
+                <RadioGroup
+                    android:id="@+id/cardSourceRadioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/card_number_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/card_number_label"
+                    tools:visibility="visible">
+
+                    <RadioButton
+                        android:id="@+id/saved_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:text="Saved"
+                        android:textColor="@color/mobPayGrayText" />
+
+                    <RadioButton
+                        android:id="@+id/new_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:text="New"
+                        android:textColor="@color/mobPayGrayText" />
+                </RadioGroup>
+
+                <Spinner
+                    android:id="@+id/card_tokens_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/spinner_new"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/card_number_label" />
 
                 <com.interswitchgroup.mobpaylib.ui.snippets.CrEditText
                     android:id="@+id/card_number"
@@ -77,7 +128,7 @@
                     app:drawableGravity="end"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/card_number_label"
+                    app:layout_constraintTop_toBottomOf="@+id/card_tokens_spinner"
                     app:separator="spaces"
                     tools:ignore="HardcodedText" />
 
@@ -133,6 +184,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="?android:attr/listDivider"
                         android:visibility="invisible"
+                        tools:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -180,6 +232,17 @@
 
                 </android.support.constraint.ConstraintLayout>
 
+                <CheckBox
+                    android:id="@+id/tokenize_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="@={cardVm.card.tokenize}"
+                    android:text="@string/save_card"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
                 <Button
                     android:id="@+id/pay_button"
                     style="@style/MainActionButtonStyle"
@@ -197,7 +260,7 @@
                     android:text='@{"Pay "+ cardVm.paymentVm.payment.currency + " " + cardVm.paymentVm.payment.amountString}'
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                    app:layout_constraintTop_toBottomOf="@+id/tokenize_checkbox"
                     tools:text="Pay Kes 4,355.00" />
 
                 <Button
