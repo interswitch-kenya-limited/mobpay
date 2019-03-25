@@ -107,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
 
-                final Merchant merchant = new Merchant(merchantId, domain);
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
 
+                final Merchant merchant = new Merchant(merchantId, domain);
                 final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
                 payment.setPreauth(preauth);
                 final Customer customer = new Customer(customerId);
