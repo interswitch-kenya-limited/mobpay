@@ -16,6 +16,14 @@ implementation 'com.github.interswitch-kenya-limited:mobpay:0.0.3'
 maven { url "https://jitpack.io" }
 ```
 
+Finally ensure data binding is enabled in the root gradle file of your projects by adding the following config in its android section
+
+```groovy
+dataBinding {
+    enabled = true
+}
+```
+
 ## Usage examples
 
 Get an interswitch client Id and client secret for your interswitch merchant account then instantiate a mobpay object by doing the following:
