@@ -74,7 +74,7 @@ public class MobPay implements Serializable {
             }
         }
 
-        // If enabled channels was explicitly passed, override default enabled channels
+        // If enabled channels wasmakeMobileMoneyPayment explicitly passed, override default enabled channels
         if (config != null) {
             MobPay.config = config;
         }
@@ -99,11 +99,18 @@ public class MobPay implements Serializable {
     }
 
     public static void initializeMerchantConfig() throws ExecutionException, InterruptedException {
-        merchantConfigResponse = new MerchantConfigInitializationTask().execute().get();
+        MerchantConfigResponse newConfigResponse = new MerchantConfigInitializationTask().execute().get();
+        if (newConfigResponse != null) {
+            merchantConfigResponse = newConfigResponse;
+        }
     }
 
     public static MerchantConfigResponse.Config getMerchantConfig() {
-        return merchantConfigResponse.getConfig();
+        if (merchantConfigResponse != null) {
+            return merchantConfigResponse.getConfig();
+        } else {
+            return null;
+        }
     }
 
     private static class MerchantConfigInitializationTask extends AsyncTask<String, Void, MerchantConfigResponse> {
