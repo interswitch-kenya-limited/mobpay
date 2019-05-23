@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 card.setTokenize(tokenizeCheckbox.isChecked());
 
                 MobPay.Config config = new MobPay.Config();
-                MobPay.getInstance(clientId, clientSecret, config)
+                MobPay.getInstance(getApplication(), clientId, clientSecret, config)
                         .makeCardPayment(
                         card,
                         merchant,
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 MobPay.Config config = new MobPay.Config();
                 config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                 config.setCardTokens(selectedTokens);
-                MobPay.getInstance(clientId, clientSecret, config)
+                MobPay.getInstance(getApplication(), clientId, clientSecret, config)
                         .pay(MainActivity.this,
                                 merchant,
                                 payment,
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
                 }
                 Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
-                MobPay.getInstance(clientId, clientSecret, null).makeMobileMoneyPayment(mobile, merchant,
+                MobPay.getInstance(getApplication(), clientId, clientSecret, null).makeMobileMoneyPayment(mobile, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

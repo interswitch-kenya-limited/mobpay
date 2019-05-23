@@ -1,10 +1,17 @@
 package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.cardinalcommerce.cardinalmobilesdk.Cardinal;
+import com.cardinalcommerce.shared.models.parameters.CardinalConfigurationParameters;
+import com.cardinalcommerce.shared.models.parameters.CardinalEnvironment;
+import com.cardinalcommerce.shared.models.parameters.CardinalRenderType;
+import com.cardinalcommerce.shared.models.parameters.CardinalUiType;
+import com.cardinalcommerce.shared.userinterfaces.UiCustomization;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -26,6 +33,8 @@ import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
+
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,6 +58,7 @@ public class MobPay implements Serializable {
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
     private String clientSecret;
+    private static Cardinal cardinal = Cardinal.getInstance();
     private Retrofit retrofit;
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
@@ -58,7 +68,7 @@ public class MobPay implements Serializable {
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, Config config) {
+    public static MobPay getInstance(Application appContext, String clientId, String clientSecret, Config config) {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
@@ -78,6 +88,23 @@ public class MobPay implements Serializable {
         if (config != null) {
             MobPay.config = config;
         }
+        CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
+        cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
+        cardinalConfigurationParameters.setTimeout(8000);
+        JSONArray rType = new JSONArray();
+        rType.put(CardinalRenderType.OTP);
+        rType.put(CardinalRenderType.SINGLE_SELECT);
+        rType.put(CardinalRenderType.MULTI_SELECT);
+        rType.put(CardinalRenderType.OOB);
+        rType.put(CardinalRenderType.HTML);
+        cardinalConfigurationParameters.setRenderType(rType);
+
+        cardinalConfigurationParameters.setUiType(CardinalUiType.BOTH);
+
+        UiCustomization yourUICustomizationObject = new UiCustomization();
+        cardinalConfigurationParameters.setUICustomization(yourUICustomizationObject);
+
+        cardinal.configure(appContext, cardinalConfigurationParameters);
         return singletonMobPayInstance;
     }
 

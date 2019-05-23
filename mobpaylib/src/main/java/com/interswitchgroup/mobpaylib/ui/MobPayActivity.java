@@ -89,7 +89,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
-        this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
+        this.mobPay = MobPay.getInstance(getApplication(), this.clientId, this.clientSecret, null);
         paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
         paymentVm.setMobPay(mobPay);
         paymentVm.setCustomer(this.customer);
