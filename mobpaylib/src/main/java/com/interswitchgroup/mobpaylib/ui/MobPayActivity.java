@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -165,6 +166,7 @@ public class MobPayActivity extends DaggerAppCompatActivity {
                 dialog.show();
             }
         });
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         ActivityMobPayBinding activityMobPayBinding = DataBindingUtil.setContentView(this, R.layout.activity_mob_pay);
         activityMobPayBinding.setLifecycleOwner(this);
         activityMobPayBinding.setPaymentVm(paymentVm);

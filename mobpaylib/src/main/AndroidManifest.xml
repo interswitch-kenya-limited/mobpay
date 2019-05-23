@@ -3,13 +3,17 @@
     package="com.interswitchgroup.mobpaylib">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <permission
+        android:name="com.interswitchgroup.mobpaylib.PAY_WITH_ISWUI"
+        android:label="launch_payment_activity_permission"
+        android:protectionLevel="dangerous" />
     <application android:name=".MyApplication">
         <activity
             android:name=".ui.MobPayActivity"
             android:label="@string/title_activity_mob_pay"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
+            android:permission="com.interswitchgroup.mobpaylib.PAY_WITH_ISWUI"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--android:process=":MobPayProcess"-->
         <!--android:excludeFromRecents="true"-->
