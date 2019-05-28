@@ -1,17 +1,22 @@
 package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
-import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.cardinalcommerce.cardinalmobilesdk.Cardinal;
+import com.cardinalcommerce.cardinalmobilesdk.models.response.ValidateResponse;
+import com.cardinalcommerce.cardinalmobilesdk.services.CardinalInitService;
+import com.cardinalcommerce.cardinalmobilesdk.services.CardinalValidateReceiver;
+import com.cardinalcommerce.shared.models.enums.DirectoryServerID;
 import com.cardinalcommerce.shared.models.parameters.CardinalConfigurationParameters;
 import com.cardinalcommerce.shared.models.parameters.CardinalEnvironment;
 import com.cardinalcommerce.shared.models.parameters.CardinalRenderType;
 import com.cardinalcommerce.shared.models.parameters.CardinalUiType;
 import com.cardinalcommerce.shared.userinterfaces.UiCustomization;
+import com.interswitchgroup.mobpaylib.api.model.CardInitializeResponse;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -21,6 +26,7 @@ import com.interswitchgroup.mobpaylib.api.model.PaybillQueryResponse;
 import com.interswitchgroup.mobpaylib.api.service.CardPayment;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
+import com.interswitchgroup.mobpaylib.api.service.ThreeDSecure;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
@@ -64,16 +70,34 @@ public class MobPay implements Serializable {
     private TransactionSuccessCallback transactionSuccessCallback;
     private static MerchantConfigResponse merchantConfigResponse = new MerchantConfigResponse();
     private static Config config;
+    private Activity activity;
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(Application appContext, String clientId, String clientSecret, Config config) {
+    public static MobPay getInstance(Activity activity, String clientId, String clientSecret, Config config) {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
+            CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
+            cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
+            cardinalConfigurationParameters.setTimeout(8000);
+            JSONArray rType = new JSONArray();
+            rType.put(CardinalRenderType.OTP);
+            rType.put(CardinalRenderType.SINGLE_SELECT);
+            rType.put(CardinalRenderType.MULTI_SELECT);
+            rType.put(CardinalRenderType.OOB);
+            rType.put(CardinalRenderType.HTML);
+            cardinalConfigurationParameters.setRenderType(rType);
+
+            cardinalConfigurationParameters.setUiType(CardinalUiType.BOTH);
+
+            UiCustomization yourUICustomizationObject = new UiCustomization();
+            cardinalConfigurationParameters.setUICustomization(yourUICustomizationObject);
+            singletonMobPayInstance.activity = activity;
+            cardinal.configure(activity.getApplicationContext(), cardinalConfigurationParameters);
         }
 
         if (MobPay.getMerchantConfig() == null) {
@@ -88,23 +112,7 @@ public class MobPay implements Serializable {
         if (config != null) {
             MobPay.config = config;
         }
-        CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
-        cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
-        cardinalConfigurationParameters.setTimeout(8000);
-        JSONArray rType = new JSONArray();
-        rType.put(CardinalRenderType.OTP);
-        rType.put(CardinalRenderType.SINGLE_SELECT);
-        rType.put(CardinalRenderType.MULTI_SELECT);
-        rType.put(CardinalRenderType.OOB);
-        rType.put(CardinalRenderType.HTML);
-        cardinalConfigurationParameters.setRenderType(rType);
 
-        cardinalConfigurationParameters.setUiType(CardinalUiType.BOTH);
-
-        UiCustomization yourUICustomizationObject = new UiCustomization();
-        cardinalConfigurationParameters.setUICustomization(yourUICustomizationObject);
-
-        cardinal.configure(appContext, cardinalConfigurationParameters);
         return singletonMobPayInstance;
     }
 
@@ -216,15 +224,57 @@ public class MobPay implements Serializable {
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
             String authData = RSAUtil.getAuthDataMerchant(publicKey, card.getPan(), card.getCvv(), card.getExpiryYear() + card.getExpiryMonth(), card.isTokenize() ? 1 : 0);
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
-            Disposable subscribe = retrofit.create(CardPayment.class)
-                    .merchantCardPayment(cardPaymentPayload)
+            Disposable subscribe = retrofit.create(ThreeDSecure.class)
+                    .cardInitialize(cardPaymentPayload)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<CardPaymentResponse>() {
+                    .subscribe(new Consumer<CardInitializeResponse>() {
                         @Override
-                        public void accept(CardPaymentResponse cardPaymentResponse) {
-                            Log.i(LOG_TAG, "Card payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
-                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                        public void accept(CardInitializeResponse cardInitializeResponse) throws Exception {
+                            final CardInitializeResponse internalCardInitializeResponse = cardInitializeResponse;
+                            cardinal.init(cardInitializeResponse.getJwt(),
+                                    new CardinalInitService() {
+                                        /**
+                                         * You may have your Submit button disabled on page load. Once you are setup
+                                         * for CCA, you may then enable it. This will prevent users from submitting
+                                         * their order before CCA is ready.
+                                         */
+                                        @Override
+                                        public void onSetupCompleted(final String consumerSessionId) {
+                                            Disposable subscribe1 = retrofit.create(ThreeDSecure.class)
+                                                    .checkEnrollAction(internalCardInitializeResponse, consumerSessionId)
+                                                    .subscribeOn(Schedulers.io())
+                                                    .observeOn(AndroidSchedulers.mainThread())
+                                                    .subscribe(new Consumer<CardInitializeResponse>() {
+                                                        @Override
+                                                        public void accept(CardInitializeResponse checkEnrollResponse) {
+                                                            cardinal.cca_continue(checkEnrollResponse.getCsAuthenticationTransactionID(), checkEnrollResponse.getCsPaReq(), DirectoryServerID.VISA01, activity, new CardinalValidateReceiver() {
+                                                                @Override
+                                                                public void onValidated(Context context, ValidateResponse validateResponse, String s) {
+                                                                    transactionFailureCallback.onError(new Exception(validateResponse.errorDescription));
+                                                                }
+                                                            });
+                                                        }
+                                                    }, new Consumer<Throwable>() {
+                                                        @Override
+                                                        public void accept(Throwable throwable) {
+
+                                                        }
+                                                    });
+                                        }
+
+                                        /**
+                                         * If there was an error with setup, cardinal will call this function with
+                                         * validate response and empty serverJWT
+                                         *
+                                         * @param validateResponse
+                                         * @param serverJwt        will be an empty
+                                         */
+                                        @Override
+                                        public void onValidated(ValidateResponse validateResponse, String serverJwt) {
+                                            transactionFailureCallback.onError(new Exception(validateResponse.errorDescription));
+                                        }
+                                    });
                         }
                     }, new Consumer<Throwable>() {
                         @Override

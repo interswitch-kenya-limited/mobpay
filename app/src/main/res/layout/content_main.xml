@@ -140,7 +140,7 @@
             android:hint="Card Number"
             android:maxLength="16"
             android:inputType="number"
-            android:text="5061830100001895" />
+            android:text="4111111111111111" />
 
         <EditText
             android:id="@+id/cvv"

@@ -1,5 +1,7 @@
 package com.interswitchgroup.mobpaylib.api.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Payment;
@@ -30,4 +32,16 @@ public class CardPaymentPayload extends TransactionPayload {
         this.authData = authData;
     }
 
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        // Java object to JSON string
+        String jsonString = super.toString();
+        try {
+            jsonString = mapper.writeValueAsString(this);
+            return jsonString;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return super.toString();
+    }
 }
