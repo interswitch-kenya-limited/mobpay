@@ -1,10 +1,11 @@
 package com.interswitchgroup.mobpaylib.api.model;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class CardInitializeResponse {
+public class ThreeDSecureAPIResponse {
 
     private String amount;
     private String merchantId;
@@ -406,6 +407,7 @@ public class CardInitializeResponse {
     @Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // Java object to JSON string
         String jsonString = super.toString();
         try {

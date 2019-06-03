@@ -1,5 +1,6 @@
 package com.interswitchgroup.mobpaylib.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.model.Customer;
@@ -34,6 +35,7 @@ public class CardPaymentPayload extends TransactionPayload {
 
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // Java object to JSON string
         String jsonString = super.toString();
         try {
