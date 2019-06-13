@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 
 /**
@@ -53,6 +54,12 @@ public class PlaceHolderFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
         this.titleTv = rootView.findViewById(R.id.placeholder_fragment_title);
         titleTv.setText(fragmentTitle);
+        titleTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MobPay.getInstance("IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64", "J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=", null).doSomeHover(getActivity());
+            }
+        });
         return rootView;
     }
 

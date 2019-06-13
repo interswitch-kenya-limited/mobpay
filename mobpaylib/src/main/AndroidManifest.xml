@@ -15,6 +15,9 @@
             android:windowSoftInputMode="adjustNothing"
             android:permission="com.interswitchgroup.mobpaylib.PAY_WITH_ISWUI"
             android:theme="@style/AppTheme.NoActionBar" />
+        <meta-data
+            android:name="com.hover.ApiKey"
+            android:value="01f9917ee9ed4818c48770fafe59a534" />
         <!--android:process=":MobPayProcess"-->
         <!--android:excludeFromRecents="true"-->
         <!--android:noHistory="true"-->

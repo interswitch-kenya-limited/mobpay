@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.hover.sdk.api.Hover;
+import com.hover.sdk.api.HoverParameters;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -96,6 +98,16 @@ public class MobPay implements Serializable {
 
     public static Config getConfig() {
         return config;
+    }
+
+    public void doSomeHover(Activity context) {
+        Hover.initialize(context);
+        // Action Id 5853ebf2 CBA_GTB
+        Intent i = new HoverParameters.Builder(context)
+                .request("5853ebf2")
+                .extra("action_step_variable_name", "s")
+                .buildIntent();
+        context.startActivityForResult(i, 0);
     }
 
     public static void initializeMerchantConfig() throws ExecutionException, InterruptedException {

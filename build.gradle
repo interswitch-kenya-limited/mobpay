@@ -22,6 +22,7 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url 'http://maven.usehover.com/releases' }
     }
     apply plugin: 'nebula.lint'
 }
