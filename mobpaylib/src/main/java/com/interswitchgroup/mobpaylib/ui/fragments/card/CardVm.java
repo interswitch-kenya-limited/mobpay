@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel;
 import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.CardToken;
 
-import javax.inject.Inject;
 
 public class CardVm extends ViewModel {
     private PaymentVm paymentVm;
@@ -13,7 +12,6 @@ public class CardVm extends ViewModel {
     private CardToken cardToken;
     private CardInfoSource cardInfoSource = CardInfoSource.MANUAL_INPUT;
 
-    @Inject
     public CardVm() {
         this.card = new Card();
     }
