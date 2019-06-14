@@ -13,7 +13,6 @@ import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 
-import javax.inject.Inject;
 
 public class PaymentVm extends ViewModel {
     private String LOG_TAG = this.getClass().getSimpleName();
@@ -25,7 +24,6 @@ public class PaymentVm extends ViewModel {
     private TransactionSuccessCallback onSuccess;
     private TransactionFailureCallback onFailure;
 
-    @Inject
     public PaymentVm() {
     }
 

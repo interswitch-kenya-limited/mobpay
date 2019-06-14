@@ -7,7 +7,6 @@ import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 
-import javax.inject.Inject;
 
 public class MobileVm extends ViewModel {
     private static String LOG_TAG = MobileVm.class.getSimpleName();
@@ -20,7 +19,6 @@ public class MobileVm extends ViewModel {
     private TransactionFailureCallback expressTransactionFailureCallback;
     private TransactionFailureCallback paybillTransactionFailureCallback;
 
-    @Inject
     public MobileVm() {
         this.mobile = new Mobile();
     }
