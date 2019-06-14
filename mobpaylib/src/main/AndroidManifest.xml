@@ -7,7 +7,7 @@
         android:name="com.interswitchgroup.mobpaylib.PAY_WITH_ISWUI"
         android:label="launch_payment_activity_permission"
         android:protectionLevel="dangerous" />
-    <application android:name=".MyApplication">
+    <application>
         <activity
             android:name=".ui.MobPayActivity"
             android:label="@string/title_activity_mob_pay"

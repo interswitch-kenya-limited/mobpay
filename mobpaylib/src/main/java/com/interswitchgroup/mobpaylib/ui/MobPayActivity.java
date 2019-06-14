@@ -1,7 +1,6 @@
 package com.interswitchgroup.mobpaylib.ui;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
@@ -15,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,11 +54,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
-public class MobPayActivity extends DaggerAppCompatActivity implements Hover.DownloadListener {
+public class MobPayActivity extends AppCompatActivity {
 
     private static final String TAG = MobPayActivity.class.getSimpleName();
     /**
@@ -80,9 +77,7 @@ public class MobPayActivity extends DaggerAppCompatActivity implements Hover.Dow
     public Payment payment;
     public String clientId;
     public String clientSecret;
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
-    private PaymentVm paymentVm;
+    public PaymentVm paymentVm;
     private MobPay mobPay;
 
     @Override
@@ -94,7 +89,7 @@ public class MobPayActivity extends DaggerAppCompatActivity implements Hover.Dow
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
         this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
-        paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
+        paymentVm = new PaymentVm();
         paymentVm.setMobPay(mobPay);
         paymentVm.setCustomer(this.customer);
         paymentVm.setMerchant(this.merchant);
