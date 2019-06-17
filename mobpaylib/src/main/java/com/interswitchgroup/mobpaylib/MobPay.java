@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.hover.sdk.api.Hover;
 import com.hover.sdk.api.HoverParameters;
+import com.hover.sdk.permissions.PermissionActivity;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -100,21 +101,28 @@ public class MobPay implements Serializable {
         return config;
     }
 
-    public void doSomeHover(Activity context) {
-        Hover.initialize(context);
-        // Action Id 5853ebf2 CBA_GTB
-        Intent i = new HoverParameters.Builder(context)
-                .request("5853ebf2")
-                .extra("action_step_variable_name", "s")
-                .buildIntent();
-        context.startActivityForResult(i, 0);
-    }
-
     public static void initializeMerchantConfig() throws ExecutionException, InterruptedException {
         MerchantConfigResponse newConfigResponse = new MerchantConfigInitializationTask().execute().get();
         if (newConfigResponse != null) {
             merchantConfigResponse = newConfigResponse;
         }
+    }
+
+    public void doSomeHover(Activity context) {
+        Hover.initialize(context);
+        // Action Id 5853ebf2 CBA_GTB
+        Intent i = new HoverParameters.Builder(context)
+                .request("5853ebf2")
+//                .request("c5ea0610")
+                .extra("ReceiverAccount", "01108018224500")
+                .extra("Amount", "1")
+                .extra("Narration", "Test payment form android sdk sample app")
+                .buildIntent();
+        context.startActivityForResult(i, 0);
+    }
+
+    public void getHoverPermissions(Activity context) {
+        context.startActivityForResult(new Intent(context, PermissionActivity.class), 0);
     }
 
     public static MerchantConfigResponse.Config getMerchantConfig() {

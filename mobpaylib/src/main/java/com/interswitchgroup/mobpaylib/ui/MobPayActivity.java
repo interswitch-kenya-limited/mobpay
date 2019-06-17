@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -31,8 +30,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.hover.sdk.actions.HoverAction;
-import com.hover.sdk.api.Hover;
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.api.model.ErrorWrapper;
@@ -277,18 +274,18 @@ public class MobPayActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    public void onError(String message) {
-        Toast.makeText(this, "Error while attempting to download actions, see logcat for error", Toast.LENGTH_LONG).show();
-        Log.e(TAG, "Error: " + message);
-    }
-
-    @Override
-    public void onSuccess(ArrayList<HoverAction> actions) {
-        Toast.makeText(this, "Successfully downloaded " + actions.size() + " actions", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "Successfully downloaded " + actions.size() + " actions");
-    }
+//
+//    @Override
+//    public void onError(String message) {
+//        Toast.makeText(this, "Error while attempting to download actions, see logcat for error", Toast.LENGTH_LONG).show();
+//        Log.e(TAG, "Error: " + message);
+//    }
+//
+//    @Override
+//    public void onSuccess(ArrayList<HoverAction> actions) {
+//        Toast.makeText(this, "Successfully downloaded " + actions.size() + " actions", Toast.LENGTH_LONG).show();
+//        Log.d(TAG, "Successfully downloaded " + actions.size() + " actions");
+//    }
 
     @Override
     protected void onResume() {
