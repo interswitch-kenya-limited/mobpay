@@ -52,7 +52,7 @@ public class CardPaymentFragment extends Fragment {
             fragmentCardPaymentBinding.cardTokensSpinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
 
-        switch (MobPay.getMerchantConfig().getTokenizeStatus()) {
+        switch (paymentVm.getMobPay().getMerchantConfig().getTokenizeStatus()) {
             case 0: //Always tokenize,
                 cardVm.getCard().setTokenize(true);//Set card tokenize to true
                 if (MobPay.getConfig().getCardTokens() != null && MobPay.getConfig().getCardTokens().size() > 0) {
@@ -103,7 +103,7 @@ public class CardPaymentFragment extends Fragment {
                     String expiry = CardToken.getDateForDisplay(MobPay.getConfig().getCardTokens().get(fragmentCardPaymentBinding.cardTokensSpinner.getSelectedItemPosition()).getExpiry());
                     fragmentCardPaymentBinding.expiryDate.setText(expiry);
                 } else if (checkedId == R.id.new_card) {
-                    if (MobPay.getMerchantConfig().getTokenizeStatus() == 1) {// When tokenization is optional show checkbox
+                    if (paymentVm.getMobPay().getMerchantConfig().getTokenizeStatus() == 1) {// When tokenization is optional show checkbox
                         fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.VISIBLE);
                     }
                     cardVm.getCard().setPayWithToken(false);

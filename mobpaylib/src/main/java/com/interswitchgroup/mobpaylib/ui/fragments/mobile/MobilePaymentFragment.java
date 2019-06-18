@@ -20,7 +20,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.api.model.ErrorWrapper;
 import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
@@ -265,11 +264,11 @@ public class MobilePaymentFragment extends Fragment {
             switch (providereEnumLogoPairs.get(provider).first) {
                 case MPESA:
                     t2 = getString(R.string.mpesa_manual_payment_instructions);
-                    t2 = String.format(t2, MobPay.getMerchantConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
                 case EAZZYPAY:
                     t2 = getString(R.string.eazzypay_manual_payment_instructions);
-                    t2 = String.format(t2, MobPay.getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
             }
         }
