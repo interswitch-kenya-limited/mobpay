@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -55,13 +54,13 @@ public class MobPay implements Serializable {
     private Retrofit retrofit;
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
-    private static MerchantConfigResponse merchantConfigResponse = new MerchantConfigResponse();
+    private MerchantConfigResponse.Config merchantConfig;
     private static Config config;
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, Config config) {
+    public static MobPay getInstance(String clientId, String clientSecret, Config config) throws Exception {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
@@ -69,12 +68,8 @@ public class MobPay implements Serializable {
             singletonMobPayInstance.clientSecret = clientSecret;
         }
 
-        if (MobPay.getMerchantConfig() == null) {
-            try {
-                MobPay.initializeMerchantConfig();
-            } catch (Exception e) {
-                singletonMobPayInstance.getTransactionFailureCallback().onError(e);
-            }
+        if (singletonMobPayInstance.getMerchantConfig() == null) {
+            singletonMobPayInstance.initializeMerchantConfig();
         }
 
         // If enabled channels wasmakeMobileMoneyPayment explicitly passed, override default enabled channels
@@ -101,10 +96,12 @@ public class MobPay implements Serializable {
         return config;
     }
 
-    public static void initializeMerchantConfig() throws ExecutionException, InterruptedException {
-        MerchantConfigResponse newConfigResponse = new MerchantConfigInitializationTask().execute().get();
-        if (newConfigResponse != null) {
-            merchantConfigResponse = newConfigResponse;
+    private void initializeMerchantConfig() throws Exception {
+        MerchantConfigResponse merchantConfigResponse = new MerchantConfigInitializationTask().execute().get();
+        if (merchantConfigResponse != null) {
+            merchantConfig = merchantConfigResponse.getConfig();
+        } else {
+            throw new Exception("Failed to fetch merchant config, check your internet and configuration");
         }
     }
 
@@ -127,12 +124,8 @@ public class MobPay implements Serializable {
         context.startActivityForResult(new Intent(context, PermissionActivity.class), 0);
     }
 
-    public static MerchantConfigResponse.Config getMerchantConfig() {
-        if (merchantConfigResponse != null) {
-            return merchantConfigResponse.getConfig();
-        } else {
-            return null;
-        }
+    public MerchantConfigResponse.Config getMerchantConfig() {
+        return merchantConfig;
     }
 
     private static class MerchantConfigInitializationTask extends AsyncTask<String, Void, MerchantConfigResponse> {
@@ -152,7 +145,9 @@ public class MobPay implements Serializable {
 
         @Override
         protected void onPostExecute(MerchantConfigResponse result) {
-            merchantConfigResponse = result;
+            if (result != null) {
+                singletonMobPayInstance.merchantConfig = result.getConfig();
+            }
         }
 
         @Override
