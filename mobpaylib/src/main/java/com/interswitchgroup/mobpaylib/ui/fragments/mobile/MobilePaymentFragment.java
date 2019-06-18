@@ -1,11 +1,11 @@
 package com.interswitchgroup.mobpaylib.ui.fragments.mobile;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -20,7 +20,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.api.model.ErrorWrapper;
 import com.interswitchgroup.mobpaylib.databinding.FragmentMobilePaymentBinding;
@@ -34,19 +33,13 @@ import com.interswitchgroup.mobpaylib.utils.NetUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import dagger.android.support.DaggerFragment;
-
 import static com.interswitchgroup.mobpaylib.model.Mobile.Type.EAZZYPAY;
 import static com.interswitchgroup.mobpaylib.model.Mobile.Type.MPESA;
 
-public class MobilePaymentFragment extends DaggerFragment {
+public class MobilePaymentFragment extends Fragment {
 
     private static final String LOG_TAG = MobilePaymentFragment.class.getSimpleName();
     MobileVm mobileVm;
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
     private final List<Pair<Mobile.Type, Integer>> providereEnumLogoPairs = new ArrayList<>();
     private FragmentMobilePaymentBinding fragmentMobilePaymentBinding;
@@ -59,8 +52,8 @@ public class MobilePaymentFragment extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
-        mobileVm = ViewModelProviders.of(this, viewModelFactory).get(MobileVm.class);
+        paymentVm = ((MobPayActivity) getActivity()).paymentVm;
+        mobileVm = new MobileVm();
         mobileVm.setMobile(new Mobile());// Reset the model so that form is cleared
         mobileVm.setPaymentVm(paymentVm);
         mobileVm.setExpressTransactionFailureCallback(new TransactionFailureCallback() {
@@ -271,11 +264,11 @@ public class MobilePaymentFragment extends DaggerFragment {
             switch (providereEnumLogoPairs.get(provider).first) {
                 case MPESA:
                     t2 = getString(R.string.mpesa_manual_payment_instructions);
-                    t2 = String.format(t2, MobPay.getMerchantConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
                 case EAZZYPAY:
                     t2 = getString(R.string.eazzypay_manual_payment_instructions);
-                    t2 = String.format(t2, MobPay.getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
             }
         }

@@ -1,11 +1,10 @@
 package com.interswitchgroup.mobpaylib.ui.fragments.card;
 
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +19,13 @@ import com.interswitchgroup.mobpaylib.model.CardToken;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.ui.adapters.TokensSpinnerAdapter;
 
-import javax.inject.Inject;
-
-import dagger.android.support.DaggerFragment;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class CardPaymentFragment extends DaggerFragment {
+public class CardPaymentFragment extends Fragment {
 
     CardVm cardVm;
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
     private PaymentVm paymentVm;
     private FragmentCardPaymentBinding fragmentCardPaymentBinding;
 
@@ -41,8 +35,8 @@ public class CardPaymentFragment extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
-        cardVm = ViewModelProviders.of(this, viewModelFactory).get(CardVm.class);
+        paymentVm = ((MobPayActivity) getActivity()).paymentVm;
+        cardVm = new CardVm();
         cardVm.setCard(new Card());// Reset the model so that form is cleared
         cardVm.setPaymentVm(paymentVm);
     }
@@ -58,7 +52,7 @@ public class CardPaymentFragment extends DaggerFragment {
             fragmentCardPaymentBinding.cardTokensSpinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
 
-        switch (MobPay.getMerchantConfig().getTokenizeStatus()) {
+        switch (paymentVm.getMobPay().getMerchantConfig().getTokenizeStatus()) {
             case 0: //Always tokenize,
                 cardVm.getCard().setTokenize(true);//Set card tokenize to true
                 if (MobPay.getConfig().getCardTokens() != null && MobPay.getConfig().getCardTokens().size() > 0) {
@@ -109,7 +103,7 @@ public class CardPaymentFragment extends DaggerFragment {
                     String expiry = CardToken.getDateForDisplay(MobPay.getConfig().getCardTokens().get(fragmentCardPaymentBinding.cardTokensSpinner.getSelectedItemPosition()).getExpiry());
                     fragmentCardPaymentBinding.expiryDate.setText(expiry);
                 } else if (checkedId == R.id.new_card) {
-                    if (MobPay.getMerchantConfig().getTokenizeStatus() == 1) {// When tokenization is optional show checkbox
+                    if (paymentVm.getMobPay().getMerchantConfig().getTokenizeStatus() == 1) {// When tokenization is optional show checkbox
                         fragmentCardPaymentBinding.tokenizeCheckbox.setVisibility(View.VISIBLE);
                     }
                     cardVm.getCard().setPayWithToken(false);

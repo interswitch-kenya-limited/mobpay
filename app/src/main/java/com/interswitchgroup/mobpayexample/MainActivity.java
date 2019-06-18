@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
@@ -120,10 +121,16 @@ public class MainActivity extends AppCompatActivity {
                 customer.setEmail(customerEmail);
                 Card card = new Card(cardNumber, cvv, expYear, expMonth);
                 card.setTokenize(tokenizeCheckbox.isChecked());
-
-                MobPay.Config config = new MobPay.Config();
-                MobPay.getInstance(MainActivity.this, clientId, clientSecret, config)
-                        .makeCardPayment(
+                MobPay mobPay;
+                try {
+                    MobPay.Config config = new MobPay.Config();
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                mobPay.makeCardPayment(
                         card,
                         merchant,
                         payment,
@@ -195,14 +202,21 @@ public class MainActivity extends AppCompatActivity {
                 for (int selectedTokenIndex : tokensSpinner.getSelectedIndicies()) {
                     selectedTokens.add(cardTokens.get(selectedTokenIndex));
                 }
-                MobPay.Config config = new MobPay.Config();
-                config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
-                config.setCardTokens(selectedTokens);
-                MobPay.getInstance(MainActivity.this, clientId, clientSecret, config)
-                        .pay(MainActivity.this,
-                                merchant,
-                                payment,
-                                customer,
+                MobPay mobPay;
+                try {
+                    MobPay.Config config = new MobPay.Config();
+                    config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
+                    config.setCardTokens(selectedTokens);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                mobPay.pay(MainActivity.this,
+                        merchant,
+                        payment,
+                        customer,
                         new TransactionSuccessCallback() {
                             @Override
                             public void onSuccess(TransactionResponse transactionResponse) {
@@ -269,7 +283,15 @@ public class MainActivity extends AppCompatActivity {
                     selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
                 }
                 Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
-                MobPay.getInstance(MainActivity.this, clientId, clientSecret, null).makeMobileMoneyPayment(mobile, merchant,
+                MobPay mobPay;
+                try {
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                mobPay.makeMobileMoneyPayment(mobile, merchant,
                         payment,
                         customer,
                         new TransactionSuccessCallback() {

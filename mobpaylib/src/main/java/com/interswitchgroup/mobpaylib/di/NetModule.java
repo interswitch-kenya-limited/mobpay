@@ -4,7 +4,6 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.interswitchgroup.mobpaylib.BuildConfig;
@@ -12,6 +11,7 @@ import com.interswitchgroup.mobpaylib.api.utils.TLSSocketFactory;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -87,7 +87,7 @@ public class NetModule {
                             // Build signature and headers
                             String timestamp = String.valueOf(new Date().getTime() / 1000);
                             String nonce = UUID.randomUUID().toString().replaceAll("-", "");
-                            String encodedClientId = Base64.encodeToString(clientId.getBytes("UTF-8"), Base64.NO_WRAP);
+                            String encodedClientId = Base64.encodeToString(clientId.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
                             String httpMethod = original.method();
                             String url = original.url().toString();
                             String encodedUrl = URLEncoder.encode(url, "UTF-8");
@@ -95,7 +95,7 @@ public class NetModule {
                             String signatureCipher = TextUtils.join("&", signatureItems);
                             String signatureMethod = "SHA1";
                             MessageDigest messageDigest = MessageDigest.getInstance(signatureMethod);
-                            String signature = Base64.encodeToString(messageDigest.digest(signatureCipher.getBytes("UTF-8")), Base64.NO_WRAP);
+                            String signature = Base64.encodeToString(messageDigest.digest(signatureCipher.getBytes(StandardCharsets.UTF_8)), Base64.NO_WRAP);
 
                             // Add headers to request
                             Request.Builder builder = original.newBuilder()
