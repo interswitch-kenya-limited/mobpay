@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
@@ -17,12 +18,19 @@ import com.interswitchgroup.mobpaylib.R;
  */
 public class PlaceHolderFragment extends Fragment {
     private static final String FRAGMENT_TITLE = "param1";
+    private MobPay mobpayInstance;
     private Button btnTestHover;
     private Button btnGetPermissions;
     private String fragmentTitle;
 
     public PlaceHolderFragment() {
         // Required empty public constructor
+        try {
+            mobpayInstance = MobPay.getInstance("IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64", "J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=", null);
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+            getActivity().finish();
+        }
     }
 
     /**
@@ -53,7 +61,6 @@ public class PlaceHolderFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
-        final MobPay mobpayInstance = MobPay.getInstance("IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64", "J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=", null);
         this.btnTestHover = rootView.findViewById(R.id.testbankussd);
         this.btnGetPermissions = rootView.findViewById(R.id.gethoverpermissions);
         btnTestHover.setOnClickListener(new View.OnClickListener() {
