@@ -84,7 +84,12 @@ public class MobPayActivity extends AppCompatActivity {
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
-        this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
+        try {
+            this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
+        }
         paymentVm = new PaymentVm();
         paymentVm.setMobPay(mobPay);
         paymentVm.setCustomer(this.customer);
@@ -272,21 +277,6 @@ public class MobPayActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (MobPay.getMerchantConfig() == null) {
-            try {
-                paymentVm.getLoading().set(true);
-                MobPay.initializeMerchantConfig();
-                paymentVm.getLoading().set(false);
-            } catch (Exception e) {
-                mobPay.getTransactionFailureCallback().onError(e);
-                finish();
-            }
-        }
     }
 
     @Override
