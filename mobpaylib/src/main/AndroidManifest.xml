@@ -17,7 +17,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <meta-data
             android:name="com.hover.ApiKey"
-            android:value="01f9917ee9ed4818c48770fafe59a534" />
+            android:value="c0522f11d8ed4ec53530b3b7a1ff550c" />
         <!--android:process=":MobPayProcess"-->
         <!--android:excludeFromRecents="true"-->
         <!--android:noHistory="true"-->

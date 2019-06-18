@@ -112,11 +112,13 @@ public class MobPay implements Serializable {
         Hover.initialize(context);
         // Action Id 5853ebf2 CBA_GTB
         Intent i = new HoverParameters.Builder(context)
-                .request("5853ebf2")
+                .request("3acd07d9")
+//                .request("12ccfeff")
+//                .request("5853ebf2")
 //                .request("c5ea0610")
-                .extra("ReceiverAccount", "01108018224500")
-                .extra("Amount", "1")
-                .extra("Narration", "Test payment form android sdk sample app")
+//                .extra("ReceiverAccount", "01108018224500")
+//                .extra("Amount", "1")
+//                .extra("Narration", "Test payment form android sdk sample app")
                 .buildIntent();
         context.startActivityForResult(i, 0);
     }
