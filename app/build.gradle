@@ -1,6 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        releass {
+            storeFile file('C:\\Users\\ramses-iv\\keys\\mobpay_skd.jks')
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         minSdkVersion 19
@@ -13,6 +18,11 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

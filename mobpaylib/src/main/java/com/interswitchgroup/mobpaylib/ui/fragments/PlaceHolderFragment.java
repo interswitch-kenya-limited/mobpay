@@ -26,7 +26,7 @@ public class PlaceHolderFragment extends Fragment {
     public PlaceHolderFragment() {
         // Required empty public constructor
         try {
-            mobpayInstance = MobPay.getInstance("IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64", "J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=", null);
+            mobpayInstance = MobPay.getInstance(getActivity(), "IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64", "J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=", null);
         } catch (Exception e) {
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
             getActivity().finish();

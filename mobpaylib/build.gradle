@@ -20,7 +20,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            signingConfig signingConfigs.debug
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -69,7 +71,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.0.0'
 
     //UseHover
-    implementation('com.hover:android-sdk:0.17.0-rc12') {
+    implementation('com.hover:android-sdk:1.+') {
         transitive = true
     }
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-android

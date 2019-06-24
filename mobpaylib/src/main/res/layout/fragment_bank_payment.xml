@@ -54,7 +54,7 @@
                     tools:targetApi="p" />
 
                 <Spinner
-                    android:id="@+id/spinner"
+                    android:id="@+id/ussd_actions_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -62,43 +62,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title" />
 
-                <RadioGroup
-                    android:id="@+id/payMethodRadioGroup"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/spinner">
-
-                    <RadioButton
-                        android:id="@+id/express"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:checked="@{bankVm.paymentMethod.equals(BankVm.EXPRESS)}"
-                        android:onClick="@{()->bankVm.setPaymentMethod(BankVm.EXPRESS)}"
-                        android:text="Express checkout"
-                        android:textColor="@color/mobPayGrayText" />
-
-                    <RadioButton
-                        android:id="@+id/paybill"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:checked="@{bankVm.paymentMethod.equals(BankVm.PAYBIll)}"
-                        android:onClick="@{()->bankVm.setPaymentMethod(BankVm.PAYBIll)}"
-                        android:text="Paybill"
-                        android:textColor="@color/mobPayGrayText" />
-                </RadioGroup>
-
                 <EditText
                     android:id="@+id/mobile"
                     style="@style/EditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/edit_text_height"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:ems="10"
                     android:hint="0700 000 000"
                     android:inputType="phone"
@@ -106,25 +75,10 @@
                     android:text="@={bankVm.mobile.phone}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/payMethodRadioGroup"
+                    app:layout_constraintTop_toBottomOf="@+id/ussd_actions_spinner"
                     tools:ignore="Autofill,HardcodedText"
                     tools:text="0713365209" />
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/mno_content_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:lineSpacingMultiplier="1.5"
-                    android:text="mno content and action initial text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/mobile"
-                    tools:ignore="HardcodedText" />
                 <!---->
                 <!--android:textSize="14sp"-->
                 <!--android:lineSpacingExtra=""-->
@@ -135,7 +89,7 @@
                     style="@style/MainActionButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:clickable="true"
                     android:enabled="@{bankVm.mobile.mobileFullyValid}"
                     android:focusable="true"
@@ -143,7 +97,7 @@
                     android:text='@{"Pay "+ bankVm.paymentVm.payment.currency + " " + bankVm.paymentVm.payment.amountString}'
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/mno_content_text"
+                    app:layout_constraintTop_toBottomOf="@+id/mobile"
                     tools:text="Pay Kes 4,355.00" />
 
                 <Button
@@ -168,39 +122,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cancel_button">
-
-
-                    <ImageView
-                        android:id="@+id/imageView3"
-                        android:layout_width="@dimen/mobpay_icons_height"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="64dp"
-                        android:layout_marginLeft="64dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginRight="4dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/imageView6"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/gray_mpesa"
-                        tools:ignore="ContentDescription" />
-
-                    <ImageView
-                        android:id="@+id/imageView6"
-                        android:layout_width="@dimen/mobpay_icons_height"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginEnd="64dp"
-                        android:layout_marginRight="64dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/imageView3"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/gray_eazzypay"
-                        tools:ignore="ContentDescription" />
-                </android.support.constraint.ConstraintLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/cancel_button" />
 
             </android.support.constraint.ConstraintLayout>
         </ScrollView>

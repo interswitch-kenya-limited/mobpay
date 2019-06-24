@@ -60,8 +60,9 @@ public class MobPay implements Serializable {
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, Config config) throws Exception {
+    public static MobPay getInstance(Activity context, String clientId, String clientSecret, Config config) throws Exception {
         if (singletonMobPayInstance == null) {
+            Hover.initialize(context);
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
@@ -106,16 +107,19 @@ public class MobPay implements Serializable {
     }
 
     public void doSomeHover(Activity context) {
-        Hover.initialize(context);
         // Action Id 5853ebf2 CBA_GTB
         Intent i = new HoverParameters.Builder(context)
-                .request("3acd07d9")
-//                .request("12ccfeff")
+//                .request("3acd07d9")
+                .request("12ccfeff")
 //                .request("5853ebf2")
 //                .request("c5ea0610")
 //                .extra("ReceiverAccount", "01108018224500")
 //                .extra("Amount", "1")
 //                .extra("Narration", "Test payment form android sdk sample app")
+//                .hideFinalUssd(false)
+//                .setEnvironment(HoverParameters.PROD_ENV)
+//                .setEnvironment(HoverParameters.DEBUG_ENV)
+//                .setEnvironment(HoverParameters.TEST_ENV)
                 .buildIntent();
         context.startActivityForResult(i, 0);
     }

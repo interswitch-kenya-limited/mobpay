@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,13 +83,6 @@ public class BankPaymentFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Try Paybill", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        fragmentBankPaymentBinding.paybill.setChecked(true);
-                    }
-                });
                 dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Quit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -129,7 +121,7 @@ public class BankPaymentFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Re-Confirm", new DialogInterface.OnClickListener() {
+                dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Try Again", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getContext(), "Trying again", Toast.LENGTH_SHORT).show();
@@ -161,18 +153,16 @@ public class BankPaymentFragment extends Fragment {
         });
         //Getting the instance of Spinner and applying OnItemSelectedListener on it
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            fragmentBankPaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_new));
+            fragmentBankPaymentBinding.ussdActionsSpinner.setBackground(getResources().getDrawable(R.drawable.spinner_new));
         } else {
-            fragmentBankPaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
+            fragmentBankPaymentBinding.ussdActionsSpinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
         providereEnumLogoPairs.clear();
         providereEnumLogoPairs.add(new Pair<>(MPESA, R.drawable.mpesa));
         providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
-        fragmentBankPaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        fragmentBankPaymentBinding.ussdActionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String t2 = getInstructionText(position, bankVm.getPaymentMethod().equalsIgnoreCase(BankVm.EXPRESS));
-                fragmentBankPaymentBinding.mnoContentText.setText(t2);
                 BankPaymentFragment.this.bankVm.getMobile().setType(providereEnumLogoPairs.get(position).first);
                 switch (providereEnumLogoPairs.get(position).first) {
                     case EAZZYPAY:
@@ -195,28 +185,6 @@ public class BankPaymentFragment extends Fragment {
 
             }
         });
-        fragmentBankPaymentBinding.payMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                String t2 = "";
-                if (checkedId == R.id.express) {
-                    bankVm.setPaymentMethod(BankVm.EXPRESS);// Redundant because of binding but necessary when switching programmatically
-                    t2 = getInstructionText(fragmentBankPaymentBinding.spinner.getSelectedItemPosition(), true);
-                    fragmentBankPaymentBinding.mobile.setVisibility(View.VISIBLE);
-                    fragmentBankPaymentBinding.payButton.setText("Pay " + bankVm.getPaymentVm().getPayment().getCurrency() + " " + bankVm.getPaymentVm().getPayment().getAmountString());
-                    bankVm.getMobile().refreshValidity();
-                    fragmentBankPaymentBinding.payButton.setEnabled(bankVm.getMobile().isMobileFullyValid());
-                } else if (checkedId == R.id.paybill) {
-                    bankVm.setPaymentMethod(BankVm.PAYBIll);// Redundant because of binding but necessary when switching programmatically
-                    t2 = getInstructionText(fragmentBankPaymentBinding.spinner.getSelectedItemPosition(), false);
-                    fragmentBankPaymentBinding.mobile.setVisibility(View.GONE);
-                    fragmentBankPaymentBinding.payButton.setText("Confirm Payment");
-                    fragmentBankPaymentBinding.payButton.setEnabled(true);
-                }
-                fragmentBankPaymentBinding.cardScrollview.scrollTo(0, 0);
-                fragmentBankPaymentBinding.mnoContentText.setText(t2);
-            }
-        });
         fragmentBankPaymentBinding.mobile.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -234,7 +202,7 @@ public class BankPaymentFragment extends Fragment {
             }
         });
         EnumPairSpinnerAdapter<Mobile.Type> enumPairSpinnerAdapter = new EnumPairSpinnerAdapter<>(getContext(), providereEnumLogoPairs);
-        fragmentBankPaymentBinding.spinner.setAdapter(enumPairSpinnerAdapter);
+        fragmentBankPaymentBinding.ussdActionsSpinner.setAdapter(enumPairSpinnerAdapter);
         return fragmentBankPaymentBinding.getRoot();
     }
 
@@ -252,26 +220,4 @@ public class BankPaymentFragment extends Fragment {
         }
     }
 
-    private String getInstructionText(int provider, boolean express) {
-        String t2 = "";
-        if (express) {
-            String mno = providereEnumLogoPairs.get(provider).first.value;
-//                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
-            t2 = getString(R.string.push_payment_instructions);
-            t2 = String.format(t2, mno);
-        } else {
-            //
-            switch (providereEnumLogoPairs.get(provider).first) {
-                case MPESA:
-                    t2 = getString(R.string.mpesa_manual_payment_instructions);
-                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getMpesaPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
-                    break;
-                case EAZZYPAY:
-                    t2 = getString(R.string.eazzypay_manual_payment_instructions);
-                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
-                    break;
-            }
-        }
-        return t2;
-    }
 }
