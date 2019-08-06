@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 MobPay mobPay;
                 try {
                     MobPay.Config config = new MobPay.Config();
-                    mobPay = MobPay.getInstance(clientId, clientSecret, config);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     view.setEnabled(true);
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     MobPay.Config config = new MobPay.Config();
                     config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                     config.setCardTokens(selectedTokens);
-                    mobPay = MobPay.getInstance(clientId, clientSecret, config);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     view.setEnabled(true);
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                 Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
                 MobPay mobPay;
                 try {
-                    mobPay = MobPay.getInstance(clientId, clientSecret, null);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     view.setEnabled(true);
