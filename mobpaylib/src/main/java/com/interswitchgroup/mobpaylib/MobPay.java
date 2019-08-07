@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -30,6 +31,13 @@ import com.interswitchgroup.mobpaylib.utils.AESEncryptor;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.PublicKey;
@@ -48,6 +56,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
+    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
@@ -191,8 +200,7 @@ public class MobPay implements Serializable {
             String authData = RSAUtil.getAuthDataMerchant(publicKey, card.getPan(), card.getCvv(), card.getExpiryYear() + card.getExpiryMonth(), card.isTokenize() ? 1 : 0, "D");
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
             String payloadString = cardPaymentPayload.toString();
-            String urlString = "https://testmerchant.interswitch-ke.com/sdkcardinal";
-            Uri url = Uri.parse(urlString);
+            Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
             String publicRSAKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcS3/OiYyHdlCHicBm9yHiOQdvJ/8XRR3dHSaezR5SjlrUEiul4MeNdmqYU7IB7zXG+4aW2OtrdUkfVLXkxjqO4IW8B1cfdXOxNzrq1/NUUKYdepcAGcT1xMtvRgqPXd7ja+U5lLNT2n3GLYuLAVuk987bgVKQQ4gBAls5WIwGIQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
             String aesKey = randomUUID.substring(randomUUID.length() - 16);
@@ -204,7 +212,42 @@ public class MobPay implements Serializable {
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
+            final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
+            intent.putExtra("topic", topic);
             activity.startActivity(intent);
+            try {
+                final MqttClient sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
+                System.out.println("Connecting to broker: " + mqttServer);
+                sampleClient.connect(connOpts);
+                System.out.println("Connected");
+                sampleClient.subscribe(topic, new IMqttMessageListener() {
+                    @Override
+                    public void messageArrived(String topic, final MqttMessage message) throws Exception {
+                        // message Arrived!
+                        System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                        /**
+                         * Run on ui thread otherwise utakua mwingi wa machozi
+                         */
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper().readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (MqttException me) {
+                me.printStackTrace();
+            }
         } catch (Exception e) {
             transactionFailureCallback.onError(e);
         }
