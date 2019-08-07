@@ -85,7 +85,7 @@ public class MobPayActivity extends AppCompatActivity {
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
         try {
-            this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
+            this.mobPay = MobPay.getInstance(this, this.clientId, this.clientSecret, null);
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             finish();

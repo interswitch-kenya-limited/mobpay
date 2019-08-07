@@ -2,9 +2,12 @@ package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -24,8 +27,16 @@ import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
+import com.interswitchgroup.mobpaylib.utils.AESEncryptor;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
+
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -34,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -44,6 +56,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
+    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
@@ -53,16 +66,18 @@ public class MobPay implements Serializable {
     private TransactionSuccessCallback transactionSuccessCallback;
     private MerchantConfigResponse.Config merchantConfig;
     private static Config config;
+    private Activity activity;
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, Config config) throws Exception {
+    public static MobPay getInstance(Activity activity, String clientId, String clientSecret, Config config) throws Exception {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
+            singletonMobPayInstance.activity = activity;
         }
 
         if (singletonMobPayInstance.getMerchantConfig() == null) {
@@ -184,23 +199,55 @@ public class MobPay implements Serializable {
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
             String authData = RSAUtil.getAuthDataMerchant(publicKey, card.getPan(), card.getCvv(), card.getExpiryYear() + card.getExpiryMonth(), card.isTokenize() ? 1 : 0, "D");
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
-            Disposable subscribe = retrofit.create(CardPayment.class)
-                    .merchantCardPayment(cardPaymentPayload)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<CardPaymentResponse>() {
-                        @Override
-                        public void accept(CardPaymentResponse cardPaymentResponse) {
-                            Log.i(LOG_TAG, "Card payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
-                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) {
-                            Log.e(LOG_TAG, "Card payment failed, reason:\t" + throwable.getMessage());
-                            transactionFailureCallback.onError(throwable);
-                        }
-                    });
+            String payloadString = cardPaymentPayload.toString();
+            Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
+            String publicRSAKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcS3/OiYyHdlCHicBm9yHiOQdvJ/8XRR3dHSaezR5SjlrUEiul4MeNdmqYU7IB7zXG+4aW2OtrdUkfVLXkxjqO4IW8B1cfdXOxNzrq1/NUUKYdepcAGcT1xMtvRgqPXd7ja+U5lLNT2n3GLYuLAVuk987bgVKQQ4gBAls5WIwGIQIDAQAB";
+            String randomUUID = UUID.randomUUID().toString();
+            String aesKey = randomUUID.substring(randomUUID.length() - 16);
+            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            url = url.buildUpon()
+                    .appendQueryParameter("transactionType", "CARD")
+                    .appendQueryParameter("key", encryptedKey)
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
+                    .build();
+            Intent intent = new Intent(activity, BrowserActivity.class);
+            intent.putExtra("url", url.toString());
+            final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
+            intent.putExtra("topic", topic);
+            activity.startActivity(intent);
+            try {
+                final MqttClient sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
+                System.out.println("Connecting to broker: " + mqttServer);
+                sampleClient.connect(connOpts);
+                System.out.println("Connected");
+                sampleClient.subscribe(topic, new IMqttMessageListener() {
+                    @Override
+                    public void messageArrived(String topic, final MqttMessage message) throws Exception {
+                        // message Arrived!
+                        System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                        /**
+                         * Run on ui thread otherwise utakua mwingi wa machozi
+                         */
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper().readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (MqttException me) {
+                me.printStackTrace();
+            }
         } catch (Exception e) {
             transactionFailureCallback.onError(e);
         }
