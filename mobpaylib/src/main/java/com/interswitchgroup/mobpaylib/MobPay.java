@@ -202,12 +202,17 @@ public class MobPay implements Serializable {
             Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
             String publicRSAKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcS3/OiYyHdlCHicBm9yHiOQdvJ/8XRR3dHSaezR5SjlrUEiul4MeNdmqYU7IB7zXG+4aW2OtrdUkfVLXkxjqO4IW8B1cfdXOxNzrq1/NUUKYdepcAGcT1xMtvRgqPXd7ja+U5lLNT2n3GLYuLAVuk987bgVKQQ4gBAls5WIwGIQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
-            String aesKey = randomUUID.substring(randomUUID.length() - 16);
+            int keyLength = 16;
+            String aesKey = randomUUID.substring(randomUUID.length() - keyLength);
             String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            randomUUID = UUID.randomUUID().toString();//Regenerate the uuid to use as an iv
+            String iv = randomUUID.substring(randomUUID.length() - keyLength);
+            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), publicRSAKey), Base64.NO_WRAP);
             url = url.buildUpon()
                     .appendQueryParameter("transactionType", "CARD")
                     .appendQueryParameter("key", encryptedKey)
-                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
+                    .appendQueryParameter("iv", encryptedIv)
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
@@ -263,12 +268,17 @@ public class MobPay implements Serializable {
             Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
             String publicRSAKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcS3/OiYyHdlCHicBm9yHiOQdvJ/8XRR3dHSaezR5SjlrUEiul4MeNdmqYU7IB7zXG+4aW2OtrdUkfVLXkxjqO4IW8B1cfdXOxNzrq1/NUUKYdepcAGcT1xMtvRgqPXd7ja+U5lLNT2n3GLYuLAVuk987bgVKQQ4gBAls5WIwGIQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
-            String aesKey = randomUUID.substring(randomUUID.length() - 16);
+            int keyLength = 16;
+            String aesKey = randomUUID.substring(randomUUID.length() - keyLength);
             String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            randomUUID = UUID.randomUUID().toString();//Regenerate the uuid to use as an iv
+            String iv = randomUUID.substring(randomUUID.length() - keyLength);
+            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), publicRSAKey), Base64.NO_WRAP);
             url = url.buildUpon()
                     .appendQueryParameter("transactionType", "TOKEN")
                     .appendQueryParameter("key", encryptedKey)
-                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
+                    .appendQueryParameter("iv", encryptedIv)
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());

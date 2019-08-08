@@ -3,6 +3,7 @@ package com.interswitchgroup.mobpaylib;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -62,6 +63,7 @@ public class BrowserActivity extends AppCompatActivity {
             }
         });
         String url = getIntent().getStringExtra("url");
+        Log.e(this.getClass().getSimpleName(), url);
         webview.loadUrl(url);
     }
 }
