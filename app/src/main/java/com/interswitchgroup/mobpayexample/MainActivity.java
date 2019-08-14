@@ -84,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
         final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "02/20");
         cardToken.setPanLast4Digits("1895");
         cardToken.setPanFirst6Digits("506183");
-        cardTokens.add(cardToken);
+        if (!cardTokens.contains(cardToken)) {
+            cardTokens.add(cardToken);
+        }
         String[] cardTokenLabelsArray = new String[cardTokens.size()];
         for (int i = 0; i < cardTokens.size(); i++) {
             cardTokenLabelsArray[i] = cardTokens.get(i).toString();
@@ -148,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
                                         CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
                                         token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
                                         token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
-                                        cardTokens.add(token);
+                                        if (!cardTokens.contains(cardToken)) {
+                                            cardTokens.add(token);
+                                        }
                                         String[] cardTokenLabelsArray = new String[cardTokens.size()];
                                         for (int i = 0; i < cardTokens.size(); i++) {
                                             cardTokenLabelsArray[i] = cardTokens.get(i).toString();
@@ -230,7 +234,9 @@ public class MainActivity extends AppCompatActivity {
                                         CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
                                         token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
                                         token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
-                                        cardTokens.add(token);
+                                        if (!cardTokens.contains(cardToken)) {
+                                            cardTokens.add(token);
+                                        }
                                         String[] cardTokenLabelsArray = new String[cardTokens.size()];
                                         for (int i = 0; i < cardTokens.size(); i++) {
                                             cardTokenLabelsArray[i] = cardTokens.get(i).toString();

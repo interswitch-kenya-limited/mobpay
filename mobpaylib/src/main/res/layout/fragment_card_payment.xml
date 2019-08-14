@@ -193,7 +193,6 @@
                     <TextView
                         android:id="@+id/cvv_label"
                         android:layout_width="wrap_content"
-                        android:inputType="numberPassword"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/cvv"
@@ -213,7 +212,7 @@
                         android:layout_marginBottom="8dp"
                         android:ems="10"
                         android:hint="123"
-                        android:inputType="number"
+                        android:inputType="numberPassword"
                         android:maxLength="3"
                         android:text="@={cardVm.card.cvv}"
                         app:layout_constraintBottom_toBottomOf="parent"

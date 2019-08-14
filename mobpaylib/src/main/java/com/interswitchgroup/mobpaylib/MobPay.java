@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
@@ -43,6 +44,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,7 +66,7 @@ public class MobPay implements Serializable {
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
     private MerchantConfigResponse.Config merchantConfig;
-    private static Config config;
+    private static Config config = new Config();
     private Activity activity;
 
     private MobPay() {
@@ -83,8 +85,26 @@ public class MobPay implements Serializable {
             singletonMobPayInstance.initializeMerchantConfig();
         }
 
-        // If enabled channels wasmakeMobileMoneyPayment explicitly passed, override default enabled channels
+        // If enabled channels was explicitly passed, override default enabled channels
         if (config != null) {
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getBnkStatus())) {
+                config.getChannels().remove(PaymentChannel.BANK);
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getMmoStatus())) {
+                if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getAirtelStatus())
+                        && !"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getMpesaStatus())
+                        && !"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getEquitelStatus())
+                        && !"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getTkashStatus())) {
+                    //Mobile payment option is only removed if main mmo config is not true and all provider channels are missing or disabled too
+                    config.getChannels().remove(PaymentChannel.MOBILE);
+                }
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getCardStatus())) {
+                config.getChannels().remove(PaymentChannel.CARD);
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getPaycodeStatus())) {
+                config.getChannels().remove(PaymentChannel.PAYCODE);
+            }
             MobPay.config = config;
         }
         return singletonMobPayInstance;
@@ -193,6 +213,7 @@ public class MobPay implements Serializable {
 
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(card, "card must not be null");
+        payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
@@ -212,7 +233,7 @@ public class MobPay implements Serializable {
                     .appendQueryParameter("transactionType", "CARD")
                     .appendQueryParameter("key", encryptedKey)
                     .appendQueryParameter("iv", encryptedIv)
-                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
@@ -239,9 +260,14 @@ public class MobPay implements Serializable {
                             @Override
                             public void run() {
                                 try {
-                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper().readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper()
+                                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                            .readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
+                                        throw new Exception("Invalid response");
+                                    }
                                     transactionSuccessCallback.onSuccess(cardPaymentResponse);
-                                } catch (IOException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                     transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
                                 }
@@ -259,6 +285,7 @@ public class MobPay implements Serializable {
 
     public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
+        payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
@@ -278,7 +305,7 @@ public class MobPay implements Serializable {
                     .appendQueryParameter("transactionType", "TOKEN")
                     .appendQueryParameter("key", encryptedKey)
                     .appendQueryParameter("iv", encryptedIv)
-                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
@@ -305,9 +332,14 @@ public class MobPay implements Serializable {
                             @Override
                             public void run() {
                                 try {
-                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper().readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper()
+                                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                            .readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
+                                        throw new Exception("Invalid response");
+                                    }
                                     transactionSuccessCallback.onSuccess(cardPaymentResponse);
-                                } catch (IOException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                     transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
                                 }
@@ -383,7 +415,8 @@ public class MobPay implements Serializable {
     }
 
     public static class Config {
-        private List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
+        //All channels are enabled by default
+        private List<PaymentChannel> channels = new LinkedList<>(Arrays.asList(PaymentChannel.class.getEnumConstants()));
         private List<CardToken> cardTokens = new ArrayList<>();
 
         public List<PaymentChannel> getChannels() {
