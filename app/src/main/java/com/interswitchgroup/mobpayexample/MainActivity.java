@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                                         CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
                                         token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
                                         token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
-                                        if (!cardTokens.contains(cardToken)) {
+                                        if (!cardTokens.contains(token)) {
                                             cardTokens.add(token);
                                         }
                                         String[] cardTokenLabelsArray = new String[cardTokens.size()];
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                                         CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
                                         token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
                                         token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
-                                        if (!cardTokens.contains(cardToken)) {
+                                        if (!cardTokens.contains(token)) {
                                             cardTokens.add(token);
                                         }
                                         String[] cardTokenLabelsArray = new String[cardTokens.size()];
