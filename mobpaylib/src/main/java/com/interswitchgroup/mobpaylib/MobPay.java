@@ -233,7 +233,7 @@ public class MobPay implements Serializable {
                     .appendQueryParameter("transactionType", "CARD")
                     .appendQueryParameter("key", encryptedKey)
                     .appendQueryParameter("iv", encryptedIv)
-                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
@@ -305,7 +305,7 @@ public class MobPay implements Serializable {
                     .appendQueryParameter("transactionType", "TOKEN")
                     .appendQueryParameter("key", encryptedKey)
                     .appendQueryParameter("iv", encryptedIv)
-                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, "drowssapdrowssap", payloadString))
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
