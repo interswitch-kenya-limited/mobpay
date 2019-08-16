@@ -2,16 +2,19 @@ package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.PaybillQueryResponse;
-import com.interswitchgroup.mobpaylib.api.service.CardPayment;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
@@ -24,8 +27,16 @@ import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
+import com.interswitchgroup.mobpaylib.utils.AESEncryptor;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
+
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,7 +44,9 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -44,6 +57,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
+    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
@@ -52,25 +66,45 @@ public class MobPay implements Serializable {
     private TransactionFailureCallback transactionFailureCallback;
     private TransactionSuccessCallback transactionSuccessCallback;
     private MerchantConfigResponse.Config merchantConfig;
-    private static Config config;
+    private static Config config = new Config();
+    private Activity activity;
 
     private MobPay() {
     }
 
-    public static MobPay getInstance(String clientId, String clientSecret, Config config) throws Exception {
+    public static MobPay getInstance(Activity activity, String clientId, String clientSecret, Config config) throws Exception {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
             DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
+            singletonMobPayInstance.activity = activity;
         }
 
         if (singletonMobPayInstance.getMerchantConfig() == null) {
             singletonMobPayInstance.initializeMerchantConfig();
         }
 
-        // If enabled channels wasmakeMobileMoneyPayment explicitly passed, override default enabled channels
+        // If enabled channels was explicitly passed, override default enabled channels
         if (config != null) {
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getBnkStatus())) {
+                config.getChannels().remove(PaymentChannel.BANK);
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getMmoStatus())) {
+                if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getAirtelStatus())
+                        && !"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getMpesaStatus())
+                        && !"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getEquitelStatus())
+                        && !"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getTkashStatus())) {
+                    //Mobile payment option is only removed if main mmo config is not true and all provider channels are missing or disabled too
+                    config.getChannels().remove(PaymentChannel.MOBILE);
+                }
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getCardStatus())) {
+                config.getChannels().remove(PaymentChannel.CARD);
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getPaycodeStatus())) {
+                config.getChannels().remove(PaymentChannel.PAYCODE);
+            }
             MobPay.config = config;
         }
         return singletonMobPayInstance;
@@ -179,28 +213,71 @@ public class MobPay implements Serializable {
 
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(card, "card must not be null");
+        payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
             String authData = RSAUtil.getAuthDataMerchant(publicKey, card.getPan(), card.getCvv(), card.getExpiryYear() + card.getExpiryMonth(), card.isTokenize() ? 1 : 0, "D");
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
-            Disposable subscribe = retrofit.create(CardPayment.class)
-                    .merchantCardPayment(cardPaymentPayload)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<CardPaymentResponse>() {
-                        @Override
-                        public void accept(CardPaymentResponse cardPaymentResponse) {
-                            Log.i(LOG_TAG, "Card payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
-                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) {
-                            Log.e(LOG_TAG, "Card payment failed, reason:\t" + throwable.getMessage());
-                            transactionFailureCallback.onError(throwable);
-                        }
-                    });
+            String payloadString = cardPaymentPayload.toString();
+            Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
+            String public3dsPayloadRSAKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJ84cM/HJEOvuxxWwbOTsF+GeFD7qQCMaSSbfWo7x0oiNEMxRGZOCPpQI+SNt8D4n+U4YroRmo4W4wgNkkJWQJkx5EyDJePGv5NSGXW+27uQpOin7G2h7JAHq+mF3hcR4uR7GlMw4MpTdNyYfb2L/8RvCdIXzANQOpdNFsbNm62qJSOO/gq1jCTl/+8HudIQHR7Vyw1QrL+3Sp0ZlkzlUr2SouPVyEVodcea2z4gkH1AQMwXGXUzALMqtYo3uUaOZb5E3vKDzTeTkVzujefloPUxVBJXfW0ypkH452ccOywH6Fv/aJaVUvQCe5arEO4IPg9HjsWrxsqkvZ2xnPrkfQIDAQAB";
+            String randomUUID = UUID.randomUUID().toString();
+            int keyLength = 16;
+            String aesKey = randomUUID.substring(randomUUID.length() - keyLength);
+            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
+            randomUUID = UUID.randomUUID().toString();//Regenerate the uuid to use as an iv
+            String iv = randomUUID.substring(randomUUID.length() - keyLength);
+            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
+            url = url.buildUpon()
+                    .appendQueryParameter("transactionType", "CARD")
+                    .appendQueryParameter("key", encryptedKey)
+                    .appendQueryParameter("iv", encryptedIv)
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
+                    .build();
+            Intent intent = new Intent(activity, BrowserActivity.class);
+            intent.putExtra("url", url.toString());
+            final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
+            intent.putExtra("topic", topic);
+            activity.startActivity(intent);
+            try {
+                final MqttClient sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
+                System.out.println("Connecting to broker: " + mqttServer);
+                sampleClient.connect(connOpts);
+                System.out.println("Connected");
+                sampleClient.subscribe(topic, new IMqttMessageListener() {
+                    @Override
+                    public void messageArrived(String topic, final MqttMessage message) throws Exception {
+                        // message Arrived!
+                        System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                        /**
+                         * Run on ui thread otherwise utakua mwingi wa machozi
+                         */
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper()
+                                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                            .readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
+                                        throw new Exception("Invalid response");
+                                    }
+                                    transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (MqttException me) {
+                me.printStackTrace();
+            }
         } catch (Exception e) {
             transactionFailureCallback.onError(e);
         }
@@ -208,28 +285,71 @@ public class MobPay implements Serializable {
 
     public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
+        payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
             PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
             String authData = RSAUtil.getAuthDataMerchant(publicKey, cardToken.getToken(), cardToken.getCvv(), cardToken.getExpiry().replaceAll("[^\\d]", ""), 0, ",");
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
-            Disposable subscribe = retrofit.create(CardPayment.class)
-                    .merchantCardTokenPayment(cardPaymentPayload)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<CardPaymentResponse>() {
-                        @Override
-                        public void accept(CardPaymentResponse cardPaymentResponse) {
-                            Log.i(LOG_TAG, "Card token payment succeeded, ref:\t" + cardPaymentResponse.getTransactionRef());
-                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) {
-                            Log.e(LOG_TAG, "Card token payment failed, reason:\t" + throwable.getMessage());
-                            transactionFailureCallback.onError(throwable);
-                        }
-                    });
+            String payloadString = cardPaymentPayload.toString();
+            Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
+            String public3dsPayloadRSAKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJ84cM/HJEOvuxxWwbOTsF+GeFD7qQCMaSSbfWo7x0oiNEMxRGZOCPpQI+SNt8D4n+U4YroRmo4W4wgNkkJWQJkx5EyDJePGv5NSGXW+27uQpOin7G2h7JAHq+mF3hcR4uR7GlMw4MpTdNyYfb2L/8RvCdIXzANQOpdNFsbNm62qJSOO/gq1jCTl/+8HudIQHR7Vyw1QrL+3Sp0ZlkzlUr2SouPVyEVodcea2z4gkH1AQMwXGXUzALMqtYo3uUaOZb5E3vKDzTeTkVzujefloPUxVBJXfW0ypkH452ccOywH6Fv/aJaVUvQCe5arEO4IPg9HjsWrxsqkvZ2xnPrkfQIDAQAB";
+            String randomUUID = UUID.randomUUID().toString();
+            int keyLength = 16;
+            String aesKey = randomUUID.substring(randomUUID.length() - keyLength);
+            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
+            randomUUID = UUID.randomUUID().toString();//Regenerate the uuid to use as an iv
+            String iv = randomUUID.substring(randomUUID.length() - keyLength);
+            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
+            url = url.buildUpon()
+                    .appendQueryParameter("transactionType", "TOKEN")
+                    .appendQueryParameter("key", encryptedKey)
+                    .appendQueryParameter("iv", encryptedIv)
+                    .appendQueryParameter("payload", AESEncryptor.encrypt(aesKey, iv, payloadString))
+                    .build();
+            Intent intent = new Intent(activity, BrowserActivity.class);
+            intent.putExtra("url", url.toString());
+            final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
+            intent.putExtra("topic", topic);
+            activity.startActivity(intent);
+            try {
+                final MqttClient sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
+                System.out.println("Connecting to broker: " + mqttServer);
+                sampleClient.connect(connOpts);
+                System.out.println("Connected");
+                sampleClient.subscribe(topic, new IMqttMessageListener() {
+                    @Override
+                    public void messageArrived(String topic, final MqttMessage message) throws Exception {
+                        // message Arrived!
+                        System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                        /**
+                         * Run on ui thread otherwise utakua mwingi wa machozi
+                         */
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper()
+                                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                            .readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
+                                        throw new Exception("Invalid response");
+                                    }
+                                    transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (MqttException me) {
+                me.printStackTrace();
+            }
         } catch (Exception e) {
             transactionFailureCallback.onError(e);
         }
@@ -295,7 +415,8 @@ public class MobPay implements Serializable {
     }
 
     public static class Config {
-        private List<PaymentChannel> channels = Arrays.asList(PaymentChannel.class.getEnumConstants());
+        //All channels are enabled by default
+        private List<PaymentChannel> channels = new LinkedList<>(Arrays.asList(PaymentChannel.class.getEnumConstants()));
         private List<CardToken> cardTokens = new ArrayList<>();
 
         public List<PaymentChannel> getChannels() {

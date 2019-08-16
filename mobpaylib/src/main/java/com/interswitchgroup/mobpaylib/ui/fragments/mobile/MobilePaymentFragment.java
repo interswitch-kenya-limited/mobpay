@@ -166,8 +166,12 @@ public class MobilePaymentFragment extends Fragment {
             fragmentMobilePaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
         providereEnumLogoPairs.clear();
-        providereEnumLogoPairs.add(new Pair<>(MPESA, R.drawable.mpesa));
-        providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
+        if ("1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getMpesaStatus())) {
+            providereEnumLogoPairs.add(new Pair<>(MPESA, R.drawable.mpesa));
+        }
+        if ("1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getEquitelStatus())) {
+            providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
+        }
         fragmentMobilePaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

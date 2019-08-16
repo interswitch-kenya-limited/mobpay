@@ -48,7 +48,6 @@ import com.interswitchgroup.mobpaylib.utils.AndroidUtils;
 import com.interswitchgroup.mobpaylib.utils.NetUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -85,7 +84,7 @@ public class MobPayActivity extends AppCompatActivity {
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
         try {
-            this.mobPay = MobPay.getInstance(this.clientId, this.clientSecret, null);
+            this.mobPay = MobPay.getInstance(this, this.clientId, this.clientSecret, null);
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             finish();
@@ -207,8 +206,9 @@ public class MobPayActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.container);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
-        final MobPay.PaymentChannel[] allChannels = MobPay.PaymentChannel.class.getEnumConstants();
+//        final MobPay.PaymentChannel[] allChannels = MobPay.PaymentChannel.class.getEnumConstants();
         final List<MobPay.PaymentChannel> mobPayChannels = MobPay.getConfig().getChannels();
+        final MobPay.PaymentChannel[] allChannels = mobPayChannels.toArray(new MobPay.PaymentChannel[0]);
         for (MobPay.PaymentChannel paymentChannel : allChannels) {
             mSectionsPagerAdapter.addTab(paymentChannel);
         }
@@ -223,7 +223,7 @@ public class MobPayActivity extends AppCompatActivity {
                 tabView.setClickable(false);
             }
         }
-        mViewPager.setCurrentItem(Arrays.asList(allChannels).indexOf(mobPayChannels.get(0)));
+        mViewPager.setCurrentItem(0);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             private int currentPosition = mViewPager.getCurrentItem();
 
@@ -297,16 +297,23 @@ public class MobPayActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new CardPaymentFragment();
-                case 1:
-                    return new MobilePaymentFragment();
-                default:
-                    return PlaceHolderFragment.newInstance(paymentChannels.get(position).value);
-            }
+            return getFragmentForChannel(paymentChannels.get(position));
         }
 
+        private Fragment getFragmentForChannel(MobPay.PaymentChannel paymentChannel) {
+            switch (paymentChannel) {
+                case BANK:
+                    return PlaceHolderFragment.newInstance(paymentChannel.value);
+                case CARD:
+                    return new CardPaymentFragment();
+                case MOBILE:
+                    return new MobilePaymentFragment();
+                case PAYCODE:
+                    return PlaceHolderFragment.newInstance(paymentChannel.value);
+                default:
+                    return PlaceHolderFragment.newInstance(paymentChannel.value);
+            }
+        }
         @Override
         public int getCount() {
             return paymentChannels.size();

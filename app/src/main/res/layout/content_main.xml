@@ -38,7 +38,7 @@
             android:ems="10"
             android:hint="merchant id"
             android:inputType="text"
-            android:text="GEPGTZ0001" />
+            android:text="CRUZZZ0001" />
 
         <EditText
             android:id="@+id/domain"
@@ -47,7 +47,7 @@
             android:ems="10"
             android:hint="Domain"
             android:inputType="text"
-            android:text="ISWKE" />
+            android:text="CRUZZZ" />
 
         <EditText
             android:id="@+id/terminal_id"
@@ -66,7 +66,7 @@
             android:enabled="true"
             android:hint="Client Id"
             android:inputType="text"
-            android:text="IKIA264751EFD43881E84150FDC4D7F0717AD27C4E64" />
+            android:text="IKIA7C2981C715915A2D9DF952D8422F956BAB4ABB8A" />
 
         <EditText
             android:id="@+id/client_secret"
@@ -76,7 +76,7 @@
             android:enabled="true"
             android:hint="Client Secret"
             android:inputType="text"
-            android:text="J3e432fg5qdpFXDsjlinBPGs/CgCNaUs5BHLFloO3/U=" />
+            android:text="2NZ4AlYFzabz6+eTMp9pYJvcgWTLjfYBvsFQFRkfuUc=" />
 
 
         <EditText

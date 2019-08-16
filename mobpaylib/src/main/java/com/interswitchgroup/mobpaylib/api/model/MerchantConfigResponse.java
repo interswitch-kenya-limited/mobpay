@@ -49,17 +49,20 @@ public class MerchantConfigResponse {
         private String merchantName;
         private String clientId;
         private String clientSecret;
-        private Integer cardStatus;
-        private Integer mpesaStatus;
-        private Integer equitelStatus;
-        private Integer tkashStatus;
-        private Integer airtelStatus;
-        private Integer paycodeStatus;
+        private String cardStatus;
+        private String mpesaStatus;
+        private String equitelStatus;
+        private String tkashStatus;
+        private String airtelStatus;
+        private String paycodeStatus;
         private String mpesaPaybill;
         private String equitelPaybill;
         private Integer tokenizeStatus;
         private Integer cardauthStatus;
         private Integer cardPreauth;
+        private String domain;
+        private String mmoStatus;
+        private String bnkStatus;
 
         public String getMerchantId() {
             return merchantId;
@@ -93,51 +96,51 @@ public class MerchantConfigResponse {
             this.clientSecret = clientSecret;
         }
 
-        public Integer getCardStatus() {
+        public String getCardStatus() {
             return cardStatus;
         }
 
-        public void setCardStatus(Integer cardStatus) {
+        public void setCardStatus(String cardStatus) {
             this.cardStatus = cardStatus;
         }
 
-        public Integer getMpesaStatus() {
+        public String getMpesaStatus() {
             return mpesaStatus;
         }
 
-        public void setMpesaStatus(Integer mpesaStatus) {
+        public void setMpesaStatus(String mpesaStatus) {
             this.mpesaStatus = mpesaStatus;
         }
 
-        public Integer getEquitelStatus() {
+        public String getEquitelStatus() {
             return equitelStatus;
         }
 
-        public void setEquitelStatus(Integer equitelStatus) {
+        public void setEquitelStatus(String equitelStatus) {
             this.equitelStatus = equitelStatus;
         }
 
-        public Integer getTkashStatus() {
+        public String getTkashStatus() {
             return tkashStatus;
         }
 
-        public void setTkashStatus(Integer tkashStatus) {
+        public void setTkashStatus(String tkashStatus) {
             this.tkashStatus = tkashStatus;
         }
 
-        public Integer getAirtelStatus() {
+        public String getAirtelStatus() {
             return airtelStatus;
         }
 
-        public void setAirtelStatus(Integer airtelStatus) {
+        public void setAirtelStatus(String airtelStatus) {
             this.airtelStatus = airtelStatus;
         }
 
-        public Integer getPaycodeStatus() {
+        public String getPaycodeStatus() {
             return paycodeStatus;
         }
 
-        public void setPaycodeStatus(Integer paycodeStatus) {
+        public void setPaycodeStatus(String paycodeStatus) {
             this.paycodeStatus = paycodeStatus;
         }
 
@@ -180,6 +183,32 @@ public class MerchantConfigResponse {
         public void setCardPreauth(Integer cardPreauth) {
             this.cardPreauth = cardPreauth;
         }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public String getMmoStatus() {
+            return mmoStatus;
+        }
+
+        public void setMmoStatus(String mmoStatus) {
+            this.mmoStatus = mmoStatus;
+        }
+
+        public String getBnkStatus() {
+            return bnkStatus;
+        }
+
+        public void setBnkStatus(String bnkStatus) {
+            this.bnkStatus = bnkStatus;
+        }
+
     }
+
 }
 

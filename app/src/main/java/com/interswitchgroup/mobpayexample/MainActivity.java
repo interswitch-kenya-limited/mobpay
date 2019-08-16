@@ -81,10 +81,18 @@ public class MainActivity extends AppCompatActivity {
         paymentChannels.setItems(channelNames);
         tokensSpinner = findViewById(R.id.tokens);
         cardTokens.clear();
-        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "02/20");
+        CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "02/20");
         cardToken.setPanLast4Digits("1895");
         cardToken.setPanFirst6Digits("506183");
-        cardTokens.add(cardToken);
+        if (!cardTokens.contains(cardToken)) {
+            cardTokens.add(cardToken);
+        }
+        cardToken = new CardToken("BE1C0A36255388EFB9AA39696CE32C6554FB1D88A77648A59C", "02/20");
+        cardToken.setPanLast4Digits("1111");
+        cardToken.setPanFirst6Digits("411111");
+        if (!cardTokens.contains(cardToken)) {
+            cardTokens.add(cardToken);
+        }
         String[] cardTokenLabelsArray = new String[cardTokens.size()];
         for (int i = 0; i < cardTokens.size(); i++) {
             cardTokenLabelsArray[i] = cardTokens.get(i).toString();
@@ -124,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 MobPay mobPay;
                 try {
                     MobPay.Config config = new MobPay.Config();
-                    mobPay = MobPay.getInstance(clientId, clientSecret, config);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     view.setEnabled(true);
@@ -148,7 +156,9 @@ public class MainActivity extends AppCompatActivity {
                                         CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
                                         token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
                                         token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
-                                        cardTokens.add(token);
+                                        if (!cardTokens.contains(token)) {
+                                            cardTokens.add(token);
+                                        }
                                         String[] cardTokenLabelsArray = new String[cardTokens.size()];
                                         for (int i = 0; i < cardTokens.size(); i++) {
                                             cardTokenLabelsArray[i] = cardTokens.get(i).toString();
@@ -207,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                     MobPay.Config config = new MobPay.Config();
                     config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                     config.setCardTokens(selectedTokens);
-                    mobPay = MobPay.getInstance(clientId, clientSecret, config);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     view.setEnabled(true);
@@ -230,7 +240,9 @@ public class MainActivity extends AppCompatActivity {
                                         CardToken token = new CardToken(cardPaymentResponse.getToken(), cardPaymentResponse.getExpiry());
                                         token.setPanFirst6Digits(cardPaymentResponse.getPanFirst6Digits());
                                         token.setPanLast4Digits(cardPaymentResponse.getPanLast4Digits());
-                                        cardTokens.add(token);
+                                        if (!cardTokens.contains(token)) {
+                                            cardTokens.add(token);
+                                        }
                                         String[] cardTokenLabelsArray = new String[cardTokens.size()];
                                         for (int i = 0; i < cardTokens.size(); i++) {
                                             cardTokenLabelsArray[i] = cardTokens.get(i).toString();
@@ -285,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
                 MobPay mobPay;
                 try {
-                    mobPay = MobPay.getInstance(clientId, clientSecret, null);
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     view.setEnabled(true);
