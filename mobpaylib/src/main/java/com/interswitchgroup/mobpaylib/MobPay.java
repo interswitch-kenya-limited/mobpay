@@ -221,14 +221,14 @@ public class MobPay implements Serializable {
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
             String payloadString = cardPaymentPayload.toString();
             Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
-            String publicRSAKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcS3/OiYyHdlCHicBm9yHiOQdvJ/8XRR3dHSaezR5SjlrUEiul4MeNdmqYU7IB7zXG+4aW2OtrdUkfVLXkxjqO4IW8B1cfdXOxNzrq1/NUUKYdepcAGcT1xMtvRgqPXd7ja+U5lLNT2n3GLYuLAVuk987bgVKQQ4gBAls5WIwGIQIDAQAB";
+            String public3dsPayloadRSAKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJ84cM/HJEOvuxxWwbOTsF+GeFD7qQCMaSSbfWo7x0oiNEMxRGZOCPpQI+SNt8D4n+U4YroRmo4W4wgNkkJWQJkx5EyDJePGv5NSGXW+27uQpOin7G2h7JAHq+mF3hcR4uR7GlMw4MpTdNyYfb2L/8RvCdIXzANQOpdNFsbNm62qJSOO/gq1jCTl/+8HudIQHR7Vyw1QrL+3Sp0ZlkzlUr2SouPVyEVodcea2z4gkH1AQMwXGXUzALMqtYo3uUaOZb5E3vKDzTeTkVzujefloPUxVBJXfW0ypkH452ccOywH6Fv/aJaVUvQCe5arEO4IPg9HjsWrxsqkvZ2xnPrkfQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
             int keyLength = 16;
             String aesKey = randomUUID.substring(randomUUID.length() - keyLength);
-            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
             randomUUID = UUID.randomUUID().toString();//Regenerate the uuid to use as an iv
             String iv = randomUUID.substring(randomUUID.length() - keyLength);
-            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
             url = url.buildUpon()
                     .appendQueryParameter("transactionType", "CARD")
                     .appendQueryParameter("key", encryptedKey)
@@ -293,14 +293,14 @@ public class MobPay implements Serializable {
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
             String payloadString = cardPaymentPayload.toString();
             Uri url = Uri.parse("https://testmerchant.interswitch-ke.com/sdkcardinal");
-            String publicRSAKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcS3/OiYyHdlCHicBm9yHiOQdvJ/8XRR3dHSaezR5SjlrUEiul4MeNdmqYU7IB7zXG+4aW2OtrdUkfVLXkxjqO4IW8B1cfdXOxNzrq1/NUUKYdepcAGcT1xMtvRgqPXd7ja+U5lLNT2n3GLYuLAVuk987bgVKQQ4gBAls5WIwGIQIDAQAB";
+            String public3dsPayloadRSAKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJ84cM/HJEOvuxxWwbOTsF+GeFD7qQCMaSSbfWo7x0oiNEMxRGZOCPpQI+SNt8D4n+U4YroRmo4W4wgNkkJWQJkx5EyDJePGv5NSGXW+27uQpOin7G2h7JAHq+mF3hcR4uR7GlMw4MpTdNyYfb2L/8RvCdIXzANQOpdNFsbNm62qJSOO/gq1jCTl/+8HudIQHR7Vyw1QrL+3Sp0ZlkzlUr2SouPVyEVodcea2z4gkH1AQMwXGXUzALMqtYo3uUaOZb5E3vKDzTeTkVzujefloPUxVBJXfW0ypkH452ccOywH6Fv/aJaVUvQCe5arEO4IPg9HjsWrxsqkvZ2xnPrkfQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
             int keyLength = 16;
             String aesKey = randomUUID.substring(randomUUID.length() - keyLength);
-            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            String encryptedKey = Base64.encodeToString(RSAUtil.encrypt(aesKey.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
             randomUUID = UUID.randomUUID().toString();//Regenerate the uuid to use as an iv
             String iv = randomUUID.substring(randomUUID.length() - keyLength);
-            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), publicRSAKey), Base64.NO_WRAP);
+            String encryptedIv = Base64.encodeToString(RSAUtil.encrypt(iv.getBytes(), public3dsPayloadRSAKey), Base64.NO_WRAP);
             url = url.buildUpon()
                     .appendQueryParameter("transactionType", "TOKEN")
                     .appendQueryParameter("key", encryptedKey)

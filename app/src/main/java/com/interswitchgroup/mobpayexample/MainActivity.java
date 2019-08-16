@@ -81,9 +81,15 @@ public class MainActivity extends AppCompatActivity {
         paymentChannels.setItems(channelNames);
         tokensSpinner = findViewById(R.id.tokens);
         cardTokens.clear();
-        final CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "02/20");
+        CardToken cardToken = new CardToken("C48FA7D7F466914A3E4440DE458AABC1914B9500CC7780BEB4", "02/20");
         cardToken.setPanLast4Digits("1895");
         cardToken.setPanFirst6Digits("506183");
+        if (!cardTokens.contains(cardToken)) {
+            cardTokens.add(cardToken);
+        }
+        cardToken = new CardToken("BE1C0A36255388EFB9AA39696CE32C6554FB1D88A77648A59C", "02/20");
+        cardToken.setPanLast4Digits("1111");
+        cardToken.setPanFirst6Digits("411111");
         if (!cardTokens.contains(cardToken)) {
             cardTokens.add(cardToken);
         }
