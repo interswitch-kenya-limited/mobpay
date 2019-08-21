@@ -7,6 +7,9 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import com.hover.sdk.api.Hover;
+import com.hover.sdk.api.HoverParameters;
+
 import com.cardinalcommerce.cardinalmobilesdk.Cardinal;
 import com.cardinalcommerce.cardinalmobilesdk.models.response.ValidateResponse;
 import com.cardinalcommerce.cardinalmobilesdk.services.CardinalInitService;
@@ -138,6 +141,16 @@ public class MobPay implements Serializable {
         } else {
             throw new Exception("Failed to fetch merchant config, check your internet and configuration");
         }
+    }
+
+    public void doSomeHover(Activity context) {
+        Hover.initialize(context);
+        // Action Id 5853ebf2 CBA_GTB
+        Intent i = new HoverParameters.Builder(context)
+                .request("12ccfeff")
+//                .extra("action_step_variable_name", "s")
+                .buildIntent();
+        context.startActivityForResult(i, 0);
     }
 
     public MerchantConfigResponse.Config getMerchantConfig() {

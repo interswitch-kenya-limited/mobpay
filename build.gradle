@@ -23,6 +23,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         repositories {
+            maven { url 'http://maven.usehover.com/releases' }
             maven {
                 url "https://cardinalcommerce.bintray.com/android"
                 credentials {

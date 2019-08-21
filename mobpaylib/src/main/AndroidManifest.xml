@@ -18,6 +18,9 @@
         <!--android:process=":MobPayProcess"-->
         <!--android:excludeFromRecents="true"-->
         <!--android:noHistory="true"-->
+        <meta-data
+            android:name="com.hover.ApiKey"
+            android:value="c0522f11d8ed4ec53530b3b7a1ff550c" />
     </application>
 
 </manifest>

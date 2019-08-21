@@ -1,6 +1,8 @@
 package com.interswitchgroup.mobpaylib.ui;
 
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
@@ -51,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 
 public class MobPayActivity extends AppCompatActivity {
 
@@ -73,6 +77,8 @@ public class MobPayActivity extends AppCompatActivity {
     public Payment payment;
     public String clientId;
     public String clientSecret;
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
     public PaymentVm paymentVm;
     private MobPay mobPay;
 
@@ -90,7 +96,7 @@ public class MobPayActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             finish();
         }
-        paymentVm = new PaymentVm();
+        paymentVm = ViewModelProviders.of(this, viewModelFactory).get(PaymentVm.class);
         paymentVm.setMobPay(mobPay);
         paymentVm.setCustomer(this.customer);
         paymentVm.setMerchant(this.merchant);
