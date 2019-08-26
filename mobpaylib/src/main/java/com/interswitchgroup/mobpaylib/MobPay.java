@@ -109,7 +109,7 @@ public class MobPay implements Serializable {
             singletonMobPayInstance.initializeMerchantConfig();
         }
 
-        // If enabled channels wasmakeMobileMoneyPayment explicitly passed, override default enabled channels
+        // If enabled channels was makeMobileMoneyPayment explicitly passed, override default enabled channels
         if (config != null) {
             MobPay.config = config;
         }
@@ -143,12 +143,13 @@ public class MobPay implements Serializable {
         }
     }
 
-    public void doSomeHover(Activity context) {
+    public void doSomeHover(Activity context, String phoneNumber, String amount, String request) {
         Hover.initialize(context);
-        // Action Id 5853ebf2 CBA_GTB
         Intent i = new HoverParameters.Builder(context)
-                .request("12ccfeff")
-//                .extra("action_step_variable_name", "s")
+                .request(request)
+                .extra("phoneNumber", phoneNumber)
+                .extra("creditAmount", amount)
+                .setEnvironment(HoverParameters.TEST_ENV)
                 .buildIntent();
         context.startActivityForResult(i, 0);
     }

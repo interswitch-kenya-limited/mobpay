@@ -45,4 +45,7 @@
         \nOnce you receive a confirmation SMS from M-PESA, click on the confirm payment button below
     </string>
     <string name="save_card">Save card</string>
+
+    <!--Pay from bank strings-->
+    <string name="select_bnk_title_hint">Select your bank</string>
 </resources>

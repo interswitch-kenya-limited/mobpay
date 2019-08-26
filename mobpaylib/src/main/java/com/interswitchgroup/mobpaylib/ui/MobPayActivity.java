@@ -43,6 +43,7 @@ import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.fragments.PlaceHolderFragment;
+import com.interswitchgroup.mobpaylib.ui.fragments.bank.BankPaymentFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardPaymentFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 import com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobilePaymentFragment;
@@ -308,6 +309,8 @@ public class MobPayActivity extends AppCompatActivity {
                     return new CardPaymentFragment();
                 case 1:
                     return new MobilePaymentFragment();
+                case 2:
+                    return new BankPaymentFragment();
                 default:
                     return PlaceHolderFragment.newInstance(paymentChannels.get(position).value);
             }
