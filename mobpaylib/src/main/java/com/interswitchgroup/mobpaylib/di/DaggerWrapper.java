@@ -13,7 +13,7 @@ public class DaggerWrapper {
 
     private static void initComponent(String clientId, String clientSecret) {
 //        String baseurl = "https://ptsv2.com/t/rbvm6-1549534696/";
-        String baseurl = "https://testids.interswitch.co.ke:9080/api/v1/";
+        String baseurl = "https://testids.interswitch.co.ke:18082/api/v1/";
         mComponent = DaggerMainComponent
                 .builder()
                 .netModule(new NetModule(baseurl, clientId, clientSecret))
