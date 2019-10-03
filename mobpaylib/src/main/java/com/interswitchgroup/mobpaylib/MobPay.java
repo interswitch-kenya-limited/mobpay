@@ -57,7 +57,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
-    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
+    private String mqttServer = "tcp://esb.interswitch-ke.com:1883";
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;

@@ -20,7 +20,7 @@ import java.util.UUID;
 public class BrowserActivity extends AppCompatActivity {
 
     private String topic;
-    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
+    private String mqttServer = "tcp://esb.interswitch-ke.com:1883";
     private MqttClient sampleClient;
 
     @SuppressLint("SetJavaScriptEnabled")
