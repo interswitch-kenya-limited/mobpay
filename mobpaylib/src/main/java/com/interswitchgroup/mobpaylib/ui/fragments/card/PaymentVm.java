@@ -1,7 +1,7 @@
 package com.interswitchgroup.mobpaylib.ui.fragments.card;
 
-import android.arch.lifecycle.ViewModel;
-import android.databinding.ObservableBoolean;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.ViewModel;
 
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;

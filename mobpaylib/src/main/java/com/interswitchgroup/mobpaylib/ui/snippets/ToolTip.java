@@ -3,12 +3,13 @@ package com.interswitchgroup.mobpaylib.ui.snippets;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 public class ToolTip extends AppCompatTextView {
 

@@ -1,7 +1,8 @@
 package com.interswitchgroup.mobpaylib.ui.fragments.mobile;
 
-import android.arch.lifecycle.ViewModel;
 import android.util.Log;
+
+import androidx.lifecycle.ViewModel;
 
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.model.Mobile;
