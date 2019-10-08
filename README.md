@@ -7,7 +7,7 @@ This SDK library enables you to integrate Interswitch payments to your mobile ap
 To get the library add the following dependency to your module gradle file(app.gradle):
 
 ```groovy
-implementation 'com.github.interswitch-kenya-limited:mobpay:0.0.3'
+implementation 'com.github.interswitch-kenya-limited:mobpay:0.1.0.02'
 ```
 
 *Ensure that the jitpack io repository is part of your project* by adding it to the root build.gradle in the allprojects => repositories section
@@ -37,20 +37,20 @@ final Customer customer = new Customer(customerId);
 customer.setEmail(customerEmail);
 
 MobPay.Config config = new MobPay.Config();// May be used for advanced configuration, can be null
-MobPay.getInstance(clientId, clientSecret, config)// Instantiate the mobpay library object to make a payment and get the results in the callbacks
-        .pay(
-    	MainActivity.this,// The instance of an activity that will be active untill the payment is completed
-    	merchant,
+mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);// Instantiate the mobpay library object to make a payment and get the results in the callbacks
+mobPay.pay(MainActivity.this,// The instance of an activity that will be active untill the payment is completed
+        merchant,
         payment,
         customer,
-        new TransactionSuccessCallback() { // Callback object to handle success
+        new TransactionSuccessCallback() {
             @Override
             public void onSuccess(TransactionResponse transactionResponse) {
                 // Your code to proceed to after success
-            },
+            }
+        },
         new TransactionFailureCallback() {
             @Override
-            public void onError(Throwable error) { // Callback object to handle failure
+            public void onError(Throwable error) {
                 // Code to handle failure
             }
         });
