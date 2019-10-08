@@ -5,6 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.1'
@@ -14,6 +15,8 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath 'com.netflix.nebula:gradle-lint-plugin:11.0.0'
+
+
     }
 }
 
@@ -22,6 +25,8 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        mavenCentral()
+        maven { url "http://maven.usehover.com/releases" }
     }
     apply plugin: 'nebula.lint'
 }
