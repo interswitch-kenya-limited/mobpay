@@ -2,6 +2,8 @@ package com.interswitchgroup.mobpaylib;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Base64;
@@ -57,7 +59,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
-    private String mqttServer = "tcp://esb.interswitch-ke.com:1883";
+    private String mqttServer;
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
@@ -68,6 +70,7 @@ public class MobPay implements Serializable {
     private MerchantConfigResponse.Config merchantConfig;
     private static Config config = new Config();
     private Activity activity;
+    private ApplicationInfo ai;
 
     private MobPay() {
     }
@@ -75,10 +78,12 @@ public class MobPay implements Serializable {
     public static MobPay getInstance(Activity activity, String clientId, String clientSecret, Config config) throws Exception {
         if (singletonMobPayInstance == null) {
             singletonMobPayInstance = new MobPay();
-            DaggerWrapper.getComponent(clientId, clientSecret).inject(singletonMobPayInstance);
+            DaggerWrapper.getComponent(activity, clientId, clientSecret).inject(singletonMobPayInstance);
             singletonMobPayInstance.clientId = clientId;
             singletonMobPayInstance.clientSecret = clientSecret;
             singletonMobPayInstance.activity = activity;
+            singletonMobPayInstance.ai = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
+            singletonMobPayInstance.mqttServer = String.valueOf(singletonMobPayInstance.ai.metaData.get("interswitch-kenya-limited.mobpay.mqtt_url"));
         }
 
         if (singletonMobPayInstance.getMerchantConfig() == null) {
@@ -176,6 +181,7 @@ public class MobPay implements Serializable {
      * and related details e.g. payment mode card and required card details.
      * Then once collected it will call the interswitch backend to make the payment and
      * call onSuccess or onFailure of the passed transaction callback
+     *
      * @param merchant
      * @param payment
      * @param customer
@@ -215,12 +221,14 @@ public class MobPay implements Serializable {
         NullChecker.checkNull(card, "card must not be null");
         payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
-            // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
-            PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
+            String modulus = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.modulus"));
+            String exponent = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.exponent"));
+            PublicKey publicKey = RSAUtil.getPublicKey(modulus, exponent);
             String authData = RSAUtil.getAuthDataMerchant(publicKey, card.getPan(), card.getCvv(), card.getExpiryYear() + card.getExpiryMonth(), card.isTokenize() ? 1 : 0, "D");
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
             String payloadString = cardPaymentPayload.toString();
-            Uri url = Uri.parse("https://merchant.interswitch-ke.com/sdkcardinal");
+            String sdkcardinalurl = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.cardinal_url"));
+            Uri url = Uri.parse(sdkcardinalurl);
             String public3dsPayloadRSAKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJ84cM/HJEOvuxxWwbOTsF+GeFD7qQCMaSSbfWo7x0oiNEMxRGZOCPpQI+SNt8D4n+U4YroRmo4W4wgNkkJWQJkx5EyDJePGv5NSGXW+27uQpOin7G2h7JAHq+mF3hcR4uR7GlMw4MpTdNyYfb2L/8RvCdIXzANQOpdNFsbNm62qJSOO/gq1jCTl/+8HudIQHR7Vyw1QrL+3Sp0ZlkzlUr2SouPVyEVodcea2z4gkH1AQMwXGXUzALMqtYo3uUaOZb5E3vKDzTeTkVzujefloPUxVBJXfW0ypkH452ccOywH6Fv/aJaVUvQCe5arEO4IPg9HjsWrxsqkvZ2xnPrkfQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
             int keyLength = 16;
@@ -237,6 +245,7 @@ public class MobPay implements Serializable {
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
+            intent.putExtra("mqttServer", mqttServer);
             final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
             intent.putExtra("topic", topic);
             activity.startActivity(intent);
@@ -287,12 +296,14 @@ public class MobPay implements Serializable {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
         payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
-            // TODO The Modulus and Public Exponent will be supplied by Interswitch. Please ask for one
-            PublicKey publicKey = RSAUtil.getPublicKey("9c7b3ba621a26c4b02f48cfc07ef6ee0aed8e12b4bd11c5cc0abf80d5206be69e1891e60fc88e2d565e2fabe4d0cf630e318a6c721c3ded718d0c530cdf050387ad0a30a336899bbda877d0ec7c7c3ffe693988bfae0ffbab71b25468c7814924f022cb5fda36e0d2c30a7161fa1c6fb5fbd7d05adbef7e68d48f8b6c5f511827c4b1c5ed15b6f20555affc4d0857ef7ab2b5c18ba22bea5d3a79bd1834badb5878d8c7a4b19da20c1f62340b1f7fbf01d2f2e97c9714a9df376ac0ea58072b2b77aeb7872b54a89667519de44d0fc73540beeaec4cb778a45eebfbefe2d817a8a8319b2bc6d9fa714f5289ec7c0dbc43496d71cf2a642cb679b0fc4072fd2cf", "010001");
+            String modulus = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.modulus"));
+            String exponent = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.exponent"));
+            PublicKey publicKey = RSAUtil.getPublicKey(modulus, exponent);
             String authData = RSAUtil.getAuthDataMerchant(publicKey, cardToken.getToken(), cardToken.getCvv(), cardToken.getExpiry().replaceAll("[^\\d]", ""), 0, ",");
             CardPaymentPayload cardPaymentPayload = new CardPaymentPayload(merchant, payment, customer, authData);
             String payloadString = cardPaymentPayload.toString();
-            Uri url = Uri.parse("https://merchant.interswitch-ke.com/sdkcardinal");
+            String sdkcardinalurl = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.cardinal_url"));
+            Uri url = Uri.parse(sdkcardinalurl);
             String public3dsPayloadRSAKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjJ84cM/HJEOvuxxWwbOTsF+GeFD7qQCMaSSbfWo7x0oiNEMxRGZOCPpQI+SNt8D4n+U4YroRmo4W4wgNkkJWQJkx5EyDJePGv5NSGXW+27uQpOin7G2h7JAHq+mF3hcR4uR7GlMw4MpTdNyYfb2L/8RvCdIXzANQOpdNFsbNm62qJSOO/gq1jCTl/+8HudIQHR7Vyw1QrL+3Sp0ZlkzlUr2SouPVyEVodcea2z4gkH1AQMwXGXUzALMqtYo3uUaOZb5E3vKDzTeTkVzujefloPUxVBJXfW0ypkH452ccOywH6Fv/aJaVUvQCe5arEO4IPg9HjsWrxsqkvZ2xnPrkfQIDAQAB";
             String randomUUID = UUID.randomUUID().toString();
             int keyLength = 16;
@@ -309,6 +320,7 @@ public class MobPay implements Serializable {
                     .build();
             Intent intent = new Intent(activity, BrowserActivity.class);
             intent.putExtra("url", url.toString());
+            intent.putExtra("mqttServer", mqttServer);
             final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
             intent.putExtra("topic", topic);
             activity.startActivity(intent);

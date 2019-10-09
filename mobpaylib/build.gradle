@@ -71,8 +71,4 @@ dependencies {
 //    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     //TODO Remove above lines for this single mqtt service dependency once it is stable
 //    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1@aar'
-
-    //multidex
-    def multidex_version = "2.0.1"
-    implementation "androidx.multidex:multidex:$multidex_version"
 }
