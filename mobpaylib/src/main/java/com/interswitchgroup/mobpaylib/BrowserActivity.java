@@ -21,7 +21,6 @@ import java.util.UUID;
 public class BrowserActivity extends AppCompatActivity {
 
     private String topic;
-    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
     private MqttClient sampleClient;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -31,6 +30,7 @@ public class BrowserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browser);
         topic = getIntent().getStringExtra("topic");
         try {
+            String mqttServer = getIntent().getStringExtra("mqttServer");
             sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setAutomaticReconnect(true);
