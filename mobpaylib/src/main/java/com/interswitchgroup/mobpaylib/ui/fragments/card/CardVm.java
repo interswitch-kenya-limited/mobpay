@@ -1,6 +1,6 @@
 package com.interswitchgroup.mobpaylib.ui.fragments.card;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.interswitchgroup.mobpaylib.model.Card;
 import com.interswitchgroup.mobpaylib.model.CardToken;

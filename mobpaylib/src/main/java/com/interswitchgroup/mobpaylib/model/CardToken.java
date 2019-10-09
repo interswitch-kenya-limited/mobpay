@@ -1,6 +1,6 @@
 package com.interswitchgroup.mobpaylib.model;
 
-import android.databinding.BaseObservable;
+import androidx.databinding.BaseObservable;
 
 import com.interswitchgroup.mobpaylib.R;
 

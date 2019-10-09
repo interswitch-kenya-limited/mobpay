@@ -11,7 +11,7 @@
             type="com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobileVm" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:context=".ui.fragments.mobile.MobilePaymentFragment">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -109,7 +109,7 @@
                     tools:ignore="Autofill,HardcodedText"
                     tools:text="0713365209" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/mno_content_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/pay_button" />
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/icons_layout"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/mobpay_toolbar_height"
@@ -199,13 +199,13 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/gray_eazzypay"
                         tools:ignore="ContentDescription" />
-                </android.support.constraint.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
         <include
             android:id="@+id/footer"
             layout="@layout/footer" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

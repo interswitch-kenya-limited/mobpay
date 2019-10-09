@@ -1,7 +1,8 @@
 package com.interswitchgroup.mobpaylib.di.vms;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
+
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardVm;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;

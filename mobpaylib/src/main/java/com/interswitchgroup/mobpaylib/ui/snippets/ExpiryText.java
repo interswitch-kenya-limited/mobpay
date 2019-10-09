@@ -1,9 +1,10 @@
 package com.interswitchgroup.mobpaylib.ui.snippets;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.model.Card;
