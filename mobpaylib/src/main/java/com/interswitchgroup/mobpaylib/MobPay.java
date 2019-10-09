@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hover.sdk.api.Hover;
-import com.hover.sdk.api.HoverParameters;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
@@ -59,7 +57,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MobPay implements Serializable {
-    private String mqttServer = "tcp://esb.interswitch-ke.com:1883";
+    private String mqttServer = "tcp://testmerchant.interswitch-ke.com:1883";
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
@@ -405,16 +403,6 @@ public class MobPay implements Serializable {
         } catch (Exception e) {
             transactionFailureCallback.onError(e);
         }
-    }
-
-    public void makeBankPayment(Activity context,String amount, String hoverActivity) {
-        Hover.initialize(context);
-        Intent i = new HoverParameters.Builder(context)
-                .request(hoverActivity)
-//                .extra("creditAmount", amount)
-                .setEnvironment(HoverParameters.TEST_ENV)
-                .buildIntent();
-        context.startActivityForResult(i, 0);
     }
 
     public enum PaymentChannel {
