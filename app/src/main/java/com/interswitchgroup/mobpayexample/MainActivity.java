@@ -327,24 +327,6 @@ public class MainActivity extends AppCompatActivity {
                         });
             }
         });
-
-        findViewById(R.id.payFromBankPaymentButton).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View view) {
-
-                            view.setEnabled(false);
-                            String clientId = clientIdField.getText().toString();
-                            String clientSecret = clientSecretField.getText().toString();
-                            MobPay mobPay;
-                            try {
-                                mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
-                            } catch (Exception e) {
-                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                                view.setEnabled(true);
-                                return;
-                            }
-                            mobPay.makeBankPayment(MainActivity.this, "300", "12ccfeff");
-                        }});
     }
 
     @Override
