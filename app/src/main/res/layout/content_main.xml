@@ -195,6 +195,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mobile payment" />
+            <Button
+                android:id="@+id/payFromBankPaymentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pay from bank" />
         </LinearLayout>
 
 
