@@ -7,7 +7,7 @@ This SDK library enables you to integrate Interswitch payments to your mobile ap
 To get the library add the following dependency to your module gradle file(app.gradle):
 
 ```groovy
-implementation 'com.github.interswitch-kenya-limited:mobpay:0.1.0.02'
+implementation 'com.github.interswitch-kenya-limited:mobpay:0.2.0'
 ```
 
 *Ensure that the jitpack io repository is part of your project* by adding it to the root build.gradle in the allprojects => repositories section
