@@ -38,7 +38,7 @@
             android:ems="10"
             android:hint="merchant id"
             android:inputType="text"
-            android:text="CRUZZZ0001" />
+            android:text="TZLETU0001" />
 
         <EditText
             android:id="@+id/domain"
@@ -47,7 +47,7 @@
             android:ems="10"
             android:hint="Domain"
             android:inputType="text"
-            android:text="CRUZZZ" />
+            android:text="ISWKE" />
 
         <EditText
             android:id="@+id/terminal_id"
@@ -66,7 +66,7 @@
             android:enabled="true"
             android:hint="Client Id"
             android:inputType="text"
-            android:text="IKIA7C2981C715915A2D9DF952D8422F956BAB4ABB8A" />
+            android:text="IKIAAB09E4ECCB92A508AEDE0D01B36472E27C309F05" />
 
         <EditText
             android:id="@+id/client_secret"
@@ -76,7 +76,7 @@
             android:enabled="true"
             android:hint="Client Secret"
             android:inputType="text"
-            android:text="2NZ4AlYFzabz6+eTMp9pYJvcgWTLjfYBvsFQFRkfuUc=" />
+            android:text="f4Vm0o0bXBQTIG4DAKrbs4urZZgJSieih/EiHjnf9/E=" />
 
 
         <EditText
@@ -86,7 +86,7 @@
             android:ems="10"
             android:hint="amount"
             android:inputType="number"
-            android:text="993" />
+            android:text="963" />
 
         <EditText
             android:id="@+id/currency"
@@ -114,7 +114,7 @@
             android:hint="orderId"
             android:inputType="text"
             android:maxLength="10"
-            android:text="oid_12121" />
+            android:text="TZL_ANDR_132" />
 
         <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
             android:id="@+id/tokens"
@@ -140,7 +140,7 @@
             android:hint="Card Number"
             android:maxLength="16"
             android:inputType="number"
-            android:text="5061830100001895" />
+            android:text="4111111111111111" />
 
         <EditText
             android:id="@+id/cvv"

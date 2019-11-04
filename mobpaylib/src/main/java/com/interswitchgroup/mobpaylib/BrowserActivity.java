@@ -54,6 +54,12 @@ public class BrowserActivity extends AppCompatActivity {
         WebView webview = findViewById(R.id.webview);
         WebSettings settings = webview.getSettings();
         settings.setJavaScriptEnabled(true);
+//        settings.setLoadWithOverviewMode(false);
+//        settings.setDisplayZoomControls(false);
+//        settings.setBuiltInZoomControls(false);
+//        settings.setUseWideViewPort(false);
+//        settings.setLoadWithOverviewMode(false);
+//        webview.setInitialScale(50);
         webview.setWebViewClient(new WebViewClient() {
 
             @Override
