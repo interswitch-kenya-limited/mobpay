@@ -9,7 +9,6 @@ import retrofit2.http.POST;
 
 public interface PesalinkPayment {
 
-    //TODO call the pesalink api from kelvin
     @POST("merchant/transact/pesalink")
     Single<PesalinkPaymentResponse> pesalinkPayment(@Body PesalinkPaymentPayload pesalinkPaymentPayload);
 
