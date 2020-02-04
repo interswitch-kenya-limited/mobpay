@@ -17,9 +17,14 @@ import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.PaybillQueryResponse;
+import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentPayload;
+import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
+import com.interswitchgroup.mobpaylib.api.service.PesalinkPayment;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkSuccessCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
@@ -424,6 +429,29 @@ public class MobPay implements Serializable {
         PaymentChannel(String value) {
             this.value = value;
         }
+    }
+
+    public void makePesalinkPayment(Merchant merchant, Payment payment, Customer customer, final PesalinkSuccessCallback pesalinkSuccessCallback, final PesalinkFailureCallback pesalinkFailureCallback){
+        try{
+            PesalinkPaymentPayload pesalinkPaymentPayload = new PesalinkPaymentPayload(merchant,payment,customer);
+            Disposable subscribe = retrofit.create(PesalinkPayment.class)
+                    .pesalinkPayment(pesalinkPaymentPayload)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<PesalinkPaymentResponse>() {
+                        @Override
+                        public void accept(PesalinkPaymentResponse pesalinkPaymentResponse) throws Exception {
+                            Log.i(LOG_TAG, "Pesalink payment code generation succeeded, code:\t" + pesalinkPaymentResponse.getExternalPaymentRef());
+                            System.out.println(pesalinkPaymentResponse.getExternalPaymentRef());
+                            pesalinkSuccessCallback.onSuccess(pesalinkPaymentResponse);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            pesalinkFailureCallback.onError(throwable);
+                        }
+                    });
+        }catch (Exception e){}
     }
 
     public static class Config {
