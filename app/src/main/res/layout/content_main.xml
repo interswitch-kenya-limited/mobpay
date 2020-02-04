@@ -116,6 +116,15 @@
             android:maxLength="10"
             android:text="TZL_ANDR_132" />
 
+        <EditText
+            android:id="@+id/transactionRefField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="transactionRefField"
+            android:inputType="text"
+            android:maxLength="10"
+            />
         <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
             android:id="@+id/tokens"
             android:layout_width="match_parent"
@@ -206,6 +215,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/payWithPesalink"
             android:text="Pay with Pesalink" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirmTransactionPayment"
+            android:text="Confirm transaction payment" />
         </LinearLayout>
 
     </LinearLayout>

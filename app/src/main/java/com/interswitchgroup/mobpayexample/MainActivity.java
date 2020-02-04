@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText expMonthField;
     private EditText preauthField;
     private EditText orderIdField;
+    private EditText transactionRefField;
     private CheckBox tokenizeCheckbox;
     private MultiSelectionSpinner paymentChannels;
     private MultiSelectionSpinner tokensSpinner;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         expMonthField = findViewById(R.id.expMonth);
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
+        transactionRefField = findViewById(R.id.transactionRefField);
         tokenizeCheckbox = findViewById(R.id.tokenization_checkBox);
         paymentChannels = findViewById(R.id.channels);
         List<String> channelNames = new ArrayList<>();
@@ -380,6 +382,46 @@ public class MainActivity extends AppCompatActivity {
                     public void onError(Throwable error) {
                         view.setEnabled(true);
                         Snackbar.make(view, "Pesalink payment code generation failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.confirmTransactionPayment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                view.setEnabled(false);
+                String clientId = clientIdField.getText().toString();
+                String clientSecret = clientSecretField.getText().toString();
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+
+                MobPay mobPay;
+                try {
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
+                }catch (Exception e){
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                mobPay.confirmTransactionPayment(transactionRef, new TransactionSuccessCallback() {
+                    @Override
+                    public void onSuccess(TransactionResponse transactionResponse) {
+                        view.setEnabled(true);
+
+                        Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                                .setAction("Action", null).show();
+                    }
+                }, new TransactionFailureCallback() {
+                    @Override
+                    public void onError(Throwable error) {
+                        view.setEnabled(true);
+
+                        Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                                 .setAction("Action", null).show();
                     }
