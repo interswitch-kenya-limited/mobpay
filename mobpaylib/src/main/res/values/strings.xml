@@ -52,9 +52,9 @@
     <string name="select_ppl_title_hint">Select your bank</string>
 
     <string name="pesalink_payment_instructions">
-        \n&#8226;\t To pay via:<b>%1$s</b> dial <b>%2$s</b>
+        \n&#8226;\t To pay via: <b>%1$s</b> dial <b>%2$s</b>
         \n&#8226;\t Use pesalink, send to mobile number <b>%3$s</b>
-        \n&#8226;\t Enter the <b>Enter exact amount (%4$s)</b>
+        \n&#8226;\t Enter the <b>Enter exact amount %4$s</b>
         \n&#8226;\t If prompted to enter reason/narration enter <b>%5$s</b>
         \nOnce you receive a confirmation SMS from your bank, click on the confirm payment button below
     </string>
