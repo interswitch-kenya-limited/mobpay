@@ -4,6 +4,8 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.ViewModel;
 
 import com.interswitchgroup.mobpaylib.MobPay;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkSuccessCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
@@ -114,5 +116,17 @@ public class PaymentVm extends ViewModel {
                 orderId,
                 onSuccess,
                 paybillTransactionFailureCallback);
+    }
+
+    public void confrimTransactionPayment(String transactionRef, TransactionFailureCallback payFromPesalinkTransactionFailureCallback) {
+        loading.set(true);
+        mobPay.confirmTransactionPayment(
+                transactionRef,
+                onSuccess,
+                payFromPesalinkTransactionFailureCallback);
+    }
+
+    public void getExternalTransactionReference(String transactionRef, final PesalinkSuccessCallback setPesalinkExternalReference, PesalinkFailureCallback transactionFailureCallback){
+        mobPay.makePesalinkPayment(merchant,payment,customer,setPesalinkExternalReference,transactionFailureCallback);
     }
 }

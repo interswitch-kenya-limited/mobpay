@@ -424,7 +424,7 @@ public class MobPay implements Serializable {
     }
 
     public enum PaymentChannel {
-        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode");
+        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode"),PAYFROMPESALINK("Pay from Pesalink");
         public String value;
 
         PaymentChannel(String value) {
