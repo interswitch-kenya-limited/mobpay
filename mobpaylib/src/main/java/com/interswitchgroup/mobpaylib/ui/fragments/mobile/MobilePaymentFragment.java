@@ -261,7 +261,6 @@ public class MobilePaymentFragment extends Fragment {
         String t2 = "";
         if (express) {
             String mno = providereEnumLogoPairs.get(provider).first.value;
-//                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
             t2 = getString(R.string.push_payment_instructions);
             t2 = String.format(t2, mno);
         } else {

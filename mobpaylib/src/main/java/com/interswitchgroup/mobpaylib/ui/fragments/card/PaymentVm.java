@@ -126,7 +126,7 @@ public class PaymentVm extends ViewModel {
                 payFromPesalinkTransactionFailureCallback);
     }
 
-    public void getExternalTransactionReference(String transactionRef, final PesalinkSuccessCallback setPesalinkExternalReference, PesalinkFailureCallback transactionFailureCallback){
-        mobPay.makePesalinkPayment(merchant,payment,customer,setPesalinkExternalReference,transactionFailureCallback);
+    public void getExternalTransactionReference(String transactionRef, final PesalinkSuccessCallback pesalinkSuccessCallback, PesalinkFailureCallback pesalinkFailureCallback){
+        mobPay.makePesalinkPayment(merchant,payment,customer,pesalinkSuccessCallback,pesalinkFailureCallback);
     }
 }

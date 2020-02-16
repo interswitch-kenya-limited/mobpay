@@ -27,12 +27,25 @@ public class PayFromPesalink extends BaseObservable implements Serializable {
 
     public void setBank(Bank bank) {
         switch (bank) {
-            case CBA:
-                this.ussdCode = "702";
+            case NCBA:
+                this.ussdCode = "*654#";
                 break;
-            case EQUITY:
-                this.ussdCode = "708";
+            case STANBIC:
+                this.ussdCode ="*208#";
                 break;
+            case STANDARDCHARTERED:
+                this.ussdCode="*722#";
+                break;
+            case COOPERATIVEBANK:
+                this.ussdCode = "*667#";
+                break;
+            case IMBANK:
+                this.ussdCode = "*458#";
+                break;
+            case KCBBANK:
+                this.ussdCode = "*522#";
+                break;
+
             default:
                 throw new IllegalArgumentException("The type selected does not have a corresponding provider set");
         }
@@ -42,7 +55,8 @@ public class PayFromPesalink extends BaseObservable implements Serializable {
 
 
     public enum Bank{
-        CBA("CBA"), EQUITY("EQUITY");
+        NCBA("NCBA"), COOPERATIVEBANK("COOPERATIVE BANK"), IMBANK("I&M BANK"),KCBBANK("KCB BANK"),STANBIC("STANBIC")
+        ,STANDARDCHARTERED("STANDARD CHARTERED");
         public String value;
 
         Bank(String value){

@@ -19,7 +19,10 @@ import androidx.fragment.app.Fragment;
 
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.api.model.ErrorWrapper;
+import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
 import com.interswitchgroup.mobpaylib.databinding.FragmentPayFromPesalinkPaymentBinding;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkSuccessCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.model.PayFromPesalink;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
@@ -30,8 +33,12 @@ import com.interswitchgroup.mobpaylib.utils.NetUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.CBA;
-import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.EQUITY;
+import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.COOPERATIVEBANK;
+import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.IMBANK;
+import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.KCBBANK;
+import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.NCBA;
+import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.STANBIC;
+import static com.interswitchgroup.mobpaylib.model.PayFromPesalink.Bank.STANDARDCHARTERED;
 
 
 public class PayFromPesalinkFragment extends Fragment {
@@ -53,8 +60,38 @@ public class PayFromPesalinkFragment extends Fragment {
         super.onCreate(savedInstanceState);
         paymentVm = ((MobPayActivity) getActivity()).paymentVm;
 
+
+
+
+
+        //get the code
+        //set loading to true
+        paymentVm.getLoading().set(true);
+        //Refresh the pesalink fragment
+            paymentVm.getExternalTransactionReference(paymentVm.getPayment().getTransactionRef(), new PesalinkSuccessCallback() {
+                @Override
+                public void onSuccess(PesalinkPaymentResponse pesalinkResponse) {
+                    System.out.println(pesalinkResponse.getExternalPaymentRef());
+                    //set the pesalink external ref then remove the loader
+                    payFromPesalinkVM.setExternalTrasactionReference(pesalinkResponse.getExternalPaymentRef());
+                    //remove the loader
+                    paymentVm.getLoading().set(false);
+                    //Edit text
+                    String t2 = getInstructionText();
+                    fragmentPayFromPesalinkPaymentBinding.mnoContentText.setText(t2);
+
+                }
+            }, new PesalinkFailureCallback() {
+                @Override
+                public void onError(Throwable error) {
+                    System.out.println(error.getLocalizedMessage());
+                }
+            });
+
+
         payFromPesalinkVM = new PayFromPesalinkVM();
-        payFromPesalinkVM.setPayFromPesalink(new PayFromPesalink(CBA));// Reset the model so that form is cleared
+        payFromPesalink = new PayFromPesalink(NCBA);
+        payFromPesalinkVM.setPayFromPesalink(payFromPesalink);// Reset the model so that form is cleared
         payFromPesalinkVM.setPaymentVm(paymentVm);
         payFromPesalinkVM.setTransactionFailureCallback(new TransactionFailureCallback() {
             @Override
@@ -119,8 +156,12 @@ public class PayFromPesalinkFragment extends Fragment {
             fragmentPayFromPesalinkPaymentBinding.spinner.setBackground(getResources().getDrawable(R.drawable.spinner_classic));
         }
         bankNameAndLogoPairs.clear();
-        bankNameAndLogoPairs.add(new Pair<>(CBA, R.drawable.mpesa));
-        bankNameAndLogoPairs.add(new Pair<>(EQUITY, R.drawable.eazzypay));
+        bankNameAndLogoPairs.add(new Pair<>(NCBA, R.drawable.ncba_logo));
+        bankNameAndLogoPairs.add(new Pair<>(STANBIC, R.drawable.stanbic_bank));
+        bankNameAndLogoPairs.add(new Pair<>(STANDARDCHARTERED, R.drawable.standard_chartered_logo));
+        bankNameAndLogoPairs.add(new Pair<>(COOPERATIVEBANK, R.drawable.cooperative_logo));
+        bankNameAndLogoPairs.add(new Pair<>(IMBANK, R.drawable.im_logo));
+        bankNameAndLogoPairs.add(new Pair<>(KCBBANK, R.drawable.kcb_logo));
 
 
         EnumPairSpinnerAdapter<PayFromPesalink.Bank> enumPairSpinnerAdapter = new EnumPairSpinnerAdapter<>(getContext(), bankNameAndLogoPairs);
@@ -128,6 +169,27 @@ public class PayFromPesalinkFragment extends Fragment {
         fragmentPayFromPesalinkPaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (bankNameAndLogoPairs.get(position).first.value){
+                    case "NCBA":
+                        payFromPesalink.setBank(NCBA);
+                        break;
+                    case "STANBIC":
+                        payFromPesalink.setBank(STANBIC);
+                        break;
+                    case "STANDARD CHARTERED":
+                        payFromPesalink.setBank(STANDARDCHARTERED);
+                        break;
+                    case "COOPERATIVE BANK":
+                        payFromPesalink.setBank(COOPERATIVEBANK);
+                        break;
+                    case "I&M BANK":
+                        payFromPesalink.setBank(IMBANK);
+                        break;
+                    case "KCB BANK":
+                        payFromPesalink.setBank(KCBBANK);
+                        break;
+
+                }
                 String t2 = getInstructionText();
                 fragmentPayFromPesalinkPaymentBinding.mnoContentText.setText(t2);
             }
@@ -146,9 +208,8 @@ public class PayFromPesalinkFragment extends Fragment {
 
 
     private String getInstructionText() {
-        String t2 = "";
-        t2 = getString(R.string.pesalink_payment_instructions);
-        t2 = String.format(t2,"CBA","*126#","interswitch number",paymentVm.getPayment().getAmount(),payFromPesalinkVM.getExternalTrasactionReference());
+        String t2 = getString(R.string.pesalink_payment_instructions);
+        t2 = String.format(t2,payFromPesalink.getBank(),payFromPesalink.getUssdCode(),"Interswitch number",paymentVm.getPayment().getCurrency() +" " +paymentVm.getPayment().getAmount(),payFromPesalinkVM.getExternalTrasactionReference());
         return t2;
     }
 }

@@ -14,7 +14,7 @@ public class PayFromPesalinkVM extends ViewModel {
     private String externalTrasactionReference;
     public PayFromPesalinkVM(){
 
-        this.payFromPesalink = new PayFromPesalink(PayFromPesalink.Bank.CBA);
+        this.payFromPesalink = new PayFromPesalink(PayFromPesalink.Bank.NCBA);
     }
 
     public PaymentVm getPaymentVm() {
