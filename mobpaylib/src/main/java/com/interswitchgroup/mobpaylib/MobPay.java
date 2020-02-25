@@ -98,6 +98,7 @@ public class MobPay implements Serializable {
 
         // If enabled channels was explicitly passed, override default enabled channels
         if (config != null) {
+            //TODO add pesalink here
             if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getBnkStatus())) {
                 config.getChannels().remove(PaymentChannel.BANK);
             }
