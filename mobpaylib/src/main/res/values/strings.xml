@@ -44,14 +44,18 @@
         \n&#8226;\t Enter your <b>M-PESA PIN</b> and send
         \nOnce you receive a confirmation SMS from M-PESA, click on the confirm payment button below
     </string>
-    <string name="airtel_manual_payment_instructions">\n&#8226;\t Go to AIRTEL Money on your phone
-        \n&#8226;\t Select Lipa na AIRTEL option
-        \n&#8226;\t Select Pay Bill option
-        \n&#8226;\t Enter <b>business no. %1$s</b>
-        \n&#8226;\t Enter <b>account no.  %2$s</b>
-        \n&#8226;\t Enter the <b>EXACT amount %3$s</b>
-        \n&#8226;\t Enter your <b>AIRTEL PIN</b> and send
-        \nOnce you receive a confirmation SMS from AIRTEL, click on the confirm payment button below
+    <string name="airtel_manual_payment_instructions">\n&#8226;\t Dial *222#
+\n&#8226;\t Select Lipa Na Airtel Money
+\n&#8226;\t Select Pay Bill
+\n&#8226;\t Select Other
+\n&#8226;\t Select other
+\n&#8226;\t Enter Paybill Number : %1$s
+\n&#8226;\t Enter EXACT amount (%3$s)
+\n&#8226;\t Enter Account number %2$s
+\n&#8226;\t Confirm transaction details
+\n&#8226;\t Enter your PIN and press OK
+\n&#8226;\t After receiving a confirmation message from Airtel click on the button below
+
     </string>
     <string name="save_card">Save card</string>
 
