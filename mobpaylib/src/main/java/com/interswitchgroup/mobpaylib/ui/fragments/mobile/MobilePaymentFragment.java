@@ -283,7 +283,7 @@ public class MobilePaymentFragment extends Fragment {
                     break;
                 case AIRTEL:
                     t2 = getString(R.string.airtel_manual_payment_instructions);
-                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getAirtelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
             }
         }

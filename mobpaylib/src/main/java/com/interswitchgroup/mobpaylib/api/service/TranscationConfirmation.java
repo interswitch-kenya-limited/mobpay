@@ -7,7 +7,6 @@ import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-//todo create transaction confrimation method
 public interface TranscationConfirmation {
     @GET("merchant/bills/transactions/{transactionRef}")
     Single<PaybillQueryResponse> confirmTransanction(@Path("transactionRef") String transactionRef);

@@ -209,7 +209,7 @@ public class PayFromPesalinkFragment extends Fragment {
 
     private String getInstructionText() {
         String t2 = getString(R.string.pesalink_payment_instructions);
-        t2 = String.format(t2,payFromPesalink.getBank(),payFromPesalink.getUssdCode(),"Interswitch number",paymentVm.getPayment().getCurrency() +" " +paymentVm.getPayment().getAmount(),payFromPesalinkVM.getExternalTrasactionReference());
+        t2 = String.format(t2,payFromPesalink.getBank(),payFromPesalink.getUssdCode(),paymentVm.getMobPay().getMerchantConfig().getPesalinkAccount(),paymentVm.getPayment().getCurrency() +" " +paymentVm.getPayment().getAmount(),payFromPesalinkVM.getExternalTrasactionReference());
         return t2;
     }
 }

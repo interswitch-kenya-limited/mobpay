@@ -117,6 +117,9 @@ public class MobPay implements Serializable {
             if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getPaycodeStatus())) {
                 config.getChannels().remove(PaymentChannel.PAYCODE);
             }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getPesalinkStatus())) {
+                config.getChannels().remove(PaymentChannel.PAYFROMPESALINK);
+            }
             MobPay.config = config;
         }
         return singletonMobPayInstance;
@@ -425,7 +428,7 @@ public class MobPay implements Serializable {
     }
 
     public enum PaymentChannel {
-        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode"),PAYFROMPESALINK("Pay from Pesalink");
+        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode"),PAYFROMPESALINK("Pesalink");
         public String value;
 
         PaymentChannel(String value) {
