@@ -174,7 +174,7 @@ public class MobilePaymentFragment extends Fragment {
         if ("1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getEquitelStatus())) {
             providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
         }
-        if ("1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getAirtelStatus())){
+        if (!"1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getAirtelStatus())){
             providereEnumLogoPairs.add(new Pair<>(AIRTEL, R.drawable.airtel_logo));
         }
         fragmentMobilePaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

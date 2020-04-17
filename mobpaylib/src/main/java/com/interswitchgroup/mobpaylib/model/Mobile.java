@@ -56,6 +56,7 @@ public class Mobile extends BaseObservable implements Serializable {
             case AIRTEL:
                 this.provider = "710";
                 this.setPattern(Pattern.compile("^0(1(0([0-2]\\d{0,6})?)?|(7(([38])\\d{0,7}|5([0-5]\\d{0,6})?|6(2\\d{0,6})?)?)?)$"));
+                break;
             default:
                 throw new IllegalArgumentException("The type selected does not have a corresponding provider set");
         }
