@@ -8,7 +8,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         // For building and publishing to jitpack on github
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
 //        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
@@ -26,10 +26,8 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
     }
-    apply plugin: 'nebula.lint'
 }
 
-gradleLint.rules += 'all-dependency'
 
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -39,8 +37,8 @@ ext {
     versionCode = 1
     versionName = "1.0"
     minSdkVersion = 19
-    compileSdkVersion = 28
-    targetSdkVersion = 28
-    buildToolsVersion = "27.0.0"
-    supportLibraryVersion = "27.0.0"
+    compileSdkVersion = 30
+    targetSdkVersion = 30
+    buildToolsVersion = "30.0.0"
+    supportLibraryVersion = "30.0.0"
 }
