@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.interswitchgroup.mobpayexample">
 
-    <uses-permission android:name="com.interswitchgroup.mobpaylib.PAY_WITH_ISWUI" />
+<!--    <uses-permission android:name="com.interswitchgroup.mobpaylib.PAY_WITH_ISWUI" />-->
     <application
         android:name="androidx.multidex.MultiDexApplication"
         android:allowBackup="true"
