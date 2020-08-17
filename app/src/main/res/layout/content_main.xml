@@ -38,7 +38,7 @@
             android:ems="10"
             android:hint="merchant id"
             android:inputType="text"
-            android:text="TZLETU0001" />
+            android:text="ISWKEN0001" />
 
         <EditText
             android:id="@+id/domain"
@@ -66,7 +66,7 @@
             android:enabled="true"
             android:hint="Client Id"
             android:inputType="text"
-            android:text="IKIAAB09E4ECCB92A508AEDE0D01B36472E27C309F05" />
+            android:text="IKIA9A911AC910155F6E787CA8FDC318D6A846454264" />
 
         <EditText
             android:id="@+id/client_secret"
@@ -76,7 +76,7 @@
             android:enabled="true"
             android:hint="Client Secret"
             android:inputType="text"
-            android:text="f4Vm0o0bXBQTIG4DAKrbs4urZZgJSieih/EiHjnf9/E=" />
+            android:text="Dh68KKA+FOzg14jsnXugRqn9FP9mVcrpFJ9oYq/G1s4=" />
 
 
         <EditText
