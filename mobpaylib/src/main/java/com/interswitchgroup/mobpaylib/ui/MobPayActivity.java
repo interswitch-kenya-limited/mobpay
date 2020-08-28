@@ -45,6 +45,7 @@ import com.interswitchgroup.mobpaylib.ui.fragments.PlaceHolderFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.CardPaymentFragment;
 import com.interswitchgroup.mobpaylib.ui.fragments.card.PaymentVm;
 import com.interswitchgroup.mobpaylib.ui.fragments.mobile.MobilePaymentFragment;
+import com.interswitchgroup.mobpaylib.ui.fragments.payfrompesalink.PayFromPesalinkFragment;
 import com.interswitchgroup.mobpaylib.utils.AndroidUtils;
 import com.interswitchgroup.mobpaylib.utils.NetUtil;
 
@@ -303,14 +304,15 @@ public class MobPayActivity extends AppCompatActivity {
 
         private Fragment getFragmentForChannel(MobPay.PaymentChannel paymentChannel) {
             switch (paymentChannel) {
-                case BANK:
-                    return PlaceHolderFragment.newInstance(paymentChannel.value);
+
                 case CARD:
                     return new CardPaymentFragment();
                 case MOBILE:
                     return new MobilePaymentFragment();
                 case PAYCODE:
                     return PlaceHolderFragment.newInstance(paymentChannel.value);
+                case PAYFROMPESALINK:
+                    return new PayFromPesalinkFragment();
                 default:
                     return PlaceHolderFragment.newInstance(paymentChannel.value);
             }

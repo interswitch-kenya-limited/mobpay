@@ -47,11 +47,15 @@ public class Mobile extends BaseObservable implements Serializable {
         switch (type) {
             case MPESA:
                 this.provider = "702";
-                this.setPattern(Pattern.compile("^(\\+?254|0)[7]([0-2][0-9]|[9][0-3])[0-9]{0,6}$"));
+                this.setPattern(Pattern.compile("^0(1(1([01]\\d{0,6})?)?|(7(([0-2]|9)\\d{0,7}|4(([0-3]|[5-6]|8)\\d{0,6})?|5([7-9]\\d{0,6})?|6([8-9]\\d{0,6})?)?)?)$"));
                 break;
             case EAZZYPAY:
                 this.provider = "708";
                 this.setPattern(Pattern.compile("^(?:254|\\+254|0)?76[34]([0-9]{0,6})$"));
+                break;
+            case AIRTEL:
+                this.provider = "710";
+                this.setPattern(Pattern.compile("^0(1(0([0-2]\\d{0,6})?)?|(7(([38])\\d{0,7}|5([0-5]\\d{0,6})?|6(2\\d{0,6})?)?)?)$"));
                 break;
             default:
                 throw new IllegalArgumentException("The type selected does not have a corresponding provider set");
@@ -97,7 +101,7 @@ public class Mobile extends BaseObservable implements Serializable {
     }
 
     public enum Type {
-        MPESA("M-PESA"), EAZZYPAY("Eazzy Pay");
+        MPESA("M-PESA"), EAZZYPAY("Eazzy Pay"), AIRTEL("AIRTEL");
         public String value;
 
         Type(String value) {

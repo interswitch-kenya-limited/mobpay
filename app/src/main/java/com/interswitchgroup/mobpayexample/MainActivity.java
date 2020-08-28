@@ -16,7 +16,10 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.snackbar.Snackbar;
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
+import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.TransactionResponse;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkSuccessCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText expMonthField;
     private EditText preauthField;
     private EditText orderIdField;
+    private EditText transactionRefField;
     private CheckBox tokenizeCheckbox;
     private MultiSelectionSpinner paymentChannels;
     private MultiSelectionSpinner tokensSpinner;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         expMonthField = findViewById(R.id.expMonth);
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
+        transactionRefField = findViewById(R.id.transactionRefField);
         tokenizeCheckbox = findViewById(R.id.tokenization_checkBox);
         paymentChannels = findViewById(R.id.channels);
         List<String> channelNames = new ArrayList<>();
@@ -325,6 +330,102 @@ public class MainActivity extends AppCompatActivity {
                                         .setAction("Action", null).show();
                             }
                         });
+            }
+        });
+        findViewById(R.id.payWithPesalink).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                view.setEnabled(false);
+                String customerEmail = customerEmailField.getText().toString();
+                String customerId = customerIdField.getText().toString();
+                String amount = amountField.getText().toString();
+                String clientId = clientIdField.getText().toString();
+                String clientSecret = clientSecretField.getText().toString();
+                String merchantId = merchantIdField.getText().toString();
+                String domain = domainField.getText().toString();
+                String terminalId = terminalIdField.getText().toString();
+                String currency = currencyField.getText().toString();
+                String preauth = preauthField.getText().toString();
+                String orderId = orderIdField.getText().toString();
+
+                final Merchant merchant = new Merchant(merchantId, domain);
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+                final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
+                payment.setPreauth(preauth);
+                final Customer customer = new Customer(customerId);
+                customer.setEmail(customerEmail);
+                List<MobPay.PaymentChannel> selectedPaymentChannels = new ArrayList<>();
+                for (int selectedIndex : paymentChannels.getSelectedIndicies()) {
+                    selectedPaymentChannels.add(MobPay.PaymentChannel.class.getEnumConstants()[selectedIndex]);
+                }
+                Mobile mobile = new Mobile("0713365290", Mobile.Type.MPESA);
+                MobPay mobPay;
+                try {
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                mobPay.makePesalinkPayment(merchant, payment, customer, new PesalinkSuccessCallback() {
+                    @Override
+                    public void onSuccess(PesalinkPaymentResponse pesalinkResponse) {
+                        view.setEnabled(true);
+                        Snackbar.make(view, "Pesalink payment code generation succeeded, code:\t" + pesalinkResponse.getExternalPaymentRef(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                                .setAction("Action", null).show();
+                    }
+                }, new PesalinkFailureCallback() {
+                    @Override
+                    public void onError(Throwable error) {
+                        view.setEnabled(true);
+                        Snackbar.make(view, "Pesalink payment code generation failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.confirmTransactionPayment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                view.setEnabled(false);
+                String clientId = clientIdField.getText().toString();
+                String clientSecret = clientSecretField.getText().toString();
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+
+                MobPay mobPay;
+                try {
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, null);
+                }catch (Exception e){
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                mobPay.confirmTransactionPayment(transactionRef, new TransactionSuccessCallback() {
+                    @Override
+                    public void onSuccess(TransactionResponse transactionResponse) {
+                        view.setEnabled(true);
+
+                        Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                                .setAction("Action", null).show();
+                    }
+                }, new TransactionFailureCallback() {
+                    @Override
+                    public void onError(Throwable error) {
+                        view.setEnabled(true);
+
+                        Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                                .setAction("Action", null).show();
+                    }
+                });
             }
         });
     }

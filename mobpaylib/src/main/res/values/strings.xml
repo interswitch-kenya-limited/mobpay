@@ -44,5 +44,31 @@
         \n&#8226;\t Enter your <b>M-PESA PIN</b> and send
         \nOnce you receive a confirmation SMS from M-PESA, click on the confirm payment button below
     </string>
+    <string name="airtel_manual_payment_instructions">\n&#8226;\t Dial *222#
+\n&#8226;\t Select Lipa Na Airtel Money
+\n&#8226;\t Select Pay Bill
+\n&#8226;\t Select Other
+\n&#8226;\t Select other
+\n&#8226;\t Enter Paybill Number : %1$s
+\n&#8226;\t Enter EXACT amount (%3$s)
+\n&#8226;\t Enter Account number %2$s
+\n&#8226;\t Confirm transaction details
+\n&#8226;\t Enter your PIN and press OK
+\n&#8226;\t After receiving a confirmation message from Airtel click on the button below
+
+    </string>
     <string name="save_card">Save card</string>
+
+
+<!--    pay from pesalink strings-->
+
+    <string name="select_ppl_title_hint">Select your bank</string>
+
+    <string name="pesalink_payment_instructions">
+        \n&#8226;\t To pay via: <b>%1$s</b> dial <b>%2$s</b>
+        \n&#8226;\t Use pesalink, send to mobile number <b>%3$s</b>
+        \n&#8226;\t Enter the <b>Enter exact amount %4$s</b>
+        \n&#8226;\t If prompted to enter reason/narration enter <b>%5$s</b>
+        \nOnce you receive a confirmation SMS from your bank, click on the confirm payment button below
+    </string>
 </resources>

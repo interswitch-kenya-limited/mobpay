@@ -34,6 +34,7 @@ import com.interswitchgroup.mobpaylib.utils.NetUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.interswitchgroup.mobpaylib.model.Mobile.Type.AIRTEL;
 import static com.interswitchgroup.mobpaylib.model.Mobile.Type.EAZZYPAY;
 import static com.interswitchgroup.mobpaylib.model.Mobile.Type.MPESA;
 
@@ -173,6 +174,9 @@ public class MobilePaymentFragment extends Fragment {
         if ("1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getEquitelStatus())) {
             providereEnumLogoPairs.add(new Pair<>(EAZZYPAY, R.drawable.eazzypay));
         }
+        if ("1".equalsIgnoreCase(paymentVm.getMobPay().getMerchantConfig().getAirtelStatus())){
+            providereEnumLogoPairs.add(new Pair<>(AIRTEL, R.drawable.airtel_logo));
+        }
         fragmentMobilePaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -185,6 +189,9 @@ public class MobilePaymentFragment extends Fragment {
                         break;
                     case MPESA:
                         fragmentMobilePaymentBinding.mobile.setHint("0712 000 000");
+                        break;
+                    case AIRTEL:
+                        fragmentMobilePaymentBinding.mobile.setHint("0733 000 000");
                         break;
                 }
                 changeMobileValidityBackground();
@@ -261,7 +268,6 @@ public class MobilePaymentFragment extends Fragment {
         String t2 = "";
         if (express) {
             String mno = providereEnumLogoPairs.get(provider).first.value;
-//                String t2 = getString(R.string.eazzypay_manual_payment_instructions);
             t2 = getString(R.string.push_payment_instructions);
             t2 = String.format(t2, mno);
         } else {
@@ -274,6 +280,10 @@ public class MobilePaymentFragment extends Fragment {
                 case EAZZYPAY:
                     t2 = getString(R.string.eazzypay_manual_payment_instructions);
                     t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getEquitelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
+                    break;
+                case AIRTEL:
+                    t2 = getString(R.string.airtel_manual_payment_instructions);
+                    t2 = String.format(t2, paymentVm.getMobPay().getMerchantConfig().getAirtelPaybill(), paymentVm.getPayment().getOrderId(), paymentVm.getPayment().getCurrency() + " " + paymentVm.getPayment().getAmountString());
                     break;
             }
         }
