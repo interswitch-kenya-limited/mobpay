@@ -60,7 +60,7 @@ public class MobileVm extends ViewModel {
         if (paymentMethod.equalsIgnoreCase(EXPRESS)) {
             paymentVm.makeMobilePayment(mobile, expressTransactionFailureCallback);
         } else if (paymentMethod.equalsIgnoreCase(PAYBIll)) {
-            Log.e(LOG_TAG, "Not working yet");
+            Log.e(LOG_TAG, "Not yet working");
             paymentVm.confirmMobilePayment(paymentVm.getPayment().getOrderId(), paybillTransactionFailureCallback);
         }
     }

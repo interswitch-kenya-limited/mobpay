@@ -54,9 +54,12 @@ public class MerchantConfigResponse {
         private String equitelStatus;
         private String tkashStatus;
         private String airtelStatus;
+        private String pesalinkStatus;
         private String paycodeStatus;
         private String mpesaPaybill;
+        private String airtelPaybill;
         private String equitelPaybill;
+        private String pesalinkAccount;
         private Integer tokenizeStatus;
         private Integer cardauthStatus;
         private Integer cardPreauth;
@@ -208,6 +211,29 @@ public class MerchantConfigResponse {
             this.bnkStatus = bnkStatus;
         }
 
+        public String getPesalinkStatus() {
+            return pesalinkStatus;
+        }
+
+        public void setPesalinkStatus(String pesalinkStatus) {
+            this.pesalinkStatus = pesalinkStatus;
+        }
+
+        public String getAirtelPaybill() {
+            return airtelPaybill;
+        }
+
+        public void setAirtelPaybill(String airtelPaybill) {
+            this.airtelPaybill = airtelPaybill;
+        }
+
+        public String getPesalinkAccount() {
+            return pesalinkAccount;
+        }
+
+        public void setPesalinkAccount(String pesalinkAccount) {
+            this.pesalinkAccount = pesalinkAccount;
+        }
     }
 
 }

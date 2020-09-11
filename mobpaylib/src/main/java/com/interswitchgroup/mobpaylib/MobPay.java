@@ -17,9 +17,15 @@ import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.PaybillQueryResponse;
+import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentPayload;
+import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
+import com.interswitchgroup.mobpaylib.api.service.PesalinkPayment;
+import com.interswitchgroup.mobpaylib.api.service.TranscationConfirmation;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
+import com.interswitchgroup.mobpaylib.interfaces.PesalinkSuccessCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
@@ -92,6 +98,7 @@ public class MobPay implements Serializable {
 
         // If enabled channels was explicitly passed, override default enabled channels
         if (config != null) {
+            //TODO add pesalink here
             if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getBnkStatus())) {
                 config.getChannels().remove(PaymentChannel.BANK);
             }
@@ -109,6 +116,9 @@ public class MobPay implements Serializable {
             }
             if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getPaycodeStatus())) {
                 config.getChannels().remove(PaymentChannel.PAYCODE);
+            }
+            if (!"1".equalsIgnoreCase(singletonMobPayInstance.merchantConfig.getPesalinkStatus())) {
+                config.getChannels().remove(PaymentChannel.PAYFROMPESALINK);
             }
             MobPay.config = config;
         }
@@ -418,13 +428,62 @@ public class MobPay implements Serializable {
     }
 
     public enum PaymentChannel {
-        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode");
+        CARD("Card"), MOBILE("Mobile"), BANK("Bank"), PAYCODE("Verve Paycode"),PAYFROMPESALINK("Pesalink");
         public String value;
 
         PaymentChannel(String value) {
             this.value = value;
         }
     }
+
+    public void makePesalinkPayment(Merchant merchant, Payment payment, Customer customer, final PesalinkSuccessCallback pesalinkSuccessCallback, final PesalinkFailureCallback pesalinkFailureCallback){
+        try{
+            PesalinkPaymentPayload pesalinkPaymentPayload = new PesalinkPaymentPayload(merchant,payment,customer);
+            Disposable subscribe = retrofit.create(PesalinkPayment.class)
+                    .pesalinkPayment(pesalinkPaymentPayload)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<PesalinkPaymentResponse>() {
+                        @Override
+                        public void accept(PesalinkPaymentResponse pesalinkPaymentResponse) throws Exception {
+                            Log.i(LOG_TAG, "Pesalink payment code generation succeeded, code:\t" + pesalinkPaymentResponse.getExternalPaymentRef());
+                            pesalinkSuccessCallback.onSuccess(pesalinkPaymentResponse);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            pesalinkFailureCallback.onError(throwable);
+                        }
+                    });
+        }catch (Exception e){
+            pesalinkFailureCallback.onError(e);
+        }
+    }
+
+    public void confirmTransactionPayment(String transactionRef, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback){
+        try{
+            Disposable subscribe = retrofit.create(TranscationConfirmation.class)
+                    .confirmTransanction(transactionRef)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<PaybillQueryResponse>() {
+                        @Override
+                        public void accept(PaybillQueryResponse transactionPaymentResponse) {
+                            Log.i(LOG_TAG, "Transaction payment succeeded, ref:\t" + transactionPaymentResponse.getTransactionRef());
+                            transactionSuccessCallback.onSuccess(transactionPaymentResponse);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) {
+                            Log.e(LOG_TAG, "Transaction payment failed, reason:\t" + throwable.getMessage());
+                            transactionFailureCallback.onError(throwable);
+                        }
+                    });
+        }catch (Exception e){
+            transactionFailureCallback.onError(e);
+        }
+    }
+
 
     public static class Config {
         //All channels are enabled by default
