@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     MobPay.Config config = new MobPay.Config();
                     config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                     config.setCardTokens(selectedTokens);
+                    config.setIconUrl("https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80");
                     mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();

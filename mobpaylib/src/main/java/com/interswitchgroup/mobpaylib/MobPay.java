@@ -217,6 +217,7 @@ public class MobPay implements Serializable {
         intent.putExtra("payment", payment);
         intent.putExtra("clientId", clientId);
         intent.putExtra("clientSecret", clientSecret);
+        intent.putExtra("config", config);
         activity.startActivity(intent);
         /*
         Launch ui
@@ -485,11 +486,11 @@ public class MobPay implements Serializable {
     }
 
 
-    public static class Config {
+    public static class Config  implements  Serializable{
         //All channels are enabled by default
         private List<PaymentChannel> channels = new LinkedList<>(Arrays.asList(PaymentChannel.class.getEnumConstants()));
-        private List<CardToken> cardTokens = new ArrayList<>();
-
+        private final List<CardToken> cardTokens = new ArrayList<>();
+        private String iconUrl;
         public List<PaymentChannel> getChannels() {
             return channels;
         }
@@ -508,6 +509,14 @@ public class MobPay implements Serializable {
         public void setCardTokens(List<CardToken> cardTokens) {
             this.cardTokens.clear();
             this.cardTokens.addAll(cardTokens);
+        }
+
+        public String getIconUrl() {
+            return iconUrl;
+        }
+
+        public void setIconUrl(String iconUrl) {
+            this.iconUrl = iconUrl;
         }
     }
 }

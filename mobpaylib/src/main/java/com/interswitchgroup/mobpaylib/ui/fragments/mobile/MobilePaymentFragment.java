@@ -267,7 +267,7 @@ public class MobilePaymentFragment extends Fragment {
     private String getInstructionText(int provider, boolean express) {
         String t2 = "";
         if (express) {
-            String mno = providereEnumLogoPairs.get(provider).first.value;
+            String mno = providereEnumLogoPairs.get(provider).first.getValue();
             t2 = getString(R.string.push_payment_instructions);
             t2 = String.format(t2, mno);
         } else {

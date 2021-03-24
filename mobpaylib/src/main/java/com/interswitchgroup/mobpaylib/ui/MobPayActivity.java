@@ -76,7 +76,7 @@ public class MobPayActivity extends AppCompatActivity {
     public String clientSecret;
     public PaymentVm paymentVm;
     private MobPay mobPay;
-
+    private MobPay.Config config;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +85,9 @@ public class MobPayActivity extends AppCompatActivity {
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
+        this.config = (MobPay.Config) getIntent().getSerializableExtra("config");
         try {
-            this.mobPay = MobPay.getInstance(this, this.clientId, this.clientSecret, null);
+            this.mobPay = MobPay.getInstance(this, this.clientId, this.clientSecret, config);
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             finish();
@@ -101,6 +102,7 @@ public class MobPayActivity extends AppCompatActivity {
             public void onSuccess(final TransactionResponse transactionResponse) {
                 paymentVm.getLoading().set(false);
                 View dialogView = LayoutInflater.from(MobPayActivity.this).inflate(R.layout.result_dialog, (ViewGroup) getWindow().getDecorView().getRootView(), false);
+
                 TextView title = dialogView.findViewById(R.id.dialog_result_title);
                 ImageView imageView = dialogView.findViewById(R.id.dialog_image);
                 TextView message = dialogView.findViewById(R.id.dialog_message);
@@ -173,6 +175,14 @@ public class MobPayActivity extends AppCompatActivity {
         activityMobPayBinding.setPaymentVm(paymentVm);
 
         final FrameLayout progressOverlay = activityMobPayBinding.loading.progressOverlay;
+
+        //so this is meant to  load an image from the internet
+        if (this.config.getIconUrl() != null){
+            Glide.with(this)
+                    .load(this.config.getIconUrl())
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                    .into((ImageView) findViewById(R.id.interSwitchIcon));
+        }
         Glide.with(this)
                 .load(R.drawable.running_man)
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
