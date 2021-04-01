@@ -56,8 +56,12 @@ final Customer customer = new Customer(customerId);
 customer.setEmail(customerEmail);
 
 MobPay.Config config = new MobPay.Config();// May be used for advanced configuration, can be null
+
+config.setIconUrl('YOUR ICONS URL') can be used to change the logo
+
+
 mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);// Instantiate the mobpay library object to make a payment and get the results in the callbacks
-mobPay.pay(MainActivity.this,// The instance of an activity that will be active untill the payment is completed
+mobPay.pay(MainActivity.this,// The instance of an activity that will be active until the payment is completed
         merchant,
         payment,
         customer,

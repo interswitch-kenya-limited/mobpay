@@ -230,6 +230,7 @@ public class MobPay implements Serializable {
 
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(card, "card must not be null");
+        payment.setPaymentItem("CRD");
         payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             String modulus = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.modulus"));
@@ -305,6 +306,7 @@ public class MobPay implements Serializable {
 
     public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
+        payment.setPaymentItem("CRD");
         payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             String modulus = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.modulus"));
@@ -381,6 +383,7 @@ public class MobPay implements Serializable {
     public void makeMobileMoneyPayment(Mobile mobile, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(mobile, "mobile must not be null");
         try {
+            payment.setPaymentItem("MMO");
             MobilePaymentPayload mobilePaymentPayload = new MobilePaymentPayload(merchant, payment, customer, mobile);
             Disposable subscribe = retrofit.create(MobilePayment.class)
                     .mobilePayment(mobilePaymentPayload)
