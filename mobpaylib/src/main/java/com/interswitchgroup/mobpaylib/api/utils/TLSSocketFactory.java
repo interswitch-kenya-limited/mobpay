@@ -35,11 +35,11 @@ public class TLSSocketFactory extends SSLSocketFactory {
     // Field named delegate so okHttp 3.1.2 will be
     // able to get our trust manager as suggested here:
     // https://github.com/square/okhttp/issues/2323#issuecomment-185055040
-    private SSLSocketFactory delegate;
+    private final SSLSocketFactory delegate;
     private X509TrustManager x509TrustManager;
 
     public TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        SSLContext context = SSLContext.getInstance("TLS");
+        SSLContext context = SSLContext.getInstance("TLSv1.2");
 
         // Get, so we can use default Trust managers for our Factory
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());

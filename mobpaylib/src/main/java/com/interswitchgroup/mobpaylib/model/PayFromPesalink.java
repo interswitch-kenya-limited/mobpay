@@ -57,7 +57,11 @@ public class PayFromPesalink extends BaseObservable implements Serializable {
     public enum Bank{
         NCBA("NCBA"), COOPERATIVEBANK("COOPERATIVE BANK"), IMBANK("I&M BANK"),KCBBANK("KCB BANK"),STANBIC("STANBIC")
         ,STANDARDCHARTERED("STANDARD CHARTERED");
-        public String value;
+        private final String value;
+
+        public String getValue() {
+            return value;
+        }
 
         Bank(String value){
             this.value = value;

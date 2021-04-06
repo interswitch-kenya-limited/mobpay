@@ -210,7 +210,7 @@ public class Card extends BaseObservable implements Serializable {
 
     public enum Type {
         VISA(1), MASTERCARD(2), AMEX(4), DISCOVER(8), VERVE(10);
-        public int value;
+        private final int value;
 
         Type(int value) {
             this.value = value;

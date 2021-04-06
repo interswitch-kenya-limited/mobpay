@@ -169,7 +169,7 @@ public class PayFromPesalinkFragment extends Fragment {
         fragmentPayFromPesalinkPaymentBinding.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (bankNameAndLogoPairs.get(position).first.value){
+                switch (bankNameAndLogoPairs.get(position).first.getValue()){
                     case "NCBA":
                         payFromPesalink.setBank(NCBA);
                         break;

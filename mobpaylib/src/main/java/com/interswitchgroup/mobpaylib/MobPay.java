@@ -217,6 +217,7 @@ public class MobPay implements Serializable {
         intent.putExtra("payment", payment);
         intent.putExtra("clientId", clientId);
         intent.putExtra("clientSecret", clientSecret);
+        intent.putExtra("config", config);
         activity.startActivity(intent);
         /*
         Launch ui
@@ -229,6 +230,7 @@ public class MobPay implements Serializable {
 
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(card, "card must not be null");
+        payment.setPaymentItem("CRD");
         payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             String modulus = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.modulus"));
@@ -304,6 +306,7 @@ public class MobPay implements Serializable {
 
     public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
+        payment.setPaymentItem("CRD");
         payment.setPreauth(String.valueOf(merchantConfig.getCardPreauth() != null ? merchantConfig.getCardPreauth() : 0));
         try {
             String modulus = String.valueOf(ai.metaData.get("interswitch-kenya-limited.mobpay.modulus"));
@@ -380,6 +383,7 @@ public class MobPay implements Serializable {
     public void makeMobileMoneyPayment(Mobile mobile, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(mobile, "mobile must not be null");
         try {
+            payment.setPaymentItem("MMO");
             MobilePaymentPayload mobilePaymentPayload = new MobilePaymentPayload(merchant, payment, customer, mobile);
             Disposable subscribe = retrofit.create(MobilePayment.class)
                     .mobilePayment(mobilePaymentPayload)
@@ -485,11 +489,11 @@ public class MobPay implements Serializable {
     }
 
 
-    public static class Config {
+    public static class Config  implements  Serializable{
         //All channels are enabled by default
         private List<PaymentChannel> channels = new LinkedList<>(Arrays.asList(PaymentChannel.class.getEnumConstants()));
-        private List<CardToken> cardTokens = new ArrayList<>();
-
+        private final List<CardToken> cardTokens = new ArrayList<>();
+        private String iconUrl;
         public List<PaymentChannel> getChannels() {
             return channels;
         }
@@ -508,6 +512,14 @@ public class MobPay implements Serializable {
         public void setCardTokens(List<CardToken> cardTokens) {
             this.cardTokens.clear();
             this.cardTokens.addAll(cardTokens);
+        }
+
+        public String getIconUrl() {
+            return iconUrl;
+        }
+
+        public void setIconUrl(String iconUrl) {
+            this.iconUrl = iconUrl;
         }
     }
 }
