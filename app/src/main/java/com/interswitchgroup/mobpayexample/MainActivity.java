@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText preauthField;
     private EditText orderIdField;
     private EditText transactionRefField;
+    private EditText customUrlField;
     private CheckBox tokenizeCheckbox;
     private MultiSelectionSpinner paymentChannels;
     private MultiSelectionSpinner tokensSpinner;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
         transactionRefField = findViewById(R.id.transactionRefField);
+        customUrlField = findViewById(R.id.customUrlField);
         tokenizeCheckbox = findViewById(R.id.tokenization_checkBox);
         paymentChannels = findViewById(R.id.channels);
         List<String> channelNames = new ArrayList<>();
@@ -123,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 String expMonth = expMonthField.getText().toString();
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
-
                 int lower = 100000000;
                 int upper = 999999999;
                 String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                     MobPay.Config config = new MobPay.Config();
                     config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                     config.setCardTokens(selectedTokens);
-                    config.setIconUrl("https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2250&q=80");
+                    config.setIconUrl(customUrlField.getText().toString());
                     mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -519,7 +520,9 @@ public class MobPay implements Serializable {
         }
 
         public void setIconUrl(String iconUrl) {
-            this.iconUrl = iconUrl;
+            if (URLUtil.isValidUrl(iconUrl)){
+                this.iconUrl = iconUrl;
+            }
         }
     }
 }

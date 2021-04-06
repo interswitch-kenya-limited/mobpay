@@ -178,10 +178,14 @@ public class MobPayActivity extends AppCompatActivity {
 
         //so this is meant to  load an image from the internet
         if (this.config.getIconUrl() != null){
-            Glide.with(this)
-                    .load(this.config.getIconUrl())
-                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-                    .into((ImageView) findViewById(R.id.interSwitchIcon));
+            try {
+                Glide.with(this)
+                        .load(this.config.getIconUrl())
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                        .into((ImageView) findViewById(R.id.interSwitchIcon));
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         Glide.with(this)
                 .load(R.drawable.running_man)

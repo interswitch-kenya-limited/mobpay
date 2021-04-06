@@ -125,6 +125,15 @@
             android:inputType="text"
             android:maxLength="10"
             />
+
+        <EditText
+            android:id="@+id/customUrlField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="customUrlField"
+            android:inputType="text"
+            />
         <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
             android:id="@+id/tokens"
             android:layout_width="match_parent"
