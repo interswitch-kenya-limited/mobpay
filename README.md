@@ -34,6 +34,9 @@ Edit you app manifest file to add the following configuration metadata inside th
         <meta-data
             android:name="interswitch-kenya-limited.mobpay.exponent"
             android:value="010001" />
+        <meta-data
+            android:name="interswitch-kenya-limited.mobpay.checkout_url"
+            android:value="https://gatewaybackend-uat.quickteller.co.ke"/>
 ```
 Finally ensure data binding is enabled in the root gradle file of your projects by adding the following config in its android section
 
