@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText preauthField;
     private EditText orderIdField;
     private EditText transactionRefField;
-    private EditText customUrlField;
+    private EditText customIconUrlField;
     private CheckBox tokenizeCheckbox;
     private MultiSelectionSpinner paymentChannels;
     private MultiSelectionSpinner tokensSpinner;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         preauthField = findViewById(R.id.preauth);
         orderIdField = findViewById(R.id.orderIdField);
         transactionRefField = findViewById(R.id.transactionRefField);
-        customUrlField = findViewById(R.id.customUrlField);
+        customIconUrlField = findViewById(R.id.customUrlField);
         tokenizeCheckbox = findViewById(R.id.tokenization_checkBox);
         paymentChannels = findViewById(R.id.channels);
         List<String> channelNames = new ArrayList<>();
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                     MobPay.Config config = new MobPay.Config();
                     config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                     config.setCardTokens(selectedTokens);
-                    config.setIconUrl(customUrlField.getText().toString());
+                    config.setIconUrl(customIconUrlField.getText().toString());
                     mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -414,6 +414,62 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(TransactionResponse transactionResponse) {
                         view.setEnabled(true);
 
+                        Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
+                                .setAction("Action", null).show();
+                    }
+                }, new TransactionFailureCallback() {
+                    @Override
+                    public void onError(Throwable error) {
+                        view.setEnabled(true);
+
+                        Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.launchPayWithWeb).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                view.setEnabled(false);
+                MobPay mobPay;
+                String clientId = clientIdField.getText().toString();
+                String clientSecret = clientSecretField.getText().toString();
+                String customerEmail = customerEmailField.getText().toString();
+                String customerId = customerIdField.getText().toString();
+                String amount = amountField.getText().toString();
+                String merchantId = merchantIdField.getText().toString();
+                String domain = domainField.getText().toString();
+                String terminalId = terminalIdField.getText().toString();
+                String currency = currencyField.getText().toString();
+                String preauth = preauthField.getText().toString();
+                String orderId = orderIdField.getText().toString();
+                MobPay.Config config = new MobPay.Config();
+                config.setIconUrl(customIconUrlField.getText().toString());
+
+
+                try {
+                    mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
+                }catch (Exception e){
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    view.setEnabled(true);
+                    return;
+                }
+                final Merchant merchant = new Merchant(merchantId, domain);
+                int lower = 100000000;
+                int upper = 999999999;
+                String transactionRef = String.valueOf((int) (Math.random() * (upper - lower)) + lower);
+                final Payment payment = new Payment(amount, transactionRef, "MOBILE", terminalId, "CRD", currency, orderId);
+                payment.setPreauth(preauth);
+                final Customer customer = new Customer(customerId,"firstName","secondName","allanbmageto@gmail.com","0713805241","NBI","KEN","00100","KIBIKO","KENYA");
+                customer.setEmail(customerEmail);
+                mobPay.pay(MainActivity.this,merchant, payment, customer, new TransactionSuccessCallback() {
+                    @Override
+                    public void onSuccess(TransactionResponse transactionResponse) {
+                        view.setEnabled(true);
                         Snackbar.make(view, "Transaction succeeded, ref:\t" + transactionResponse.getTransactionOrderId(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary))
                                 .setAction("Action", null).show();

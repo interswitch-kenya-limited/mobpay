@@ -6,7 +6,6 @@ import android.util.Base64;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.interswitchgroup.mobpaylib.BuildConfig;
 import com.interswitchgroup.mobpaylib.api.utils.TLSSocketFactory;
 
 import java.io.IOException;
@@ -99,7 +98,7 @@ public class NetModule {
 
                             // Add headers to request
                             Request.Builder builder = original.newBuilder()
-                                    .header("User-Agent", "Android_" + Build.VERSION.SDK_INT + "_jg.ongeri_" + BuildConfig.VERSION_NAME)
+                                    .header("User-Agent", "Android_" + Build.VERSION.SDK_INT + "_jg.ongeri_")
                                     .header("Accept", "application/json")
                                     .header("Content-Type", "application/json")
                                     .header("Nonce", nonce)
