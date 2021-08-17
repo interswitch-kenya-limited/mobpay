@@ -66,7 +66,7 @@
             android:enabled="true"
             android:hint="Client Id"
             android:inputType="text"
-            android:text="IKIA9A911AC910155F6E787CA8FDC318D6A846454264" />
+            android:text="IKIAAB09E4ECCB92A508AEDE0D01B36472E27C309F05" />
 
         <EditText
             android:id="@+id/client_secret"
@@ -76,7 +76,7 @@
             android:enabled="true"
             android:hint="Client Secret"
             android:inputType="text"
-            android:text="Dh68KKA+FOzg14jsnXugRqn9FP9mVcrpFJ9oYq/G1s4=" />
+            android:text="f4Vm0o0bXBQTIG4DAKrbs4urZZgJSieih/EiHjnf9/E=" />
 
 
         <EditText
@@ -131,7 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="customUrlField"
+            android:hint="customIconUrlField"
             android:inputType="text"
             />
         <com.interswitchgroup.mobpayexample.MultiSelectionSpinner
@@ -229,6 +229,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/confirmTransactionPayment"
             android:text="Confirm transaction payment" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/launchPayWithWeb"
+            android:text="Launch IPG web" />
         </LinearLayout>
 
     </LinearLayout>

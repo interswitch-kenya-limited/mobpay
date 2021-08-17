@@ -8,18 +8,19 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
-import android.webkit.URLUtil;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
+import com.interswitchgroup.mobpaylib.api.model.CheckoutTransactionPayload;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.PaybillQueryResponse;
 import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentPayload;
 import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
+import com.interswitchgroup.mobpaylib.api.service.Checkout;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
 import com.interswitchgroup.mobpaylib.api.service.PesalinkPayment;
@@ -50,11 +51,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -63,10 +61,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MobPay implements Serializable {
     private String mqttServer;
+    private String checkoutUrl;
     private static MobPay singletonMobPayInstance;
     private static final String LOG_TAG = MobPay.class.getSimpleName();
     private String clientId;
@@ -78,7 +81,7 @@ public class MobPay implements Serializable {
     private static Config config = new Config();
     private Activity activity;
     private ApplicationInfo ai;
-
+    boolean receivedMessage = false;
     private MobPay() {
     }
 
@@ -91,6 +94,7 @@ public class MobPay implements Serializable {
             singletonMobPayInstance.activity = activity;
             singletonMobPayInstance.ai = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
             singletonMobPayInstance.mqttServer = String.valueOf(singletonMobPayInstance.ai.metaData.get("interswitch-kenya-limited.mobpay.mqtt_url"));
+            singletonMobPayInstance.checkoutUrl = String.valueOf(singletonMobPayInstance.ai.metaData.get("interswitch-kenya-limited.mobpay.checkout_url"));
         }
 
         if (singletonMobPayInstance.getMerchantConfig() == null) {
@@ -199,7 +203,9 @@ public class MobPay implements Serializable {
      * @param transactionSuccessCallback
      * @param transactionFailureCallback
      */
-    public void pay(Activity activity, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+    @Deprecated
+    public void payWithNative(
+            Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(activity, "Activity context must not be null");
         NullChecker.checkNull(merchant, "merchant must not be null");
         NullChecker.checkNull(customer, "customer must not be null");
@@ -229,6 +235,95 @@ public class MobPay implements Serializable {
          */
     }
 
+    public void pay(Activity activity, Merchant merchant,Payment payment,Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback){
+        NullChecker.checkNull(merchant, "merchant must not be null");
+        NullChecker.checkNull(payment, "payment must not be null");
+        NullChecker.checkNull(customer, "customer must not be null");
+        NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
+        NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
+        setReceivedMessage(false);
+        try {
+            Retrofit ipgBackendRetrofit = new Retrofit.Builder()
+                    .baseUrl(checkoutUrl)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            CheckoutTransactionPayload checkoutTransactionPayload = new CheckoutTransactionPayload(merchant,payment,customer,config);
+            Checkout checkoutService = ipgBackendRetrofit.create(Checkout.class);
+            ObjectMapper oMapper = new ObjectMapper();
+            Map map = oMapper.convertValue(checkoutTransactionPayload, Map.class);
+            map.values().removeAll(Collections.singleton(null));
+            Call checkoutServiceCall = checkoutService.transactionCheckout(map);
+            final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
+
+            checkoutServiceCall.enqueue(new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    System.out.println("The Url is : " + response.raw().request().url().toString());
+                    Intent intent = new Intent(activity, BrowserActivity.class);
+                    intent.putExtra("url",response.raw().request().url().toString());
+                    intent.putExtra("mqttServer", mqttServer);
+                    intent.putExtra("topic", topic);
+                    activity.startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Call call, Throwable t) {
+                    System.out.println(t.getLocalizedMessage());
+                }
+            });
+
+            try {
+                final MqttClient sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
+                MqttConnectOptions connOpts = new MqttConnectOptions();
+                connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
+                System.out.println("Connecting to broker: " + mqttServer);
+                sampleClient.connect(connOpts);
+                System.out.println("Connected");
+                sampleClient.subscribe(topic, new IMqttMessageListener() {
+                    @Override
+                    public void messageArrived(String topic, final MqttMessage message) throws Exception {
+                        // message Arrived!
+                        System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                        /**
+                         * Run on ui thread otherwise utakua mwingi wa machozi
+                         */
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    CardPaymentResponse cardPaymentResponse = new ObjectMapper()
+                                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                            .readValue(new String(message.getPayload()), CardPaymentResponse.class);
+                                    if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
+                                        throw new Exception("Invalid response");
+                                    }
+                                    if(!isReceivedMessage()){
+                                        setReceivedMessage(true);
+                                        if(cardPaymentResponse.getResponseCode().equals("00")) {
+                                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                        }else{
+                                            transactionFailureCallback.onError(new Exception(cardPaymentResponse.toString()));
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    if(!isReceivedMessage()) {
+                                        transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (MqttException me) {
+                throw new Exception(me);
+            }
+        }catch (Exception e){
+            transactionFailureCallback.onError(e);
+        }
+
+    }
+    @Deprecated
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(card, "card must not be null");
         payment.setPaymentItem("CRD");
@@ -305,6 +400,7 @@ public class MobPay implements Serializable {
         }
     }
 
+    @Deprecated
     public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
         payment.setPaymentItem("CRD");
@@ -381,6 +477,7 @@ public class MobPay implements Serializable {
         }
     }
 
+    @Deprecated
     public void makeMobileMoneyPayment(Mobile mobile, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(mobile, "mobile must not be null");
         try {
@@ -489,40 +586,11 @@ public class MobPay implements Serializable {
         }
     }
 
+    public boolean isReceivedMessage() {
+        return receivedMessage;
+    }
 
-    public static class Config  implements  Serializable{
-        //All channels are enabled by default
-        private List<PaymentChannel> channels = new LinkedList<>(Arrays.asList(PaymentChannel.class.getEnumConstants()));
-        private final List<CardToken> cardTokens = new ArrayList<>();
-        private String iconUrl;
-        public List<PaymentChannel> getChannels() {
-            return channels;
-        }
-
-        public void setChannels(PaymentChannel... channels) {
-            if (channels != null && channels.length > 0) {
-                // Set enabled channels by first converting all channels varargs to set to remove duplicates
-                this.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
-            }
-        }
-
-        public List<CardToken> getCardTokens() {
-            return cardTokens;
-        }
-
-        public void setCardTokens(List<CardToken> cardTokens) {
-            this.cardTokens.clear();
-            this.cardTokens.addAll(cardTokens);
-        }
-
-        public String getIconUrl() {
-            return iconUrl;
-        }
-
-        public void setIconUrl(String iconUrl) {
-            if (URLUtil.isValidUrl(iconUrl)){
-                this.iconUrl = iconUrl;
-            }
-        }
+    public void setReceivedMessage(boolean receivedMessage) {
+        this.receivedMessage = receivedMessage;
     }
 }

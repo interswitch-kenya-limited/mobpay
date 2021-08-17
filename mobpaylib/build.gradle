@@ -40,8 +40,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // Reactive and REST extensions.
-// TODO Upgrade retrofit to latest once TLS 1.1 issue with backend is fixed, as it stands we cannot
-//  use later versions because of their inability to handle our custom TLSSocketFactory
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 //    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
