@@ -1,6 +1,6 @@
 package com.interswitchgroup.mobpaylib.api.model;
 
-import com.interswitchgroup.mobpaylib.MobPay;
+import com.interswitchgroup.mobpaylib.Config;
 import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Payment;
@@ -49,24 +49,20 @@ public class CheckoutTransactionPayload {
     public String customerStreet;
     public String customerState;
 
-    public CheckoutTransactionPayload(Merchant merchant, Payment payment, Customer customer, MobPay.Config config) {
+    //config
+    public String primaryAccentColor;
+
+    public CheckoutTransactionPayload(Merchant merchant, Payment payment, Customer customer, Config config) {
         this.merchantCode = merchant.getMerchantId();
         this.domain = merchant.getDomain();
         this.transactionReference = payment.getTransactionRef();
         this.orderId = payment.getOrderId();
-//        this.expiryTime = expiryTime;
         this.currencyCode = payment.getCurrency();
         this.amount = payment.getAmount();
         this.narration = payment.getNarration();
         this.redirectUrl = "https://uat.quickteller.co.ke/";
         this.iconUrl = config.getIconUrl();
-//        this.merchantName = merchantName;
-//        this.providerIconUrl = providerIconUrl;
-//        this.cardTokensJson = cardTokensJson;
-//        this.terminalId = terminalId;
-//        this.terminalType = terminalType;
-//        this.channel = channel;
-//        this.fee = fee;
+        this.primaryAccentColor = config.getPrimaryAccentColor();
         this.preauth = 0;
         this.customerId = customer.getCustomerId();
         this.customerFirstName = customer.getFirstName();
@@ -78,7 +74,6 @@ public class CheckoutTransactionPayload {
         this.customerPostalCode = customer.getPostalCode();
         this.customerStreet = customer.getStreet();
         this.customerState = customer.getState();
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
         this.dateOfPayment = sdf.format(new Date());
     }

@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
-import android.webkit.URLUtil;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,12 +51,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -87,6 +81,7 @@ public class MobPay implements Serializable {
     private static Config config = new Config();
     private Activity activity;
     private ApplicationInfo ai;
+    boolean receivedMessage = false;
     private MobPay() {
     }
 
@@ -209,7 +204,8 @@ public class MobPay implements Serializable {
      * @param transactionFailureCallback
      */
     @Deprecated
-    public void payWithNative(Activity activity, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+    public void payWithNative(
+            Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(activity, "Activity context must not be null");
         NullChecker.checkNull(merchant, "merchant must not be null");
         NullChecker.checkNull(customer, "customer must not be null");
@@ -245,6 +241,7 @@ public class MobPay implements Serializable {
         NullChecker.checkNull(customer, "customer must not be null");
         NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
         NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
+        setReceivedMessage(false);
         try {
             Retrofit ipgBackendRetrofit = new Retrofit.Builder()
                     .baseUrl(checkoutUrl)
@@ -301,25 +298,32 @@ public class MobPay implements Serializable {
                                     if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
                                         throw new Exception("Invalid response");
                                     }
-                                    transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                    if(!isReceivedMessage()){
+                                        setReceivedMessage(true);
+                                        if(cardPaymentResponse.getResponseCode().equals("00")) {
+                                            transactionSuccessCallback.onSuccess(cardPaymentResponse);
+                                        }else{
+                                            transactionFailureCallback.onError(new Exception(cardPaymentResponse.toString()));
+                                        }
+                                    }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
-                                    transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                    if(!isReceivedMessage()) {
+                                        transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                    }
                                 }
                             }
                         });
                     }
                 });
             } catch (MqttException me) {
-//                transactionFailureCallback.onError(me);
-                me.printStackTrace();
+                throw new Exception(me);
             }
         }catch (Exception e){
-            e.printStackTrace();
             transactionFailureCallback.onError(e);
         }
 
     }
+    @Deprecated
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(card, "card must not be null");
         payment.setPaymentItem("CRD");
@@ -396,6 +400,7 @@ public class MobPay implements Serializable {
         }
     }
 
+    @Deprecated
     public void makeCardTokenPayment(CardToken cardToken, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(cardToken, "cardToken must not be null");
         payment.setPaymentItem("CRD");
@@ -472,6 +477,7 @@ public class MobPay implements Serializable {
         }
     }
 
+    @Deprecated
     public void makeMobileMoneyPayment(Mobile mobile, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
         NullChecker.checkNull(mobile, "mobile must not be null");
         try {
@@ -580,40 +586,11 @@ public class MobPay implements Serializable {
         }
     }
 
+    public boolean isReceivedMessage() {
+        return receivedMessage;
+    }
 
-    public static class Config  implements  Serializable{
-        //All channels are enabled by default
-        private List<PaymentChannel> channels = new LinkedList<>(Arrays.asList(PaymentChannel.class.getEnumConstants()));
-        private final List<CardToken> cardTokens = new ArrayList<>();
-        private String iconUrl;
-        public List<PaymentChannel> getChannels() {
-            return channels;
-        }
-
-        public void setChannels(PaymentChannel... channels) {
-            if (channels != null && channels.length > 0) {
-                // Set enabled channels by first converting all channels varargs to set to remove duplicates
-                this.channels = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(channels)));
-            }
-        }
-
-        public List<CardToken> getCardTokens() {
-            return cardTokens;
-        }
-
-        public void setCardTokens(List<CardToken> cardTokens) {
-            this.cardTokens.clear();
-            this.cardTokens.addAll(cardTokens);
-        }
-
-        public String getIconUrl() {
-            return iconUrl;
-        }
-
-        public void setIconUrl(String iconUrl) {
-            if (URLUtil.isValidUrl(iconUrl)){
-                this.iconUrl = iconUrl;
-            }
-        }
+    public void setReceivedMessage(boolean receivedMessage) {
+        this.receivedMessage = receivedMessage;
     }
 }
