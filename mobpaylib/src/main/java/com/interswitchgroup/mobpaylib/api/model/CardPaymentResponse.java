@@ -1,5 +1,8 @@
 package com.interswitchgroup.mobpaylib.api.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class CardPaymentResponse implements TransactionResponse{
     private String fee;
     private String transactionAmount;
@@ -11,6 +14,7 @@ public class CardPaymentResponse implements TransactionResponse{
     private String panLast4Digits;
     private String orderId;
     private String panFirst6Digits;
+    private String responseCode;
 
     public String getFee() {
         return fee;
@@ -95,5 +99,23 @@ public class CardPaymentResponse implements TransactionResponse{
 
     public void setPanFirst6Digits(String panFirst6Digits) {
         this.panFirst6Digits = panFirst6Digits;
+    }
+
+    public String getResponseCode() {
+        return responseCode;
+    }
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    @Override
+    public String toString(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.interswitchgroup.mobpaylib.Config;
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 card.setTokenize(tokenizeCheckbox.isChecked());
                 MobPay mobPay;
                 try {
-                    MobPay.Config config = new MobPay.Config();
+                    Config config = new Config();
                     mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 MobPay mobPay;
                 try {
-                    MobPay.Config config = new MobPay.Config();
+                    Config config = new Config();
                     config.setChannels(selectedPaymentChannels.toArray(new MobPay.PaymentChannel[0]));
                     config.setCardTokens(selectedTokens);
                     config.setIconUrl(customIconUrlField.getText().toString());
@@ -447,9 +448,9 @@ public class MainActivity extends AppCompatActivity {
                 String currency = currencyField.getText().toString();
                 String preauth = preauthField.getText().toString();
                 String orderId = orderIdField.getText().toString();
-                MobPay.Config config = new MobPay.Config();
+                Config config = new Config();
                 config.setIconUrl(customIconUrlField.getText().toString());
-
+                config.setPrimaryAccentColor("#467ad2");
 
                 try {
                     mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
@@ -478,7 +479,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable error) {
                         view.setEnabled(true);
-
                         Snackbar.make(view, "Transaction failed, reason:\t" + error.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                                 .setAction("Action", null).show();

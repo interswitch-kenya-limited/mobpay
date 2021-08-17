@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.tabs.TabLayout;
+import com.interswitchgroup.mobpaylib.Config;
 import com.interswitchgroup.mobpaylib.MobPay;
 import com.interswitchgroup.mobpaylib.R;
 import com.interswitchgroup.mobpaylib.api.model.ErrorWrapper;
@@ -76,7 +77,7 @@ public class MobPayActivity extends AppCompatActivity {
     public String clientSecret;
     public PaymentVm paymentVm;
     private MobPay mobPay;
-    private MobPay.Config config;
+    private Config config;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +86,7 @@ public class MobPayActivity extends AppCompatActivity {
         this.payment = (Payment) getIntent().getSerializableExtra("payment");
         this.clientId = getIntent().getStringExtra("clientId");
         this.clientSecret = getIntent().getStringExtra("clientSecret");
-        this.config = (MobPay.Config) getIntent().getSerializableExtra("config");
+        this.config = (Config) getIntent().getSerializableExtra("config");
         try {
             this.mobPay = MobPay.getInstance(this, this.clientId, this.clientSecret, config);
         } catch (Exception e) {
