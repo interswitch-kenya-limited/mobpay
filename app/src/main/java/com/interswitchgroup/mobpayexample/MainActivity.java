@@ -156,9 +156,9 @@ public class MainActivity extends AppCompatActivity {
             String preauth = preauthField.getText().toString();
             String orderId = orderIdField.getText().toString();
             Config config = new Config();
-            config.setIconUrl("https://i.ibb.co/vPhG41s/somLogo.png%22");
+            config.setIconUrl(customIconUrlField.getText().toString());
             config.setPrimaryAccentColor("#467ad2");
-            config.setProviderIconUrl("https://i.ibb.co/vPhG41s/somLogo.png%22");
+            config.setProviderIconUrl(customIconUrlField.getText().toString());
 
             try {
                 mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
