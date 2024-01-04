@@ -52,6 +52,7 @@ public class CheckoutTransactionPayload {
     //config
     public String primaryAccentColor;
 
+
     public CheckoutTransactionPayload(Merchant merchant, Payment payment, Customer customer, Config config) {
         this.merchantCode = merchant.getMerchantId();
         this.domain = merchant.getDomain();
@@ -62,6 +63,7 @@ public class CheckoutTransactionPayload {
         this.narration = payment.getNarration();
         this.redirectUrl = "https://uat.quickteller.co.ke/";
         this.iconUrl = config.getIconUrl();
+        this.providerIconUrl = config.getProviderIconUrl();
         this.primaryAccentColor = config.getPrimaryAccentColor();
         this.preauth = 0;
         this.customerId = customer.getCustomerId();

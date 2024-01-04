@@ -17,6 +17,7 @@ public class Config implements Serializable {
     private final List<CardToken> cardTokens = new ArrayList<>();
     private String iconUrl;
     private String primaryAccentColor;
+    private String providerIconUrl;
 
 
     public List<MobPay.PaymentChannel> getChannels() {
@@ -47,6 +48,14 @@ public class Config implements Serializable {
         if (URLUtil.isValidUrl(iconUrl)) {
             this.iconUrl = iconUrl;
         }
+    }
+
+    public String getProviderIconUrl() {
+        return providerIconUrl;
+    }
+
+    public void setProviderIconUrl(String providerIconUrl) {
+        this.providerIconUrl = providerIconUrl;
     }
 
     public String getPrimaryAccentColor() {
