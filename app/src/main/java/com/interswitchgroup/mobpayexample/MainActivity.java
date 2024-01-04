@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
             Config config = new Config();
             config.setIconUrl(customIconUrlField.getText().toString());
             config.setPrimaryAccentColor("#467ad2");
+            config.setProviderIconUrl(customIconUrlField.getText().toString());
 
             try {
                 mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);
