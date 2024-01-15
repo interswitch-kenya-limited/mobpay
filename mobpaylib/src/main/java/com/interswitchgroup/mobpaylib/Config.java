@@ -18,6 +18,11 @@ public class Config implements Serializable {
     private String iconUrl;
     private String primaryAccentColor;
     private String providerIconUrl;
+    private String redirectUrl;
+    private String merchantName;
+    private String redirectMerchantName;
+    private boolean applyOffer;
+    private boolean displayPrivacyPolicy;
 
 
     public List<MobPay.PaymentChannel> getChannels() {
@@ -65,4 +70,45 @@ public class Config implements Serializable {
     public void setPrimaryAccentColor(String primaryAccentColor) {
         this.primaryAccentColor = primaryAccentColor;
     }
+
+    // RedirectUrl
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
+    // MerchantName
+    public String getMerchantName() {
+        return merchantName;
+    }
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    // RedirectMerchantName
+    public String getRedirectMerchantName() {
+        return redirectMerchantName;
+    }
+    public void setRedirectMerchantName(String redirectMerchantName) {
+        this.redirectMerchantName = redirectMerchantName;
+    }
+
+    // ApplyOffer
+    public boolean isApplyOffer() {
+        return applyOffer;
+    }
+    public void setApplyOffer(boolean applyOffer) {
+        this.applyOffer = applyOffer;
+    }
+
+    // DisplayPrivacyPolicy
+    public boolean isDisplayPrivacyPolicy() {
+        return displayPrivacyPolicy;
+    }
+    public void setDisplayPrivacyPolicy(boolean displayPrivacyPolicy) {
+        this.displayPrivacyPolicy = displayPrivacyPolicy;
+    }
+
 }

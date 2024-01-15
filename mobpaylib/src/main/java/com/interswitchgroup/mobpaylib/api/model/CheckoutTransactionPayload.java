@@ -51,6 +51,10 @@ public class CheckoutTransactionPayload {
 
     //config
     public String primaryAccentColor;
+    private String merchantName;
+    private String redirectMerchantName;
+    private boolean applyOffer;
+    private boolean displayPrivacyPolicy;
 
 
     public CheckoutTransactionPayload(Merchant merchant, Payment payment, Customer customer, Config config) {
@@ -61,10 +65,13 @@ public class CheckoutTransactionPayload {
         this.currencyCode = payment.getCurrency();
         this.amount = payment.getAmount();
         this.narration = payment.getNarration();
-        this.redirectUrl = "https://uat.quickteller.co.ke/";
+        this.redirectUrl = config.getRedirectUrl();
         this.iconUrl = config.getIconUrl();
         this.providerIconUrl = config.getProviderIconUrl();
         this.primaryAccentColor = config.getPrimaryAccentColor();
+        this.merchantName = config.getMerchantName();
+        this.applyOffer = config.isApplyOffer();
+        this.displayPrivacyPolicy = config.isDisplayPrivacyPolicy();
         this.preauth = 0;
         this.customerId = customer.getCustomerId();
         this.customerFirstName = customer.getFirstName();
