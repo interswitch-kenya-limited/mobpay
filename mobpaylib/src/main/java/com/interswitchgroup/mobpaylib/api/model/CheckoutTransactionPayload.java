@@ -51,7 +51,6 @@ public class CheckoutTransactionPayload {
 
     //config
     public String primaryAccentColor;
-    private String merchantName;
     private String redirectMerchantName;
     private boolean applyOffer;
     private boolean displayPrivacyPolicy;
