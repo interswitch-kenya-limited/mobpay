@@ -1,6 +1,7 @@
 package com.interswitchgroup.mobpaylib;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -42,9 +43,8 @@ public class BrowserActivity extends AppCompatActivity {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     // message Arrived!
-                    System.out.println("Message: " + topic + " : " + new String(message.getPayload()));
+                    Log.i(this.getClass().getSimpleName(), "Message: " + topic + " : " + new String(message.getPayload()));
                     finish();
-//                    sampleClient.close();
                 }
 
             });
@@ -61,16 +61,30 @@ public class BrowserActivity extends AppCompatActivity {
 //        settings.setLoadWithOverviewMode(false);
 //        webview.setInitialScale(50);
         webview.setWebViewClient(new WebViewClient() {
-
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                // TODO Auto-generated method stub
+                // Log the URL here
+                Log.i(this.getClass().getSimpleName(), "Loading URL: " + url);
                 view.loadUrl(url);
                 return true;
             }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                // Log the URL when the page starts loading
+                Log.i(this.getClass().getSimpleName(), "Page started: " + url);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Log the URL when the page finishes loading
+                Log.i(this.getClass().getSimpleName(), "Page finished: " + url);
+            }
         });
         String url = getIntent().getStringExtra("url");
-        Log.e(this.getClass().getSimpleName(), url);
+        Log.i(this.getClass().getSimpleName(), url);
         webview.loadUrl(url);
     }
 }
