@@ -267,8 +267,9 @@ public class MobPay implements Serializable {
                 intent.putExtra("topic", topic);
                 if (response.isSuccessful()){
                     activity.startActivity(intent);
+                }else{
+                    transactionFailureCallback.onError(new Error(response.message()));
                 }
-                transactionFailureCallback.onError(new Error(response.message()));
 
             }
 
