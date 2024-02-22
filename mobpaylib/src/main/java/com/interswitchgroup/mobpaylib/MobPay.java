@@ -40,6 +40,7 @@ import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
 import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
 import com.interswitchgroup.mobpaylib.utils.AESEncryptor;
+import com.interswitchgroup.mobpaylib.utils.InterswitchException;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
 import com.interswitchgroup.mobpaylib.utils.RSAUtil;
 
@@ -197,12 +198,12 @@ public class MobPay implements Serializable {
             connOpts.setAutomaticReconnect(true);
             Log.i(LOG_TAG, "Connecting to broker: " + mqttServer);
             sampleClient.connect(connOpts);
-            Log.i(LOG_TAG,"Connected");
+            Log.i(LOG_TAG, "Connected");
             sampleClient.subscribe(topic, new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, final MqttMessage message) throws Exception {
                     // message Arrived!
-                    Log.i(LOG_TAG,"Message: " + topic + " : " + new String(message.getPayload()));
+                    Log.i(LOG_TAG, "Message: " + topic + " : " + new String(message.getPayload()));
                     /**
                      * Run on ui thread otherwise utakua mwingi wa machozi
                      */
@@ -214,6 +215,7 @@ public class MobPay implements Serializable {
                                         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                                         .readValue(new String(message.getPayload()), CardPaymentResponse.class);
                                 if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
+
                                     throw new Exception("Invalid response");
                                 }
                                 if (!isReceivedMessage()) {
@@ -221,12 +223,15 @@ public class MobPay implements Serializable {
                                     if (cardPaymentResponse.getResponseCode().equals("00")) {
                                         transactionSuccessCallback.onSuccess(cardPaymentResponse);
                                     } else {
-                                        transactionFailureCallback.onError(new Exception(cardPaymentResponse.toString()));
+
+                                        transactionFailureCallback.onError(new InterswitchException(cardPaymentResponse.toString(),
+                                                cardPaymentResponse.getResponseCode(), "Transaction failure"));
+                                        ;
                                     }
                                 }
                             } catch (Exception e) {
                                 if (!isReceivedMessage()) {
-                                    transactionFailureCallback.onError(new Exception(new String(message.getPayload())));
+                                    transactionFailureCallback.onError(new InterswitchException(e.getMessage(),"", new String(message.getPayload())));
                                 }
                             }
                         }
@@ -234,7 +239,7 @@ public class MobPay implements Serializable {
                 }
             });
         } catch (Exception e) {
-            transactionFailureCallback.onError(e);
+            transactionFailureCallback.onError(new InterswitchException(e.getMessage(),"9000",null));
         }
 
     }
@@ -265,9 +270,9 @@ public class MobPay implements Serializable {
                 intent.putExtra("url", response.raw().request().url().toString());
                 intent.putExtra("mqttServer", mqttServer);
                 intent.putExtra("topic", topic);
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     activity.startActivity(intent);
-                }else{
+                } else {
                     transactionFailureCallback.onError(new Error(response.message()));
                 }
 
@@ -276,7 +281,7 @@ public class MobPay implements Serializable {
             @Override
             public void onFailure(Call call, Throwable t) {
                 Log.i(LOG_TAG, t.getLocalizedMessage());
-                transactionFailureCallback.onError(t);
+                transactionFailureCallback.onError(new InterswitchException("Unable to initiate payment","1000",t.getMessage()));
             }
         });
     }
