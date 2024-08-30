@@ -220,7 +220,7 @@ public class MobPay implements Serializable {
                                 }
                                 if (!isReceivedMessage()) {
                                     setReceivedMessage(true);
-                                    if (cardPaymentResponse.getResponseCode().equals("00")) {
+                                    if (cardPaymentResponse.getResponseCode().equals("00") || cardPaymentResponse.getResponseCode().equals("0")) {
                                         transactionSuccessCallback.onSuccess(cardPaymentResponse);
                                     } else {
 
