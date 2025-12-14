@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    namespace "com.interswitchgroup.mobpayexample"
+    compileSdkVersion 34
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -16,8 +17,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding = true
+    }
+    packagingOptions {
+        resources {
+            excludes += [
+                    'META-INF/INDEX.LIST',
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/license.txt',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/notice.txt',
+                    'META-INF/*.kotlin_module',
+                    'META-INF/io.netty.versions.properties'
+            ]
+        }
     }
 }
 
@@ -31,6 +48,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation project(':mobpaylib')
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
 //    implementation("com.github.interswitch-kenya-limited:mobpay:0.7.4")
 //    {
 //        exclude group: 'com.github.bumptech.glide'

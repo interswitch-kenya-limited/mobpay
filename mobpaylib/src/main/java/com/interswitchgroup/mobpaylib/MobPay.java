@@ -11,21 +11,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.interswitchgroup.mobpaylib.api.model.CardPaymentPayload;
-import com.interswitchgroup.mobpaylib.api.model.CardPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.CheckoutTransactionPayload;
 import com.interswitchgroup.mobpaylib.api.model.MerchantConfigResponse;
-import com.interswitchgroup.mobpaylib.api.model.MobilePaymentPayload;
-import com.interswitchgroup.mobpaylib.api.model.MobilePaymentResponse;
 import com.interswitchgroup.mobpaylib.api.model.PaybillQueryResponse;
-import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentPayload;
-import com.interswitchgroup.mobpaylib.api.model.PesalinkPaymentResponse;
 import com.interswitchgroup.mobpaylib.api.service.Checkout;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
-import com.interswitchgroup.mobpaylib.api.service.MobilePayment;
-import com.interswitchgroup.mobpaylib.api.service.PesalinkPayment;
 import com.interswitchgroup.mobpaylib.api.service.TranscationConfirmation;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
 import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
@@ -38,25 +29,15 @@ import com.interswitchgroup.mobpaylib.model.Customer;
 import com.interswitchgroup.mobpaylib.model.Merchant;
 import com.interswitchgroup.mobpaylib.model.Mobile;
 import com.interswitchgroup.mobpaylib.model.Payment;
-import com.interswitchgroup.mobpaylib.ui.MobPayActivity;
-import com.interswitchgroup.mobpaylib.utils.AESEncryptor;
 import com.interswitchgroup.mobpaylib.utils.InterswitchException;
 import com.interswitchgroup.mobpaylib.utils.NullChecker;
-import com.interswitchgroup.mobpaylib.utils.RSAUtil;
+import org.apache.commons.logging.LogFactory;
 
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.security.PublicKey;
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -71,6 +52,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MobPay implements Serializable {
+    private static final org.apache.commons.logging.Log log = LogFactory.getLog(MobPay.class);
     private String mqttServer;
     private String checkoutUrl;
     private static MobPay singletonMobPayInstance;
@@ -179,77 +161,49 @@ public class MobPay implements Serializable {
      * @param transactionFailureCallback
      */
 
-    public void pay(Activity activity, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {
+    public void pay(Activity activity, Merchant merchant, Payment payment, Customer customer,
+                    final TransactionSuccessCallback transactionSuccessCallback,
+                    final TransactionFailureCallback transactionFailureCallback) {
         try {
-            NullChecker.checkNull(merchant, "merchant must not be null");
-            NullChecker.checkNull(payment, "payment must not be null");
-            NullChecker.checkNull(customer, "customer must not be null");
-            NullChecker.checkNull(transactionSuccessCallback, "transactionSuccessCallback must not be null");
-            NullChecker.checkNull(transactionFailureCallback, "transactionFailureCallback must not be null");
-            customer.validate();
+            // 1. Validate Inputs
+            validateInputs(merchant, payment, customer, transactionSuccessCallback, transactionFailureCallback);
+            // 2. Launch the Checkout UI
+            // MQTT connection will be handled in BrowserActivity
+            checkout(activity, merchant, payment, customer,transactionSuccessCallback ,transactionFailureCallback);
+            // Reset state for a new transaction
             setReceivedMessage(false);
-            //TODO: create validation for all classes
-            checkout(activity, merchant, payment, customer, transactionFailureCallback);
-            final String topic = "merchant_portal/" + merchant.getMerchantId() + "/" + payment.getTransactionRef();
-
-            final MqttClient sampleClient = new MqttClient(mqttServer, UUID.randomUUID().toString(), new MemoryPersistence());
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
-            connOpts.setAutomaticReconnect(true);
-            Log.i(LOG_TAG, "Connecting to broker: " + mqttServer);
-            sampleClient.connect(connOpts);
-            Log.i(LOG_TAG, "Connected");
-            sampleClient.subscribe(topic, new IMqttMessageListener() {
-                @Override
-                public void messageArrived(String topic, final MqttMessage message) throws Exception {
-                    // message Arrived!
-                    Log.i(LOG_TAG, "Message: " + topic + " : " + new String(message.getPayload()));
-                    /**
-                     * Run on ui thread otherwise utakua mwingi wa machozi
-                     */
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                CardPaymentResponse cardPaymentResponse = new ObjectMapper()
-                                        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                                        .readValue(new String(message.getPayload()), CardPaymentResponse.class);
-                                if (cardPaymentResponse.getTransactionRef() == null || cardPaymentResponse.getTransactionRef().isEmpty()) {
-
-                                    throw new Exception("Invalid response");
-                                }
-                                if (!isReceivedMessage()) {
-                                    setReceivedMessage(true);
-                                    if (cardPaymentResponse.getResponseCode().equals("00") || cardPaymentResponse.getResponseCode().equals("0")) {
-                                        transactionSuccessCallback.onSuccess(cardPaymentResponse);
-                                    } else {
-
-                                        transactionFailureCallback.onError(new InterswitchException(cardPaymentResponse.toString(),
-                                                cardPaymentResponse.getResponseCode(), "Transaction failure"));
-                                        ;
-                                    }
-                                }
-                            } catch (Exception e) {
-                                if (!isReceivedMessage()) {
-                                    transactionFailureCallback.onError(new InterswitchException(e.getMessage(),"", new String(message.getPayload())));
-                                }
-                            }
-                        }
-                    });
-                }
-            });
+        } catch (NullPointerException e) {
+            // Handle specific validation errors
+            transactionFailureCallback.onError(new InterswitchException(e.getMessage(), "9001", null));
         } catch (Exception e) {
-            transactionFailureCallback.onError(new InterswitchException(e.getMessage(),"9000",null));
+            // Handle general setup/initialization exceptions
+            log.debug(e.getMessage());
+            transactionFailureCallback.onError(new InterswitchException(e.getMessage(), "9000", null));
         }
-
     }
 
-    /*
-    needs to return the url and topic
-    pass checkout dto
+    /**
+     * Ensures all required parameters are non-null and validates the Customer object.
+     * @throws NullPointerException if any required parameter is null.
+     * @throws ValidationException if customer validation fails.
      */
+    private void validateInputs(Merchant merchant, Payment payment, Customer customer,
+                                TransactionSuccessCallback successCallback,
+                                TransactionFailureCallback failureCallback) throws Exception {
+        NullChecker.checkNull(merchant, "merchant must not be null");
+        NullChecker.checkNull(payment, "payment must not be null");
+        NullChecker.checkNull(customer, "customer must not be null");
+        NullChecker.checkNull(successCallback, "transactionSuccessCallback must not be null");
+        NullChecker.checkNull(failureCallback, "transactionFailureCallback must not be null");
 
-    private void checkout(Activity activity, Merchant merchant, Payment payment, Customer customer, TransactionFailureCallback transactionFailureCallback) {
+        // Assuming validate() throws a specific validation exception
+        customer.validate();
+        // TODO: create validation for all classes
+    }
+
+    private void checkout(Activity activity, Merchant merchant, Payment payment, Customer customer,
+                          TransactionSuccessCallback successCallback,
+                          TransactionFailureCallback transactionFailureCallback) {
         Retrofit ipgBackendRetrofit = new Retrofit.Builder()
                 .baseUrl(checkoutUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -270,12 +224,15 @@ public class MobPay implements Serializable {
                 intent.putExtra("url", response.raw().request().url().toString());
                 intent.putExtra("mqttServer", mqttServer);
                 intent.putExtra("topic", topic);
+
+                // Pass callbacks to BrowserActivity
+                BrowserActivity.setCallbacks(successCallback, transactionFailureCallback);
+
                 if (response.isSuccessful()) {
                     activity.startActivity(intent);
                 } else {
                     transactionFailureCallback.onError(new Error(response.message()));
                 }
-
             }
 
             @Override
@@ -285,6 +242,7 @@ public class MobPay implements Serializable {
             }
         });
     }
+
 
     @Deprecated
     public void makeCardPayment(Card card, Merchant merchant, Payment payment, Customer customer, final TransactionSuccessCallback transactionSuccessCallback, final TransactionFailureCallback transactionFailureCallback) {

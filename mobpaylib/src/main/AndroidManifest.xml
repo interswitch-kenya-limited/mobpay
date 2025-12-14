@@ -3,9 +3,9 @@
     package="com.interswitchgroup.mobpaylib">
 
     <!-- Permissions required by paho mqtt sdk -->
-    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <permission
@@ -24,9 +24,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
 
-        <!--<service-->
-        <!--android:name="org.eclipse.paho.android.service.MqttService"-->
-        <!--android:exported="false" />-->
+        <service
+        android:name="org.eclipse.paho.android.service.MqttService"
+        android:exported="false" />
     </application>
 
 </manifest>

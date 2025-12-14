@@ -24,7 +24,7 @@ Edit you app manifest file to add the following configuration metadata inside th
             android:value="https://testids.interswitch.co.ke:18082/api/v1/" />
         <meta-data
             android:name="interswitch-kenya-limited.mobpay.mqtt_url"
-            android:value="tcp://testmerchant.interswitch-ke.com:1883" />
+            android:value="wss://testmerchant.interswitch-ke.com:8084" />
         <meta-data
             android:name="interswitch-kenya-limited.mobpay.cardinal_url"
             android:value="https://testmerchant.interswitch-ke.com/sdkcardinal" />
@@ -60,7 +60,7 @@ customer.setEmail(customerEmail);
 
 MobPay.Config config = new MobPay.Config();// May be used for advanced configuration, can be null
 
-config.setIconUrl('YOUR ICONS URL') can be used to change the logo
+config.setIconUrl('YOUR ICONS URL') can be used to ch   ange the logo
 
 
 mobPay = MobPay.getInstance(MainActivity.this, clientId, clientSecret, config);// Instantiate the mobpay library object to make a payment and get the results in the callbacks

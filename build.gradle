@@ -2,24 +2,15 @@
 //apply plugin: "org.sonarqube"
 
 buildscript {
-
     repositories {
         google()
-        jcenter()
-
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
-        // For building and publishing to jitpack on github
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-        classpath 'com.netflix.nebula:gradle-lint-plugin:11.0.0'
-
-
+        classpath 'com.android.tools.build:gradle:8.11.2'
     }
 }
+
 
 allprojects {
     repositories {
@@ -38,7 +29,7 @@ task clean(type: Delete) {
 ext {
     versionCode = 1
     versionName = "1.0"
-    minSdkVersion = 19
+    minSdkVersion = 24
     compileSdkVersion = 30
     targetSdkVersion = 30
     buildToolsVersion = "30.0.0"
