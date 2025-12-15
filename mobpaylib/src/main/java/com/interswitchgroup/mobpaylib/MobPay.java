@@ -15,8 +15,6 @@ import com.interswitchgroup.mobpaylib.api.service.Checkout;
 import com.interswitchgroup.mobpaylib.api.service.MerchantConfig;
 import com.interswitchgroup.mobpaylib.api.service.TranscationConfirmation;
 import com.interswitchgroup.mobpaylib.di.DaggerWrapper;
-import com.interswitchgroup.mobpaylib.interfaces.PesalinkFailureCallback;
-import com.interswitchgroup.mobpaylib.interfaces.PesalinkSuccessCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
 import com.interswitchgroup.mobpaylib.model.Card;
@@ -269,39 +267,6 @@ public class MobPay implements Serializable {
         });
   }
 
-  @Deprecated
-  public void makeCardPayment(
-      Card card,
-      Merchant merchant,
-      Payment payment,
-      Customer customer,
-      final TransactionSuccessCallback transactionSuccessCallback,
-      final TransactionFailureCallback transactionFailureCallback) {}
-
-  @Deprecated
-  public void makeCardTokenPayment(
-      CardToken cardToken,
-      Merchant merchant,
-      Payment payment,
-      Customer customer,
-      final TransactionSuccessCallback transactionSuccessCallback,
-      final TransactionFailureCallback transactionFailureCallback) {}
-
-  @Deprecated
-  public void makeMobileMoneyPayment(
-      Mobile mobile,
-      Merchant merchant,
-      Payment payment,
-      Customer customer,
-      final TransactionSuccessCallback transactionSuccessCallback,
-      final TransactionFailureCallback transactionFailureCallback) {}
-
-  @Deprecated
-  public void confirmMobilePayment(
-      String orderId,
-      final TransactionSuccessCallback transactionSuccessCallback,
-      final TransactionFailureCallback transactionFailureCallback) {}
-
   public enum PaymentChannel {
     CARD("Card"),
     MOBILE("Mobile"),
@@ -314,13 +279,6 @@ public class MobPay implements Serializable {
       this.value = value;
     }
   }
-
-  public void makePesalinkPayment(
-      Merchant merchant,
-      Payment payment,
-      Customer customer,
-      final PesalinkSuccessCallback pesalinkSuccessCallback,
-      final PesalinkFailureCallback pesalinkFailureCallback) {}
 
   public void confirmTransactionPayment(
       String transactionRef,
