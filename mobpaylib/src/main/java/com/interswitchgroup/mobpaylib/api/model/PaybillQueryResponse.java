@@ -60,4 +60,14 @@ public class PaybillQueryResponse implements TransactionResponse {
   public String getTransactionOrderId() {
     return this.getOrderId();
   }
+
+  @Override
+  public String getResponseCode() {
+    return transactionResponseCode;
+  }
+
+  @Override
+  public String getResponseMessage() {
+    return transactionResponseMessage;
+  }
 }

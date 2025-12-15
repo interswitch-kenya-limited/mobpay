@@ -12,12 +12,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionFailureCallback;
 import com.interswitchgroup.mobpaylib.interfaces.TransactionSuccessCallback;
+import com.interswitchgroup.mobpaylib.model.MqttResponse;
 import com.interswitchgroup.mobpaylib.utils.InterswitchException;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,12 +59,12 @@ public class BrowserActivity extends AppCompatActivity {
 
     // Validate required parameters
     if (topic == null || topic.isEmpty()) {
-      notifyFailure("MQTT topic is required", null);
+      notifyFailure("MQTT topic is required", "9004", null);
       return;
     }
 
     if (checkoutUrl == null || checkoutUrl.isEmpty()) {
-      notifyFailure("Checkout URL is required", null);
+      notifyFailure("Checkout URL is required", "9004", null);
       return;
     }
 
@@ -107,7 +110,7 @@ public class BrowserActivity extends AppCompatActivity {
                     (connAck, throwable) -> {
                       if (throwable != null) {
                         Log.e(LOG_TAG, "❌ MQTT connect failed", throwable);
-                        notifyFailure("MQTT connection failed", throwable);
+                        notifyFailure("MQTT connection failed", "9004", throwable);
                         return;
                       }
 
@@ -117,7 +120,7 @@ public class BrowserActivity extends AppCompatActivity {
 
           } catch (Exception e) {
             Log.e(LOG_TAG, "❌ MQTT setup exception", e);
-            notifyFailure("MQTT setup failed", e);
+            notifyFailure("MQTT setup failed", "9004", e);
           }
         });
   }
@@ -143,12 +146,19 @@ public class BrowserActivity extends AppCompatActivity {
                             if (successCallback != null) {
                               try {
                                 // TODO: Parse payload into proper response object
-                                // TransactionResponse response = parsePayload(payload);
-                                // successCallback.onSuccess(response);
+                                MqttResponse response = parsePayload(payload);
+                                // validate transaction
+                                validateTransaction(response);
+                                successCallback.onSuccess(response);
                                 Log.i(LOG_TAG, "✅ Transaction success callback invoked");
-                              } catch (Exception e) {
+                              } catch (IOException e) {
                                 Log.e(LOG_TAG, "❌ Error parsing transaction response", e);
-                                notifyFailure("Failed to parse transaction response", e);
+                                notifyFailure(e.getMessage(), "9004", e);
+                              } catch (InterswitchException e) {
+                                Log.e(LOG_TAG, "❌ Error validating transaction", e);
+                                notifyFailure(e.getMessage(), e.getCode(), e);
+                              } catch (Exception e) {
+                                notifyFailure(e.getMessage(), "9004", e);
                               }
                             }
                             finish();
@@ -159,7 +169,7 @@ public class BrowserActivity extends AppCompatActivity {
                     (subAck, throwable) -> {
                       if (throwable != null) {
                         Log.e(LOG_TAG, "❌ Subscribe failed", throwable);
-                        notifyFailure("MQTT subscribe failed", throwable);
+                        notifyFailure("MQTT subscribe failed", "9003", throwable);
                         return;
                       }
 
@@ -175,20 +185,32 @@ public class BrowserActivity extends AppCompatActivity {
                                 webView.loadUrl(checkoutUrl);
                               } else {
                                 Log.e(LOG_TAG, "❌ WebView not found");
-                                notifyFailure("WebView initialization failed", null);
+                                notifyFailure("WebView initialization failed", "9002", null);
                               }
                             } catch (Exception e) {
                               Log.e(LOG_TAG, "❌ Error loading checkout URL", e);
-                              notifyFailure("Failed to load checkout page", e);
+                              notifyFailure("Failed to load checkout page", "9002", e);
                             }
                           });
                     });
 
           } catch (Exception e) {
             Log.e(LOG_TAG, "❌ Subscribe exception", e);
-            notifyFailure("MQTT subscribe failed", e);
+            notifyFailure("MQTT subscribe failed", "9003", e);
           }
         });
+  }
+
+  private void validateTransaction(MqttResponse response) throws InterswitchException {
+    if (!response.responseCode.equalsIgnoreCase("00")) {
+      throw new InterswitchException(
+          response.getResponseMessage(), response.responseCode, response.responseMessage);
+    }
+  }
+
+  private MqttResponse parsePayload(String payload) throws IOException {
+    ObjectMapper oMapper = new ObjectMapper();
+    return oMapper.readValue(payload, MqttResponse.class);
   }
 
   // --------------------------------------------------
@@ -198,7 +220,7 @@ public class BrowserActivity extends AppCompatActivity {
     WebView webView = findViewById(R.id.webview);
     if (webView == null) {
       Log.e(LOG_TAG, "❌ WebView not found in layout");
-      notifyFailure("WebView initialization failed", null);
+      notifyFailure("WebView initialization failed", "9002", null);
       return;
     }
 
@@ -249,7 +271,7 @@ public class BrowserActivity extends AppCompatActivity {
           public void onReceivedError(
               WebView view, int errorCode, String description, String failingUrl) {
             Log.e(LOG_TAG, "❌ WebView error: " + description + " (" + errorCode + ")");
-            notifyFailure("Failed to load payment page: " + description, null);
+            notifyFailure("Failed to load payment page: " + description, "9004", null);
           }
         });
   }
@@ -257,15 +279,14 @@ public class BrowserActivity extends AppCompatActivity {
   // --------------------------------------------------
   // ERROR HANDLING
   // --------------------------------------------------
-  private void notifyFailure(String message, Throwable cause) {
+  private void notifyFailure(String message, String code, Throwable cause) {
     Log.e(LOG_TAG, "🚨 " + message, cause);
 
     mainHandler.post(
         () -> {
           if (failureCallback != null) {
             failureCallback.onError(
-                new InterswitchException(
-                    message, "9002", cause != null ? cause.getMessage() : null));
+                new InterswitchException(message, code, cause != null ? cause.getMessage() : null));
           }
           finish();
         });
@@ -323,7 +344,8 @@ public class BrowserActivity extends AppCompatActivity {
   @Override
   public void onBackPressed() {
     // Handle back button - you might want to show a confirmation dialog
+    super.onBackPressed();
     Log.i(LOG_TAG, "⬅️ Back button pressed");
-    notifyFailure("Transaction cancelled by user", null);
+    notifyFailure("Transaction cancelled by user", "9004", null);
   }
 }
