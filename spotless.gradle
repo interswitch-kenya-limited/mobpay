@@ -1,0 +1,26 @@
+spotless {
+    // Configure Java files
+    java {
+        target '**/*.java' // applies to all Java files in subprojects
+        googleJavaFormat() // use the Google Java format
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    // Configure Kotlin files (using ktlint as an example)
+    kotlin {
+        target '**/*.kt' // applies to all Kotlin files in subprojects
+        ktlint() // use the ktlint formatter
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    // Configure other files like Gradle scripts, Markdown, XML, etc.
+    format 'misc', {
+        target '**/*.gradle', '**/*.md', '**/.gitignore', '**/*.xml'
+        indentWithSpaces()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}

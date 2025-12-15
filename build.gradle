@@ -11,7 +11,9 @@ buildscript {
     }
 }
 
-
+plugins {
+    id 'com.diffplug.spotless' version '8.1.0' apply false
+}
 allprojects {
     repositories {
         google()
@@ -21,6 +23,10 @@ allprojects {
 
 }
 
+subprojects {
+    apply plugin: 'com.diffplug.spotless'
+    apply from: "$rootDir/spotless.gradle"
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir

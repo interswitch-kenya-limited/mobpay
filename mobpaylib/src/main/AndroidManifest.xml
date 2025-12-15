@@ -23,10 +23,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
-
-        <service
-        android:name="org.eclipse.paho.android.service.MqttService"
-        android:exported="false" />
     </application>
 
 </manifest>

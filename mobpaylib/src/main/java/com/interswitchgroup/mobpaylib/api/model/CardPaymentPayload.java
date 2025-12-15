@@ -10,51 +10,52 @@ import com.interswitchgroup.mobpaylib.model.Payment;
 
 public class CardPaymentPayload extends TransactionPayload {
 
-    private String provider;
-    private String authData;
-    private String paca = "1";
+  private String provider;
+  private String authData;
+  private String paca = "1";
 
-    public CardPaymentPayload(Merchant merchant, Payment payment, Customer customer, String authData) {
-        super(merchant, payment, customer);
-        this.authData = authData;
-    }
+  public CardPaymentPayload(
+      Merchant merchant, Payment payment, Customer customer, String authData) {
+    super(merchant, payment, customer);
+    this.authData = authData;
+  }
 
-    public String getProvider() {
-        return provider;
-    }
+  public String getProvider() {
+    return provider;
+  }
 
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
+  public void setProvider(String provider) {
+    this.provider = provider;
+  }
 
-    public String getAuthData() {
-        return authData;
-    }
+  public String getAuthData() {
+    return authData;
+  }
 
-    public void setAuthData(String authData) {
-        this.authData = authData;
-    }
+  public void setAuthData(String authData) {
+    this.authData = authData;
+  }
 
-    public String getPaca() {
-        return paca;
-    }
+  public String getPaca() {
+    return paca;
+  }
 
-    public void setPaca(String paca) {
-        this.paca = paca;
-    }
+  public void setPaca(String paca) {
+    this.paca = paca;
+  }
 
-    public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // Java object to JSON string
-        String jsonString = super.toString();
-        try {
-            jsonString = mapper.writeValueAsString(this);
-            return jsonString;
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return super.toString();
+  public String toString() {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    // Java object to JSON string
+    String jsonString = super.toString();
+    try {
+      jsonString = mapper.writeValueAsString(this);
+      return jsonString;
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
     }
+    return super.toString();
+  }
 }

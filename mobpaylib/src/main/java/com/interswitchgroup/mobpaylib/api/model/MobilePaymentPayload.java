@@ -7,20 +7,21 @@ import com.interswitchgroup.mobpaylib.model.Payment;
 
 public class MobilePaymentPayload extends TransactionPayload {
 
-    private String provider;
-    private String phone;
+  private String provider;
+  private String phone;
 
-    public MobilePaymentPayload(Merchant merchant, Payment payment, Customer customer, Mobile mobile) {
-        super(merchant, payment, customer);
-        this.provider = mobile.getProvider();
-        this.phone = mobile.getPhone();
-    }
+  public MobilePaymentPayload(
+      Merchant merchant, Payment payment, Customer customer, Mobile mobile) {
+    super(merchant, payment, customer);
+    this.provider = mobile.getProvider();
+    this.phone = mobile.getPhone();
+  }
 
-    public String getProvider() {
-        return provider;
-    }
+  public String getProvider() {
+    return provider;
+  }
 
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
+  public void setProvider(String provider) {
+    this.provider = provider;
+  }
 }
